@@ -1,0 +1,45 @@
+// Prisma Schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User Model
+model User {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  email  String  @unique
+  phone  String? @unique(map: "phone_unique")
+  otp    String? @default("")
+  points Int?
+}
+
+// Admin Model
+model Admin {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String @unique
+  password String
+}
+
+model Manager {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String  @unique
+  phone    String? @unique(map: "phone_unique")
+  password String
+  cafeId   String  @db.ObjectId
+  cafe     Cafe    @relation("CafeManagers", fields: [cafeId], references: [id])
+}
+
+model Cafe {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  location String
+  managers Manager[] @relation("CafeManagers")
+}
