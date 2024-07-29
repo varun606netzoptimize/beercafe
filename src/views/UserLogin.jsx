@@ -297,7 +297,7 @@ export default function UserLogin({ mode }) {
           )}
           <div className='flex justify-center items-center flex-wrap gap-2'>
             <Typography color='primary' component={Link} href='/login'>
-              Login as an Admin
+              Login as an Admin / Manager
             </Typography>
           </div>
         </div>
