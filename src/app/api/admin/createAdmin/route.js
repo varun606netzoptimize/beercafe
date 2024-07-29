@@ -3,11 +3,7 @@ import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
-import cors, { runMiddleware } from '@/lib/cors'
-
 export async function POST(req, res) {
-  // await runMiddleware(req, res, cors)
-
   try {
     const { name, email, password } = await req.json()
 

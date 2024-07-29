@@ -2,11 +2,7 @@
 import { verifyAdmin } from '@/app/api/utils/verifyAdmin'
 import prisma from '@/lib/prisma'
 
-import cors, { runMiddleware } from '@/lib/cors'
-
 export async function GET(req, res) {
-  await runMiddleware(req, res, cors)
-
   const adminAuthResponse = await verifyAdmin(req)
 
   if (adminAuthResponse) return adminAuthResponse

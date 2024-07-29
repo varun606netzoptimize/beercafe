@@ -2,13 +2,9 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
 
-import cors, { runMiddleware } from '@/lib/cors'
-
 const prisma = new PrismaClient()
 
 export async function POST(req, res) {
-  // await runMiddleware(req, res, cors)
-
   try {
     const { email, password } = await req.json()
 
