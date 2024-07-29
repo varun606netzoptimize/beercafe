@@ -3,7 +3,7 @@ import Cors from 'cors'
 // Initialize CORS middleware
 const cors = Cors({
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  origin: 'https://beercafe-staging-pms8td8ap-varun606netzoptimizes-projects.vercel.app' // Adjust as needed
+  origin: 'https://beercafe-fpsumkyiy-varun606netzoptimizes-projects.vercel.app/' // Adjust as needed
 })
 
 // Helper method to run CORS middleware
