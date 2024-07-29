@@ -4,7 +4,7 @@ import { verifyAdmin } from '../../utils/verifyAdmin'
 
 const prisma = new PrismaClient()
 
-import { runMiddleware } from '@/lib/cors'
+import cors, { runMiddleware } from '@/lib/cors'
 
 export async function POST(req, res) {
   await runMiddleware(req, res, cors)

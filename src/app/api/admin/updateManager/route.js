@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
-import { runMiddleware } from '@/lib/cors'
+import cors, { runMiddleware } from '@/lib/cors'
 
 export async function PUT(req, res) {
   await runMiddleware(req, res, cors)

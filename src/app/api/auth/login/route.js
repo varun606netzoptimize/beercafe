@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
 
-import { runMiddleware } from '@/lib/cors'
+import cors, { runMiddleware } from '@/lib/cors'
 
 const prisma = new PrismaClient()
 

@@ -2,7 +2,7 @@
 import { verifyAdmin } from '@/app/api/utils/verifyAdmin'
 import prisma from '@/lib/prisma'
 
-import { runMiddleware } from '@/lib/cors'
+import cors, { runMiddleware } from '@/lib/cors'
 
 export async function GET(req, res) {
   await runMiddleware(req, res, cors)

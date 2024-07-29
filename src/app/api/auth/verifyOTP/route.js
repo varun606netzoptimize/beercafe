@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import prisma from '@/lib/prisma'
 
-import { runMiddleware } from '@/lib/cors'
+import cors, { runMiddleware } from '@/lib/cors'
 
 export async function POST(req, res) {
   await runMiddleware(req, res, cors)
