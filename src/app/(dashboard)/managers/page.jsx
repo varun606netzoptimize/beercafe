@@ -15,9 +15,12 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 
-import { Box, Button, Card, CardHeader, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Delete, Edit } from '@mui/icons-material'
 
 import { AuthContext } from '@/context/AuthContext'
+import { ENDPOINT } from '@/endpoints'
+import AddManagerDrawer from './AddManagerDrawer'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -40,15 +43,39 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   }
 }))
 
-export default function Page() {
-  const { authToken, tokenCheck } = useContext(AuthContext)
+const NameContainer = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  '&:hover .actionIcons': {
+    opacity: 1
+  }
+}))
 
-  const [users, setUsers] = useState([])
+const ActionIcons = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  right: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  display: 'flex',
+  gap: 24,
+  opacity: 0,
+  transition: 'opacity 0.3s ease'
+}))
+
+export default function Page() {
+  const { authToken, tokenCheck, cafes } = useContext(AuthContext)
+
+  const [managers, setManagers] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [deleting, setDeleting] = useState({})
+  const [open, setOpen] = React.useState(false)
+  const [drawerType, setDrawerType] = useState('create')
+  const [updateManagerData, setUpdateManagerData] = useState(null)
+
+  const toggleDrawer = newOpen => () => {
+    setOpen(newOpen)
+  }
 
   useEffect(() => {
-    console.log('1')
-
     if (tokenCheck) {
       console.log('2')
 
@@ -67,7 +94,7 @@ export default function Page() {
   }, [authToken])
 
   const GetManagers = () => {
-    const url = 'http://localhost:3000/api/admin/getManagers/'
+    const url = ENDPOINT.GET_MANAGERS
 
     setIsLoading(true)
 
@@ -78,13 +105,42 @@ export default function Page() {
         }
       })
       .then(res => {
-        setUsers(res.data)
+        setManagers(res.data)
       })
       .catch(err => {
         console.log('failed:', err.response)
       })
       .finally(() => {
         setIsLoading(false)
+      })
+  }
+
+  const DeleteManager = userId => {
+    const url = ENDPOINT.DELETE_MANAGER
+
+    const userData = {
+      id: userId
+    }
+
+    setDeleting(prev => ({ ...prev, [userId]: true }))
+
+    axios
+      .delete(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`,
+          'Content-Type': 'application/json'
+        },
+        data: userData
+      })
+      .then(res => {
+        console.log('Manager deleted:', res.data)
+        setManagers(prevManagers => prevManagers.filter(manager => manager.id !== userId))
+      })
+      .catch(err => {
+        console.log('Failed to delete manager:', err.response ? err.response.data : err.message)
+      })
+      .finally(() => {
+        setDeleting(prev => ({ ...prev, [userId]: false }))
       })
   }
 
@@ -108,7 +164,15 @@ export default function Page() {
           }}
         >
           <Typography variant='h5'>Manage Managers</Typography>
-          <Button variant='contained' size='medium' startIcon={<i className='tabler-briefcase' />}>
+          <Button
+            variant='contained'
+            size='medium'
+            startIcon={<i className='tabler-briefcase' />}
+            onClick={() => {
+              setOpen(true)
+              setDrawerType('create')
+            }}
+          >
             Add Manager
           </Button>
         </Box>
@@ -131,10 +195,26 @@ export default function Page() {
             </TableHead>
 
             <TableBody>
-              {users?.map((data, i) => (
-                <StyledTableRow key={i}>
-                  <StyledTableCell component='th' scope='row'>
-                    {data.name}
+              {managers?.map(data => (
+                <StyledTableRow key={data.id}>
+                  <StyledTableCell component='th' scope='row' sx={{ cursor: 'default' }}>
+                    <NameContainer>
+                      {deleting[data.id] ? <CircularProgress size={24} sx={{ color: 'primary.main' }} /> : data.name}
+                      <ActionIcons className='actionIcons'>
+                        <>
+                          <Delete color='error' sx={{ cursor: 'pointer' }} onClick={() => DeleteManager(data.id)} />
+                          <Edit
+                            color='info'
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => {
+                              setOpen(true)
+                              setUpdateManagerData(data)
+                              setDrawerType('update')
+                            }}
+                          />
+                        </>
+                      </ActionIcons>
+                    </NameContainer>
                   </StyledTableCell>
                   <StyledTableCell component='th' scope='row'>
                     {data.email}
@@ -143,7 +223,7 @@ export default function Page() {
                     {data.phone}
                   </StyledTableCell>
                   <StyledTableCell component='th' scope='row'>
-                    {data.cafe}
+                    {data.cafe.name}
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
@@ -151,6 +231,17 @@ export default function Page() {
           </Table>
         </TableContainer>
       )}
+
+      <AddManagerDrawer
+        open={open}
+        onClose={toggleDrawer(false)}
+        toggleDrawer={toggleDrawer}
+        GetManagers={GetManagers}
+        drawerType={drawerType}
+        setDrawerType={setDrawerType}
+        updateManagerData={updateManagerData}
+        setUpdateManagerData={setUpdateManagerData}
+      />
     </div>
   )
 }

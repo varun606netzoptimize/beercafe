@@ -1,19 +1,27 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { PrismaClient } from '@prisma/client'
 
-import prisma from '@/lib/prisma'
+const prisma = new PrismaClient()
 
 export async function POST(req) {
   try {
     const { email, password } = await req.json()
 
-    // Find the user by email
-    const user = await prisma.users.findUnique({
+    // Find the user by email in both Manager and Admin tables
+    const manager = await prisma.manager.findUnique({
       where: { email }
     })
 
-    // Check if user exists and has a valid role
-    if (!user || (user.role !== 'Admin' && user.role !== 'Manager')) {
+    const admin = await prisma.admin.findUnique({
+      where: { email }
+    })
+
+    const user = manager || admin
+    const role = manager ? 'Manager' : 'Admin'
+
+    // Check if user exists
+    if (!user) {
       return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })
     }
 
@@ -25,10 +33,10 @@ export async function POST(req) {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ id: user.id, role }, process.env.JWT_SECRET, { expiresIn: '1h' })
 
     // Return the response with token and user details
-    return new Response(JSON.stringify({ token, email: user.email, role: user.role }), {
+    return new Response(JSON.stringify({ token, email: user.email, role }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     })

@@ -38,8 +38,9 @@ model Manager {
 }
 
 model Cafe {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  location String
-  managers Manager[] @relation("CafeManagers")
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  location  String
+  managers  Manager[] @relation("CafeManagers")
+  createdAt DateTime  @default(now())
 }

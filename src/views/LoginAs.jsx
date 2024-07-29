@@ -147,7 +147,7 @@ export default function LoginAs({ mode }) {
                     justifyContent: 'center'
                   }}
                 >
-                  <i className='tabler-user-heart text' style={{ width: 40, height: 40 }} />
+                  <i className='tabler-user-heart text' style={{ color: 'white', width: 40, height: 40 }} />
                 </Box>
                 <Typography variant='h6'> Beercafe User </Typography>
               </div>
@@ -170,7 +170,7 @@ export default function LoginAs({ mode }) {
                     justifyContent: 'center'
                   }}
                 >
-                  <i className='tabler-briefcase text' style={{ width: 40, height: 40 }} />
+                  <i className='tabler-briefcase text' style={{ color: 'white', width: 40, height: 40 }} />
                 </Box>
                 <Typography variant='h6'> Admin / Manager </Typography>
               </div>

@@ -19,9 +19,11 @@ export const AuthProvider = ({ children }) => {
   })
 
   const [tokenCheck, setTokenCheck] = useState(false)
+  const [cafes, setCafes] = useState([])
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
+    // window.localStorage.removeItem('userRole')
 
     const storedToken = window.localStorage.getItem('authToken')
     const storedRole = window.localStorage.getItem('userRole')
@@ -71,8 +73,30 @@ export const AuthProvider = ({ children }) => {
       })
       .finally(() => {
         setTokenCheck(true)
+        GetCafe()
       })
   }
 
-  return <AuthContext.Provider value={{ authToken, setAuthToken, tokenCheck }}>{children}</AuthContext.Provider>
+  const GetCafe = () => {
+    const url = ENDPOINT.GET_CAFES
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: 'Bearer ' + authToken.token
+        }
+      })
+      .then(res => {
+        setCafes(res.data.cafes)
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+  }
+
+  return (
+    <AuthContext.Provider value={{ authToken, setAuthToken, tokenCheck, cafes, setCafes }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }

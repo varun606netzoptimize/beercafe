@@ -1,6 +1,8 @@
-// src/app/api/auth/getUsers/route.js
+import { PrismaClient } from '@prisma/client'
+
 import { verifyAdmin } from '../../utils/verifyAdmin'
-import prisma from '@/lib/prisma'
+
+const prisma = new PrismaClient()
 
 export async function GET(req) {
   const adminAuthResponse = await verifyAdmin(req)
@@ -8,7 +10,15 @@ export async function GET(req) {
   if (adminAuthResponse) return adminAuthResponse
 
   try {
-    const users = await prisma.users.findMany({ where: { role: 'User' } })
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        points: true
+      }
+    })
 
     return new Response(JSON.stringify(users), { status: 200 })
   } catch (err) {

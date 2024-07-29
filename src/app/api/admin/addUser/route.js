@@ -1,9 +1,29 @@
 import { PrismaClient } from '@prisma/client'
 
+import { verifyAdmin } from '../../utils/verifyAdmin'
+
 const prisma = new PrismaClient()
 
 export async function POST(req) {
   try {
+    // Extract Authorization header
+    const authHeader = req.headers.get('Authorization')
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ message: 'Authorization header missing or invalid' }), { status: 401 })
+    }
+
+    const token = authHeader.split(' ')[1]
+
+    // Verify the token
+    try {
+      verifyAdmin(token)
+    } catch (err) {
+      console.error('Token verification failed:', err)
+
+      return new Response(JSON.stringify({ message: err.message }), { status: 401 })
+    }
+
     const { name, email, phone, otp, points } = await req.json()
 
     console.log('Received request data:', { name, email, phone, otp, points })
