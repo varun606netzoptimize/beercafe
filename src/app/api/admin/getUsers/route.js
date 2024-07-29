@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 import cors, { runMiddleware } from '@/lib/cors'
 
 export async function GET(req, res) {
-  await runMiddleware(req, res, cors)
+  // await runMiddleware(req, res, cors)
 
   const adminAuthResponse = await verifyAdmin(req)
 

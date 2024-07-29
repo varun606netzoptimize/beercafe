@@ -6,7 +6,7 @@ import prisma from '@/lib/prisma'
 import cors, { runMiddleware } from '@/lib/cors'
 
 export async function POST(req, res) {
-  await runMiddleware(req, res, cors)
+  // await runMiddleware(req, res, cors)
 
   const { phone } = await req.json()
 

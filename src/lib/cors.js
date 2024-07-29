@@ -1,9 +1,9 @@
 import Cors from 'cors'
 
-// Initialize CORS middleware
+// Initialize CORS middleware to allow any origin
 const cors = Cors({
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  origin: 'https://beercafe-staging.vercel.app/' // Adjust as needed
+  origin: '*' // Allow any origin
 })
 
 // Helper method to run CORS middleware

@@ -7,7 +7,7 @@ import cors, { runMiddleware } from '@/lib/cors'
 const prisma = new PrismaClient()
 
 export async function POST(req, res) {
-  await runMiddleware(req, res, cors)
+  // await runMiddleware(req, res, cors)
 
   try {
     const { email, password } = await req.json()
