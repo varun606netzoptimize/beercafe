@@ -3,7 +3,11 @@ import { sendOTP } from '../../utils/sendOTP'
 import { generateOTP } from '../../utils/generateOTP'
 import prisma from '@/lib/prisma'
 
-export async function POST(req) {
+import { runMiddleware } from '@/lib/cors'
+
+export async function POST(req, res) {
+  await runMiddleware(req, res, cors)
+
   const { phone } = await req.json()
 
   // Validate phone number

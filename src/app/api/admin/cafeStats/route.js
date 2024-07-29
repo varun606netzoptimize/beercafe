@@ -4,7 +4,11 @@ import { verifyAdmin } from '../../utils/verifyAdmin'
 
 const prisma = new PrismaClient()
 
-export async function GET(req) {
+import { runMiddleware } from '@/lib/cors'
+
+export async function GET(req, res) {
+  await runMiddleware(req, res, cors)
+
   // Verify admin credentials
   const adminAuthResponse = await verifyAdmin(req)
 

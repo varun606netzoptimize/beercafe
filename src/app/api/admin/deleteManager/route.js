@@ -4,7 +4,11 @@ import { verifyAdmin } from '../../utils/verifyAdmin'
 
 const prisma = new PrismaClient()
 
-export async function DELETE(req) {
+import { runMiddleware } from '@/lib/cors'
+
+export async function DELETE(req, res) {
+  await runMiddleware(req, res, cors)
+
   try {
     // Extract Authorization header
     const authHeader = req.headers.get('Authorization')

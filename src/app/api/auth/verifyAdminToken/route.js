@@ -1,6 +1,10 @@
 import jwt from 'jsonwebtoken'
 
-export async function GET(req) {
+import { runMiddleware } from '@/lib/cors'
+
+export async function GET(req, res) {
+  await runMiddleware(req, res, cors)
+
   const token = req.headers.get('Authorization')?.split(' ')[1]
 
   if (!token) {

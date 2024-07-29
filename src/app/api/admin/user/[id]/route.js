@@ -2,7 +2,11 @@
 import { verifyAdmin } from '@/app/api/utils/verifyAdmin'
 import prisma from '@/lib/prisma'
 
-export async function GET(req) {
+import { runMiddleware } from '@/lib/cors'
+
+export async function GET(req, res) {
+  await runMiddleware(req, res, cors)
+
   const adminAuthResponse = await verifyAdmin(req)
 
   if (adminAuthResponse) return adminAuthResponse
@@ -18,7 +22,7 @@ export async function GET(req) {
 
   try {
     // Fetch the user by ID
-    const user = await prisma.users.findUnique({ where: { id } })
+    const user = await prisma.user.findUnique({ where: { id } })
 
     if (!user) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 404 })
