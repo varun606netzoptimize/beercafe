@@ -239,7 +239,6 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
 
   return (
     <>
-      <ToastContainer />
       <Drawer
         anchor='right'
         open={open}

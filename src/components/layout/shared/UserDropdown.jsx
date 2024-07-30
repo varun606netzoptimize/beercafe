@@ -21,6 +21,8 @@ import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 
 // Hook Imports
+import { toast } from 'react-toastify'
+
 import { useSettings } from '@core/hooks/useSettings'
 import { AuthContext } from '@/context/AuthContext'
 
@@ -75,7 +77,9 @@ const UserDropdown = () => {
     })
   }
 
-  const handleMenuItemClick = () => {}
+  const handleMenuItemClick = () => {
+    toast.info('Page under development.')
+  }
 
   return (
     <>

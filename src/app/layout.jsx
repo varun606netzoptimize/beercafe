@@ -7,6 +7,8 @@ import '@/app/globals.css'
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 
+import { ToastContainer } from 'react-toastify'
+
 import { AuthProvider } from '@/context/AuthContext'
 
 export const metadata = {
@@ -23,7 +25,10 @@ const RootLayout = ({ children }) => {
   return (
     <html id='__next' lang='en' dir={direction}>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <ToastContainer />
+        </AuthProvider>
       </body>
     </html>
   )

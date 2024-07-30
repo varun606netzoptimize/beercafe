@@ -267,7 +267,6 @@ const LoginV2 = ({ mode }) => {
           </form>
         </div>
       </div>
-      <ToastContainer />
     </div>
   )
 }

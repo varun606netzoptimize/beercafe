@@ -302,7 +302,6 @@ export default function UserLogin({ mode }) {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   )
 }

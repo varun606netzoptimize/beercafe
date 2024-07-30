@@ -27,7 +27,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 // Component Imports
 import axios from 'axios'
 
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import { Box } from '@mui/material'
@@ -100,7 +100,6 @@ export default function LoginAs({ mode }) {
 
   return (
     <div className='flex bs-full justify-center'>
-      <ToastContainer />
       <div
         className={classnames(
           'flex bs-full items-center justify-center flex-1 min-bs-[100dvh] relative p-6 max-md:hidden',

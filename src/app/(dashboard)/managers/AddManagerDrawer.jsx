@@ -326,7 +326,6 @@ export default function AddManagerDrawer({
 
   return (
     <>
-      <ToastContainer />
       <Drawer
         anchor='right'
         open={open}
@@ -339,6 +338,7 @@ export default function AddManagerDrawer({
       >
         {DrawerList}
       </Drawer>
+
     </>
   )
 }
