@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 // Next Imports
 import { useRouter } from 'next/navigation'
@@ -20,8 +20,12 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
+import { AuthContext } from '@/context/AuthContext'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -34,6 +38,8 @@ const BadgeContentSpan = styled('span')({
 })
 
 const UserDropdown = () => {
+  const { setAuthToken } = useContext(AuthContext)
+
   // States
   const [open, setOpen] = useState(false)
 
@@ -62,11 +68,23 @@ const UserDropdown = () => {
 
   const handleUserLogout = async () => {
     // Redirect to login page
-    router.push('/login')
+    // router.push('/login')
+
+    window.localStorage.removeItem('authToken')
+    window.localStorage.removeItem('userRole')
+    setAuthToken({
+      token: null,
+      role: null
+    })
+  }
+
+  const handleMenuItemClick = () => {
+    toast.info('Page under development')
   }
 
   return (
     <>
+      <ToastContainer />
       <Badge
         ref={anchorRef}
         overlap='circular'
@@ -104,28 +122,21 @@ const UserDropdown = () => {
                     <Avatar alt='John Doe' src='/images/avatars/1.png' />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        John Doe
+                        Admin
                       </Typography>
-                      <Typography variant='caption'>admin@vuexy.com</Typography>
+                      <Typography variant='caption'>admin@beercafe.com</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
+                  <MenuItem className='mli-2 gap-3' onClick={handleMenuItemClick}>
                     <i className='tabler-user' />
                     <Typography color='text.primary'>My Profile</Typography>
                   </MenuItem>
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
+                  <MenuItem className='mli-2 gap-3' onClick={handleMenuItemClick}>
                     <i className='tabler-settings' />
                     <Typography color='text.primary'>Settings</Typography>
                   </MenuItem>
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
-                    <i className='tabler-currency-dollar' />
-                    <Typography color='text.primary'>Pricing</Typography>
-                  </MenuItem>
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
-                    <i className='tabler-help-circle' />
-                    <Typography color='text.primary'>FAQ</Typography>
-                  </MenuItem>
+
                   <div className='flex items-center plb-2 pli-3'>
                     <Button
                       fullWidth

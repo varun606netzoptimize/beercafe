@@ -6,8 +6,9 @@ import { Box, Button, CircularProgress, Drawer, Typography } from '@mui/material
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-
 import axios from 'axios'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import CustomTextField from '@core/components/mui/TextField'
 import { ENDPOINT } from '@/endpoints'
@@ -74,17 +75,16 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
       })
       .then(res => {
         console.log('user added:', apiUserData, res.data)
-      })
-      .catch(err => {
-        reset()
-        console.log('failed to user data:', err.response)
-      })
-      .finally(() => {
-        reset()
-        setIsLoading(false)
         GetUsers()
         onClose()
         setUpdateUserData(null)
+      })
+      .catch(err => {
+        toast.error(err.response.data.message ? err.response.data.message : 'Failed to add user')
+        console.log('failed to add user data:', err.response.data)
+      })
+      .finally(() => {
+        setIsLoading(false)
       })
   }
 
@@ -121,15 +121,14 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
       })
 
       console.log('user updated:', res.data)
-    } catch (err) {
-      reset()
-      console.log('failed to update user data:', err.response)
-    } finally {
-      reset()
-      setIsLoading(false)
       GetUsers()
       onClose()
       setUpdateUserData(null)
+    } catch (err) {
+      toast.error(err.response.data.message ? err.response.data.message : 'Failed to update user')
+      console.log('failed to update user data:', err.response)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -239,17 +238,20 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
   )
 
   return (
-    <Drawer
-      anchor='right'
-      open={open}
-      onClose={() => {
-        onClose()
-        reset()
-        setUpdateUserData(null)
-        setValue()
-      }}
-    >
-      {DrawerList}
-    </Drawer>
+    <>
+      <ToastContainer />
+      <Drawer
+        anchor='right'
+        open={open}
+        onClose={() => {
+          onClose()
+          reset()
+          setUpdateUserData(null)
+          setValue()
+        }}
+      >
+        {DrawerList}
+      </Drawer>
+    </>
   )
 }

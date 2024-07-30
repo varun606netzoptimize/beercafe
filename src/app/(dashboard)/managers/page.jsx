@@ -21,6 +21,7 @@ import { Delete, Edit } from '@mui/icons-material'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddManagerDrawer from './AddManagerDrawer'
+import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -71,6 +72,9 @@ export default function Page() {
   const [drawerType, setDrawerType] = useState('create')
   const [updateManagerData, setUpdateManagerData] = useState(null)
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [deleteManagerData, setDeleteManagerData] = useState(null)
+
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
   }
@@ -115,8 +119,10 @@ export default function Page() {
       })
   }
 
-  const DeleteManager = userId => {
+  const DeleteManager = () => {
     const url = ENDPOINT.DELETE_MANAGER
+
+    const userId = deleteManagerData.id
 
     const userData = {
       id: userId
@@ -141,6 +147,8 @@ export default function Page() {
       })
       .finally(() => {
         setDeleting(prev => ({ ...prev, [userId]: false }))
+        setOpenDeleteDialog(false)
+        setDeleteManagerData(null)
       })
   }
 
@@ -202,7 +210,14 @@ export default function Page() {
                       {deleting[data.id] ? <CircularProgress size={24} sx={{ color: 'primary.main' }} /> : data.name}
                       <ActionIcons className='actionIcons'>
                         <>
-                          <Delete color='error' sx={{ cursor: 'pointer' }} onClick={() => DeleteManager(data.id)} />
+                          <Delete
+                            color='error'
+                            sx={{ cursor: 'pointer' }}
+                            onClick={() => {
+                              setDeleteManagerData(data)
+                              setOpenDeleteDialog(true)
+                            }}
+                          />
                           <Edit
                             color='info'
                             sx={{ cursor: 'pointer' }}
@@ -241,6 +256,14 @@ export default function Page() {
         setDrawerType={setDrawerType}
         updateManagerData={updateManagerData}
         setUpdateManagerData={setUpdateManagerData}
+      />
+
+      <ConfirmDelete
+        openDeleteDialog={openDeleteDialog}
+        setOpenDeleteDialog={setOpenDeleteDialog}
+        deleteUserData={deleteManagerData}
+        setDeleteUserData={setDeleteManagerData}
+        DeleteFunction={DeleteManager}
       />
     </div>
   )

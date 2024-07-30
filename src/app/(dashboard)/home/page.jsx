@@ -256,21 +256,33 @@ export default function Page() {
             <Grid item xs={12} md={6}>
               <Item sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 2 }}>
                 <Box sx={infoBox1}>
-                  <i className='tabler-beer text' style={{ width: 24, height: 24 }} />
-                  <Typography variant='h6'>Total Number of Cafes</Typography>
-                  <Typography variant='h5'>12</Typography>
+                  <i className='tabler-beer text' style={{ width: 24, height: 24, color: 'white' }} />
+                  <Typography variant='h6' color={'white'}>
+                    Total Number of Cafes
+                  </Typography>
+                  <Typography variant='h5' color={'white'}>
+                    12
+                  </Typography>
                 </Box>
 
                 <Box sx={infoBox2}>
-                  <i className='tabler-user-heart text' style={{ width: 24, height: 24 }} />
-                  <Typography variant='h6'>Total Number of Customers</Typography>
-                  <Typography variant='h5'>12</Typography>
+                  <i className='tabler-user-heart text' style={{ width: 24, height: 24, color: 'white' }} />
+                  <Typography variant='h6' color={'white'}>
+                    Total Number of Customers
+                  </Typography>
+                  <Typography variant='h5' color={'white'}>
+                    12
+                  </Typography>
                 </Box>
 
                 <Box sx={infoBox3}>
-                  <i className='tabler-briefcase text' style={{ width: 24, height: 24 }} />
-                  <Typography variant='h6'>Total Number of Managers</Typography>
-                  <Typography variant='h5'>12</Typography>
+                  <i className='tabler-briefcase text' style={{ width: 24, height: 24, color: 'white' }} />
+                  <Typography variant='h6' color={'white'}>
+                    Total Number of Managers
+                  </Typography>
+                  <Typography variant='h5' color={'white'}>
+                    12
+                  </Typography>
                 </Box>
               </Item>
             </Grid>

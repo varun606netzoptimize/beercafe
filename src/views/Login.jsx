@@ -17,6 +17,7 @@ import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
 import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -179,6 +180,14 @@ const LoginV2 = ({ mode }) => {
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
             <Typography>Please sign-in to your account</Typography>
           </div>
+
+          <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+            <Typography variant='body2' color='primary'>
+              Email: <span className='font-medium'>admin@beercafe.com</span> / Pass:{' '}
+              <span className='font-medium'>beercafe@123</span>
+            </Typography>
+          </Alert>
+
           <form
             noValidate
             autoComplete='off'

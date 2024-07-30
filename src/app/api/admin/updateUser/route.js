@@ -55,7 +55,7 @@ export async function PUT(req, res) {
       const emailTaken = await isEmailOrPhoneTaken(email, null)
 
       if (emailTaken) {
-        return new Response(JSON.stringify({ message: 'Email is already in use by another user, manager, or admin' }), {
+        return new Response(JSON.stringify({ message: 'Email is already in use' }), {
           status: 400
         })
       }
@@ -65,10 +65,7 @@ export async function PUT(req, res) {
       const phoneTaken = await isEmailOrPhoneTaken(null, phone)
 
       if (phoneTaken) {
-        return new Response(
-          JSON.stringify({ message: 'Phone number is already in use by another user, manager, or admin' }),
-          { status: 400 }
-        )
+        return new Response(JSON.stringify({ message: 'Phone number is already in use' }), { status: 400 })
       }
     }
 

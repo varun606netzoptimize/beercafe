@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 import axios from 'axios'
+import { toast, ToastContainer } from 'react-toastify'
 
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
@@ -126,15 +127,16 @@ export default function AddManagerDrawer({
       })
 
       console.log('manager updated:', res.data)
-    } catch (err) {
-      reset()
-      console.log('failed to update user data:', err.response)
-    } finally {
       reset()
       GetManagers()
-      setIsLoading(false)
       onClose()
       setUpdateManagerData(null)
+    } catch (err) {
+      toast.error(err.response.data.message ? err.response.data.message : 'Failed to update manager')
+
+      console.log('failed to update user data:', err.response)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -323,17 +325,20 @@ export default function AddManagerDrawer({
   )
 
   return (
-    <Drawer
-      anchor='right'
-      open={open}
-      onClose={() => {
-        onClose()
-        reset()
-        setValue()
-        setUpdateManagerData(null)
-      }}
-    >
-      {DrawerList}
-    </Drawer>
+    <>
+      <ToastContainer />
+      <Drawer
+        anchor='right'
+        open={open}
+        onClose={() => {
+          onClose()
+          reset()
+          setValue()
+          setUpdateManagerData(null)
+        }}
+      >
+        {DrawerList}
+      </Drawer>
+    </>
   )
 }

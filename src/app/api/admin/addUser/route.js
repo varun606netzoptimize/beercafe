@@ -43,7 +43,7 @@ export async function POST(req, res) {
     if (userExists) {
       console.log('User already exists with email:', email)
 
-      return new Response(JSON.stringify({ message: 'User already exists' }), { status: 400 })
+      return new Response(JSON.stringify({ message: 'Email addres already exists' }), { status: 400 })
     }
 
     // Check if phone number already exists

@@ -19,6 +19,7 @@ import { Delete, Edit } from '@mui/icons-material'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddUserDrawer from './AddUserDrawer'
+import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -66,6 +67,9 @@ export default function Page() {
   const [drawerType, setDrawerType] = useState('create')
   const [updateUserData, setUpdateUserData] = useState(null)
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [deleteUserData, setDeleteUserData] = useState(null)
+
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
   }
@@ -105,8 +109,10 @@ export default function Page() {
       })
   }
 
-  const DeleteUser = userId => {
+  const DeleteUser = () => {
     const url = ENDPOINT.DELETE_USER
+
+    const userId = deleteUserData.id
 
     const userData = {
       id: userId
@@ -131,6 +137,8 @@ export default function Page() {
       })
       .finally(() => {
         setDeleting(prev => ({ ...prev, [userId]: false }))
+        setDeleteUserData(null)
+        setOpenDeleteDialog(false)
       })
   }
 
@@ -187,7 +195,15 @@ export default function Page() {
 
                         <ActionIcons className='actionIcons'>
                           <>
-                            <Delete color='error' sx={{ cursor: 'pointer' }} onClick={() => DeleteUser(data.id)} />
+                            <Delete
+                              color='error'
+                              sx={{ cursor: 'pointer' }}
+                              onClick={() => {
+                                // DeleteUser(data.id)
+                                setDeleteUserData(data)
+                                setOpenDeleteDialog(true)
+                              }}
+                            />
                             <Edit
                               color='info'
                               sx={{ cursor: 'pointer' }}
@@ -227,6 +243,14 @@ export default function Page() {
         setDrawerType={setDrawerType}
         updateUserData={updateUserData}
         setUpdateUserData={setUpdateUserData}
+      />
+
+      <ConfirmDelete
+        openDeleteDialog={openDeleteDialog}
+        setOpenDeleteDialog={setOpenDeleteDialog}
+        deleteUserData={deleteUserData}
+        setDeleteUserData={setDeleteUserData}
+        DeleteFunction={DeleteUser}
       />
     </div>
   )

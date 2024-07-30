@@ -93,8 +93,14 @@ export default function LoginAs({ mode }) {
     borderedDarkIllustration
   )
 
+  const handleUserLoginClick = event => {
+    event.preventDefault()
+    toast.info('Page under development')
+  }
+
   return (
     <div className='flex bs-full justify-center'>
+      <ToastContainer />
       <div
         className={classnames(
           'flex bs-full items-center justify-center flex-1 min-bs-[100dvh] relative p-6 max-md:hidden',
@@ -130,7 +136,7 @@ export default function LoginAs({ mode }) {
               flexDirection: 'row'
             }}
           >
-            <Link href={'/userLogin'}>
+            <div onClick={handleUserLoginClick}>
               <div className='flex flex-col gap-2' style={{ alignItems: 'center' }}>
                 <Box
                   sx={{
@@ -151,7 +157,7 @@ export default function LoginAs({ mode }) {
                 </Box>
                 <Typography variant='h6'> Beercafe User </Typography>
               </div>
-            </Link>
+            </div>
 
             <Link href={'/login'}>
               <div className='flex flex-col gap-2' style={{ alignItems: 'center' }}>
