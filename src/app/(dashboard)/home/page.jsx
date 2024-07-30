@@ -52,6 +52,7 @@ const valueFormatter = value => `${value}`
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
+import AddCafeDrawer from './AddCafeDrawer'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -89,6 +90,12 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false)
   const [chartData, setChartData] = useState([])
   const [pieChartData, setPieChartData] = useState([])
+
+  const [open, setOpen] = useState(false)
+
+  const HandleClose = () => {
+    setOpen(false)
+  }
 
   useEffect(() => {
     if (tokenCheck) {
@@ -192,7 +199,12 @@ export default function Page() {
       <Card>
         <Box sx={titleBoxStyle}>
           <Typography variant='h5'>Manage Cafes</Typography>
-          <Button variant='contained' size='medium' startIcon={<i className='tabler-briefcase' />}>
+          <Button
+            onClick={() => setOpen(true)}
+            variant='contained'
+            size='medium'
+            startIcon={<i className='tabler-briefcase' />}
+          >
             Add Cafe
           </Button>
         </Box>
@@ -289,6 +301,8 @@ export default function Page() {
           </Grid>
         </Box>
       )}
+
+      <AddCafeDrawer open={open} onClose={HandleClose} GetCafe={GetCafe} />
     </div>
   )
 }

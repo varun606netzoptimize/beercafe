@@ -8,6 +8,7 @@ import '@/app/globals.css'
 import '@assets/iconify-icons/generated-icons.css'
 
 import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import { AuthProvider } from '@/context/AuthContext'
 
