@@ -73,7 +73,7 @@ const VerticalMenu = ({ scrollMenu }) => {
               Users
             </MenuItem>
           </>
-        ) : (
+        ) : authToken.role == 'Manager' ? (
           <>
             <MenuItem href='/users' icon={<i className='tabler-user-heart' />}>
               Users
@@ -83,6 +83,8 @@ const VerticalMenu = ({ scrollMenu }) => {
               Report
             </MenuItem>
           </>
+        ) : (
+          <></>
         )}
       </Menu>
     </ScrollWrapper>

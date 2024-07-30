@@ -112,6 +112,10 @@ export default function Page() {
         redirect('/users')
       }
 
+      if (authToken.role == 'User') {
+        redirect('/comingSoon')
+      }
+
       if (!authToken.token) {
         redirect('/loginAs')
       }

@@ -17,6 +17,7 @@ import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
 import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -172,6 +173,7 @@ export default function UserLogin({ mode }) {
           token: res.data.token,
           role: 'User'
         })
+        router.push('/')
       })
       .catch(err => {
         console.log('otp verification failed', err.response.data.message)
@@ -215,6 +217,13 @@ export default function UserLogin({ mode }) {
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
             <Typography>Please sign-in to your account</Typography>
           </div>
+
+          <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+            <Typography variant='body2' color='primary'>
+              Phone: <span className='font-medium'>0123456789</span>
+            </Typography>
+          </Alert>
+
           {!userPhone ? (
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onPhoneSubmit)} className='flex flex-col gap-6'>
               <Controller
