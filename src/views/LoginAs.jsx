@@ -135,7 +135,7 @@ export default function LoginAs({ mode }) {
               flexDirection: 'row'
             }}
           >
-            <div onClick={handleUserLoginClick}>
+            <Link href={'/userLogin'}>
               <div className='flex flex-col gap-2' style={{ alignItems: 'center' }}>
                 <Box
                   sx={{
@@ -156,7 +156,8 @@ export default function LoginAs({ mode }) {
                 </Box>
                 <Typography variant='h6'> Beercafe User </Typography>
               </div>
-            </div>
+            </Link>
+            {/* <div onClick={handleUserLoginClick}></div> */}
 
             <Link href={'/login'}>
               <div className='flex flex-col gap-2' style={{ alignItems: 'center' }}>

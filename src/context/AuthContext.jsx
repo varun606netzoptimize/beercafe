@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       })
       .then(res => {
         toast.success(
-          res.data.userType == 'User' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
+          res.data.userType == 'Unknown' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
         )
 
         window.localStorage.setItem('authToken', authToken.token)
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         setTokenCheck(true)
         GetCafe()
 
-        GetManagerDetails()
+        GetMyDetails()
       })
   }
 
@@ -94,8 +94,8 @@ export const AuthProvider = ({ children }) => {
       })
   }
 
-  const GetManagerDetails = () => {
-    const url = ENDPOINT.GET_My_Details
+  const GetMyDetails = () => {
+    const url = ENDPOINT.GET_MY_DETAILS
 
     axios
       .get(url, {

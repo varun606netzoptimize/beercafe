@@ -13,13 +13,13 @@ export async function POST(req, res) {
 
   try {
     // Check if the user exists
-    let user = await prisma.users.findUnique({ where: { phone } })
+    let user = await prisma.user.findUnique({ where: { phone } })
 
     const otp = generateOTP()
 
     // If user does not exist, create a new user
     if (!user) {
-      user = await prisma.users.create({
+      user = await prisma.user.create({
         data: {
           phone,
           name: '',
@@ -30,7 +30,7 @@ export async function POST(req, res) {
       })
     } else {
       // Update OTP for existing user
-      await prisma.users.update({
+      await prisma.user.update({
         where: { phone },
         data: { otp }
       })
