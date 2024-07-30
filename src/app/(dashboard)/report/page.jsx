@@ -53,7 +53,7 @@ const barData = {
   ]
 }
 
-export default function page() {
+export default function Page() {
   const { managerDetails } = useContext(AuthContext)
 
   return (
