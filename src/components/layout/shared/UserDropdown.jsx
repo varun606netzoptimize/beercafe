@@ -20,9 +20,6 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 
-import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 import { AuthContext } from '@/context/AuthContext'
@@ -78,13 +75,10 @@ const UserDropdown = () => {
     })
   }
 
-  const handleMenuItemClick = () => {
-    toast.info('Page under development')
-  }
+  const handleMenuItemClick = () => {}
 
   return (
     <>
-      <ToastContainer />
       <Badge
         ref={anchorRef}
         overlap='circular'
