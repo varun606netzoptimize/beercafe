@@ -89,7 +89,16 @@ export default function Page() {
   const [cafeStats, setCafeStats] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [chartData, setChartData] = useState([])
-  const [pieChartData, setPieChartData] = useState([])
+
+  const [pieChartData, setPieChartData] = useState([
+    { id: 0, value: 150, label: 'Hop & Malt' },
+    { id: 1, value: 200, label: 'Brew Haven' },
+    { id: 2, value: 180, label: 'Ale Oasis' },
+    { id: 3, value: 220, label: 'Brewed Bliss' },
+    { id: 4, value: 160, label: 'Brew Estate' },
+    { id: 5, value: 140, label: 'Draft Dreams' },
+    { id: 6, value: 190, label: 'Miriam Hurley' }
+  ])
 
   const [open, setOpen] = useState(false)
 
@@ -191,7 +200,7 @@ export default function Page() {
       label: cafe.name
     }))
 
-    setPieChartData(data)
+    // setPieChartData(data)
   }
 
   if (!authToken.token) {
@@ -264,7 +273,7 @@ export default function Page() {
             <Grid item xs={12} md={6}>
               <Item sx={centerItem}>
                 <Typography variant='h6' sx={{ textDecoration: 'underline' }}>
-                  Managers per cafe
+                  Customers per cafe
                 </Typography>
 
                 <PieChart
@@ -287,7 +296,7 @@ export default function Page() {
                     Total Number of Cafes
                   </Typography>
                   <Typography variant='h5' color={'white'}>
-                    12
+                    {cafes?.length}
                   </Typography>
                 </Box>
 
@@ -297,7 +306,7 @@ export default function Page() {
                     Total Number of Customers
                   </Typography>
                   <Typography variant='h5' color={'white'}>
-                    12
+                    1,240
                   </Typography>
                 </Box>
 
@@ -307,7 +316,7 @@ export default function Page() {
                     Total Number of Managers
                   </Typography>
                   <Typography variant='h5' color={'white'}>
-                    12
+                    6
                   </Typography>
                 </Box>
               </Item>
