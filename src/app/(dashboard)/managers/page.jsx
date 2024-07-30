@@ -152,7 +152,7 @@ export default function Page() {
       })
   }
 
-  if (!authToken.token) {
+  if (!authToken.token || authToken.role !== 'Admin') {
     return null
   }
 

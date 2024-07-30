@@ -61,12 +61,11 @@ const VerticalMenu = ({ scrollMenu }) => {
         renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
-          Dashboard
-        </MenuItem>
-
         {authToken.role == 'Admin' ? (
           <>
+            <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
+              Dashboard
+            </MenuItem>
             <MenuItem href='/managers' icon={<i className='tabler-briefcase' />}>
               Managers
             </MenuItem>
@@ -75,9 +74,15 @@ const VerticalMenu = ({ scrollMenu }) => {
             </MenuItem>
           </>
         ) : (
-          <MenuItem href='/users' icon={<i className='tabler-user-heart' />}>
-            Users
-          </MenuItem>
+          <>
+            <MenuItem href='/users' icon={<i className='tabler-user-heart' />}>
+              Users
+            </MenuItem>
+
+            <MenuItem href='/report' icon={<i className='tabler-report' />}>
+              Report
+            </MenuItem>
+          </>
         )}
       </Menu>
     </ScrollWrapper>

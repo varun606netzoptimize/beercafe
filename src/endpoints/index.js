@@ -15,5 +15,7 @@ export const ENDPOINT = {
   DELETE_MANAGER: baseURL + '/api/admin/deleteManager',
   ADD_MANAGER: baseURL + '/api/admin/addManager',
   UPDATE_MANAGER: baseURL + '/api/admin/updateManager',
-  ADD_CAFE: baseURL + '/api/admin/addCafe'
+  ADD_CAFE: baseURL + '/api/admin/addCafe',
+  GET_MANAGER_DETAILS: baseURL + '/api/admin/getManagerDetails/',
+  GET_My_Details: baseURL + '/api/admin/getMyDetails'
 }

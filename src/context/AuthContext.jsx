@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const [tokenCheck, setTokenCheck] = useState(false)
   const [cafes, setCafes] = useState([])
+  const [managerDetails, setManagerDetails] = useState(null)
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -27,8 +28,6 @@ export const AuthProvider = ({ children }) => {
 
     const storedToken = window.localStorage.getItem('authToken')
     const storedRole = window.localStorage.getItem('userRole')
-
-    console.log(storedToken)
 
     setAuthToken({
       token: storedToken ? storedToken : null,
@@ -54,7 +53,6 @@ export const AuthProvider = ({ children }) => {
         }
       })
       .then(res => {
-        console.log('user verified:', res.data)
         toast.success(
           res.data.userType == 'User' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
         )
@@ -74,13 +72,15 @@ export const AuthProvider = ({ children }) => {
       .finally(() => {
         setTokenCheck(true)
         GetCafe()
+
+        GetManagerDetails()
       })
   }
 
-  const GetCafe = () => {
+  const GetCafe = async () => {
     const url = ENDPOINT.GET_CAFES
 
-    axios
+    await axios
       .get(url, {
         headers: {
           Authorization: 'Bearer ' + authToken.token
@@ -94,8 +94,25 @@ export const AuthProvider = ({ children }) => {
       })
   }
 
+  const GetManagerDetails = () => {
+    const url = ENDPOINT.GET_My_Details
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: 'Bearer ' + authToken.token
+        }
+      })
+      .then(res => {
+        setManagerDetails(res.data.user)
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+  }
+
   return (
-    <AuthContext.Provider value={{ authToken, setAuthToken, tokenCheck, cafes, setCafes }}>
+    <AuthContext.Provider value={{ authToken, setAuthToken, tokenCheck, cafes, setCafes, managerDetails }}>
       {children}
     </AuthContext.Provider>
   )
