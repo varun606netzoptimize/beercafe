@@ -262,7 +262,27 @@ export default function Page() {
                 <Typography variant='h6' sx={{ textDecoration: 'underline' }}>
                   Managers per cafe
                 </Typography>
-                <PieChart series={[{ data: pieChartData }]} width={400} height={200} />
+                {/* <PieChart
+                  series={[
+                    {
+                      data: pieChartData,
+                      highlightScope: { faded: 'global', highlighted: 'item' },
+                      faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' }
+                    }
+                  ]}
+                  height={220}
+                /> */}
+
+                <PieChart
+                  series={[
+                    {
+                      data: pieChartData,
+                      highlightScope: { faded: 'global', highlighted: 'item' },
+                      faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' }
+                    }
+                  ]}
+                  height={220}
+                />
               </Item>
             </Grid>
             <Grid item xs={12} md={6}>

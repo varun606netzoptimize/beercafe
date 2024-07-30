@@ -4,7 +4,7 @@ import { createContext, useEffect, useState } from 'react'
 
 import axios from 'axios'
 
-// import { toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 
 import { ENDPOINT } from '@/endpoints'
 
@@ -55,6 +55,9 @@ export const AuthProvider = ({ children }) => {
       })
       .then(res => {
         console.log('user verified:', res.data)
+        toast.success(
+          res.data.userType == 'User' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
+        )
 
         window.localStorage.setItem('authToken', authToken.token)
         window.localStorage.setItem('userRole', authToken.role)

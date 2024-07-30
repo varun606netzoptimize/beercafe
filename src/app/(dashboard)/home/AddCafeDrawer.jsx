@@ -9,6 +9,8 @@ import * as yup from 'yup'
 
 import axios from 'axios'
 
+import { toast } from 'react-toastify'
+
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -52,6 +54,7 @@ export default function AddCafeDrawer({ open, onClose, GetCafe }) {
       })
       .then(res => {
         console.log('user added:', res.data)
+        toast.success(data.name + ' Cafe Added')
         reset()
       })
       .catch(err => {
