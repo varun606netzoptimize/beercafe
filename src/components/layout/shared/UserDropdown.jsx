@@ -37,7 +37,7 @@ const BadgeContentSpan = styled('span')({
 })
 
 const UserDropdown = () => {
-  const { setAuthToken } = useContext(AuthContext)
+  const { setAuthToken, authToken } = useContext(AuthContext)
 
   // States
   const [open, setOpen] = useState(false)
@@ -120,9 +120,9 @@ const UserDropdown = () => {
                     <Avatar alt='John Doe' src='/images/avatars/1.png' />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        Admin
+                        {authToken.role}
                       </Typography>
-                      <Typography variant='caption'>admin@beercafe.com</Typography>
+                      {/* <Typography variant='caption'>admin@beercafe.com</Typography> */}
                     </div>
                   </div>
                   <Divider className='mlb-1' />

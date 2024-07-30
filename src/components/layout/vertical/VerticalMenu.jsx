@@ -1,4 +1,6 @@
 // MUI Imports
+import { useContext } from 'react'
+
 import { useTheme } from '@mui/material/styles'
 
 // Third-party Imports
@@ -16,6 +18,7 @@ import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNav
 // Style Imports
 import menuItemStyles from '@core/styles/vertical/menuItemStyles'
 import menuSectionStyles from '@core/styles/vertical/menuSectionStyles'
+import { AuthContext } from '@/context/AuthContext'
 
 const RenderExpandIcon = ({ open, transitionDuration }) => (
   <StyledVerticalNavExpandIcon open={open} transitionDuration={transitionDuration}>
@@ -24,6 +27,8 @@ const RenderExpandIcon = ({ open, transitionDuration }) => (
 )
 
 const VerticalMenu = ({ scrollMenu }) => {
+  const { authToken } = useContext(AuthContext)
+
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
@@ -32,6 +37,8 @@ const VerticalMenu = ({ scrollMenu }) => {
   // Vars
   const { transitionDuration } = verticalNavOptions
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
+
+  console.log('authToken:', authToken.role)
 
   return (
     // eslint-disable-next-line lines-around-comment
@@ -47,8 +54,6 @@ const VerticalMenu = ({ scrollMenu }) => {
             onScrollY: container => scrollMenu(container, true)
           })}
     >
-      {/* Incase you also want to scroll NavHeader to scroll with Vertical Menu, remove NavHeader from above and paste it below this comment */}
-      {/* Vertical Menu */}
       <Menu
         popoutMenuOffset={{ mainAxis: 23 }}
         menuItemStyles={menuItemStyles(verticalNavOptions, theme)}
@@ -59,12 +64,21 @@ const VerticalMenu = ({ scrollMenu }) => {
         <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
           Dashboard
         </MenuItem>
-        <MenuItem href='/managers' icon={<i className='tabler-briefcase' />}>
-          Managers
-        </MenuItem>
-        <MenuItem href='/users' icon={<i className='tabler-user-heart' />}>
-          Users
-        </MenuItem>
+
+        {authToken.role == 'Admin' ? (
+          <>
+            <MenuItem href='/managers' icon={<i className='tabler-briefcase' />}>
+              Managers
+            </MenuItem>
+            <MenuItem href='/users' icon={<i className='tabler-user-heart' />}>
+              Users
+            </MenuItem>
+          </>
+        ) : (
+          <MenuItem href='/users' icon={<i className='tabler-user-heart' />}>
+            Users
+          </MenuItem>
+        )}
       </Menu>
     </ScrollWrapper>
   )

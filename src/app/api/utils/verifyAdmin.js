@@ -12,7 +12,7 @@ export const verifyAdmin = async req => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-    if (decoded.role !== 'Admin') {
+    if (decoded.role === 'User') {
       return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 403 })
     }
 
