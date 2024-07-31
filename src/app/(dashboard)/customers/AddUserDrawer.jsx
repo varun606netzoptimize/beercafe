@@ -45,7 +45,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
     } else if (drawerType === 'create') {
       reset()
     }
-  }, [drawerType, updateUserData, setValue])
+  }, [drawerType, updateUserData, setValue, reset])
 
   const CreateUser = async data => {
     const url = ENDPOINT.ADD_USER
@@ -156,6 +156,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
               }}
               {...((errors.name || errorState !== null) && {
                 error: true
+
                 // helperText: errors?.name?.message || errorState?.message[0]
               })}
             />
@@ -178,6 +179,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
               }}
               {...((errors.email || errorState !== null) && {
                 error: true
+
                 // helperText: errors?.email?.message || errorState?.message[0]
               })}
             />
@@ -200,6 +202,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
               }}
               {...((errors.phone || errorState !== null) && {
                 error: true
+
                 // helperText: errors?.phone?.message || errorState?.message[0]
               })}
             />
