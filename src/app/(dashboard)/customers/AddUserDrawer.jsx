@@ -155,8 +155,8 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
                 errorState !== null && setErrorState(null)
               }}
               {...((errors.name || errorState !== null) && {
-                error: true,
-                helperText: errors?.name?.message || errorState?.message[0]
+                error: true
+                // helperText: errors?.name?.message || errorState?.message[0]
               })}
             />
           )}
@@ -177,8 +177,8 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
                 errorState !== null && setErrorState(null)
               }}
               {...((errors.email || errorState !== null) && {
-                error: true,
-                helperText: errors?.email?.message || errorState?.message[0]
+                error: true
+                // helperText: errors?.email?.message || errorState?.message[0]
               })}
             />
           )}
@@ -199,8 +199,8 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
                 errorState !== null && setErrorState(null)
               }}
               {...((errors.phone || errorState !== null) && {
-                error: true,
-                helperText: errors?.phone?.message || errorState?.message[0]
+                error: true
+                // helperText: errors?.phone?.message || errorState?.message[0]
               })}
             />
           )}

@@ -164,11 +164,12 @@ export default function AddManagerDrawer({
                 }}
                 sx={{ width: '100%' }} // Match the width to the TextField
                 {...(errors.dropdown && {
-                  error: true,
-                  helperText: errors.dropdown.message
+                  error: true
+
+                  // helperText: errors.dropdown.message
                 })}
               >
-                {cafes.map(data => {
+                {cafes.cafes.map(data => {
                   return (
                     <MenuItem value={data.id} key={data.id}>
                       {data.name}
@@ -195,8 +196,9 @@ export default function AddManagerDrawer({
                 errorState !== null && setErrorState(null)
               }}
               {...((errors.name || errorState !== null) && {
-                error: true,
-                helperText: errors?.name?.message || errorState?.message[0]
+                error: true
+
+                // helperText: errors?.name?.message || errorState?.message[0]
               })}
             />
           )}
@@ -218,8 +220,9 @@ export default function AddManagerDrawer({
                 errorState !== null && setErrorState(null)
               }}
               {...((errors.email || errorState !== null) && {
-                error: true,
-                helperText: errors?.email?.message || errorState?.message[0]
+                error: true
+
+                // helperText: errors?.email?.message || errorState?.message[0]
               })}
             />
           )}
@@ -241,8 +244,9 @@ export default function AddManagerDrawer({
                 errorState !== null && setErrorState(null)
               }}
               {...((errors.phone || errorState !== null) && {
-                error: true,
-                helperText: errors?.phone?.message || errorState?.message[0]
+                error: true
+
+                // helperText: errors?.phone?.message || errorState?.message[0]
               })}
             />
           )}
@@ -273,7 +277,11 @@ export default function AddManagerDrawer({
                   </InputAdornment>
                 )
               }}
-              {...(errors.password && { error: true, helperText: errors.password.message })}
+              {...(errors.password && {
+                error: true
+
+                //  helperText: errors.password.message
+              })}
             />
           )}
         />
@@ -306,7 +314,11 @@ export default function AddManagerDrawer({
                   </InputAdornment>
                 )
               }}
-              {...(errors.confirmPassword && { error: true, helperText: errors.confirmPassword.message })}
+              {...(errors.confirmPassword && {
+                error: true
+
+                // helperText: errors.confirmPassword.message
+              })}
             />
           )}
         />
@@ -338,7 +350,6 @@ export default function AddManagerDrawer({
       >
         {DrawerList}
       </Drawer>
-
     </>
   )
 }

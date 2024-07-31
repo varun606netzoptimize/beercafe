@@ -91,8 +91,7 @@ export default function AddCafeDrawer({ open, onClose, GetCafe }) {
                 field.onChange(e.target.value)
               }}
               {...(errors.name && {
-                error: true,
-                helperText: errors.name.message
+                error: true
               })}
             />
           )}
@@ -112,8 +111,7 @@ export default function AddCafeDrawer({ open, onClose, GetCafe }) {
                 field.onChange(e.target.value)
               }}
               {...(errors.location && {
-                error: true,
-                helperText: errors.location.message
+                error: true
               })}
             />
           )}

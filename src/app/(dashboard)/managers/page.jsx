@@ -109,7 +109,7 @@ export default function Page() {
         }
       })
       .then(res => {
-        setManagers(res.data)
+        setManagers(res.data.managers)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -199,6 +199,7 @@ export default function Page() {
                 <StyledTableCell>Email</StyledTableCell>
                 <StyledTableCell>Phone</StyledTableCell>
                 <StyledTableCell>Cafe</StyledTableCell>
+                <StyledTableCell sx={{ width: '14%' }}>Actions</StyledTableCell>
               </TableRow>
             </TableHead>
 
@@ -208,27 +209,6 @@ export default function Page() {
                   <StyledTableCell component='th' scope='row' sx={{ cursor: 'default' }}>
                     <NameContainer>
                       {deleting[data.id] ? <CircularProgress size={24} sx={{ color: 'primary.main' }} /> : data.name}
-                      <ActionIcons className='actionIcons'>
-                        <>
-                          <Delete
-                            color='error'
-                            sx={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              setDeleteManagerData(data)
-                              setOpenDeleteDialog(true)
-                            }}
-                          />
-                          <Edit
-                            color='info'
-                            sx={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              setOpen(true)
-                              setUpdateManagerData(data)
-                              setDrawerType('update')
-                            }}
-                          />
-                        </>
-                      </ActionIcons>
                     </NameContainer>
                   </StyledTableCell>
                   <StyledTableCell component='th' scope='row'>
@@ -239,6 +219,42 @@ export default function Page() {
                   </StyledTableCell>
                   <StyledTableCell component='th' scope='row'>
                     {data.cafe.name}
+                  </StyledTableCell>
+                  <StyledTableCell component='th' scope='row'>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        gap: '16px'
+                      }}
+                    >
+                      <Button
+                        variant='outlined'
+                        color='error'
+                        size='small'
+                        onClick={() => {
+                          setDeleteManagerData(data)
+                          setOpenDeleteDialog(true)
+                        }}
+                      >
+                        Delete
+                      </Button>
+
+                      <Button
+                        variant='outlined'
+                        color='info'
+                        size='small'
+                        sx={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setOpen(true)
+                          setUpdateManagerData(data)
+                          setDrawerType('update')
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </Box>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

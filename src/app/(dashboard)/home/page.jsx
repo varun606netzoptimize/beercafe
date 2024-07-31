@@ -124,13 +124,19 @@ export default function Page() {
 
   useEffect(() => {
     if (authToken.token) {
-      GetCafe()
+      GetCafe(1)
       GetCafeStats()
     }
   }, [authToken])
 
-  const GetCafe = () => {
-    const url = ENDPOINT.GET_CAFES
+  function NextPage() {
+    if (cafes.hasNextPage) {
+      GetCafe((cafes.pagination.page += 1))
+    }
+  }
+
+  const GetCafe = page => {
+    const url = `${ENDPOINT.GET_CAFES}?page=${page}&limit=10`
 
     setIsLoading(true)
 
@@ -141,7 +147,9 @@ export default function Page() {
         }
       })
       .then(res => {
-        setCafes(res.data.cafes)
+        console.log({ cafes: res.data.cafes, pagination: res.data.pagination })
+
+        setCafes({ cafes: res.data.cafes, pagination: res.data.pagination })
         processChartData(res.data.cafes)
         processPieChartData(res.data.cafes)
       })
@@ -198,7 +206,7 @@ export default function Page() {
   }
 
   const processPieChartData = cafes => {
-    const data = cafes.map(cafe => ({
+    const data = cafes.cafes.map(cafe => ({
       id: cafe.id,
       value: cafe.managers.length,
       label: cafe.name
@@ -246,7 +254,7 @@ export default function Page() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {cafes?.map(data => (
+                      {cafes.cafes?.map(data => (
                         <StyledTableRow key={data.id}>
                           <StyledTableCell component='th' scope='row'>
                             {data.name}
@@ -262,6 +270,7 @@ export default function Page() {
                     </TableBody>
                   </Table>
                 </TableContainer>
+                {/* <Button onClick={NextPage}>Next</Button> */}
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
