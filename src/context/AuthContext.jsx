@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   })
 
   const [tokenCheck, setTokenCheck] = useState(false)
-  const [cafes, setCafes] = useState([])
+  const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
   const [managerDetails, setManagerDetails] = useState(null)
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         }
       })
       .then(res => {
-        setCafes(res.data.cafes)
+        setCafes({ cafes: res.data.cafes, pagination: res.data.pagination })
       })
       .catch(err => {
         console.log('failed:', err.response)

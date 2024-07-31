@@ -99,7 +99,7 @@ export default function Page() {
         }
       })
       .then(res => {
-        setUsers(res.data)
+        setUsers(res.data.users)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -150,8 +150,8 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={titleBoxStyle}>
-          <Typography variant='h5'>Manage Users</Typography>
-          <Button
+          <Typography variant='h5'>Manage Customers</Typography>
+          {/* <Button
             variant='contained'
             size='medium'
             startIcon={<i className='tabler-user-plus' />}
@@ -161,7 +161,7 @@ export default function Page() {
             }}
           >
             Add New User
-          </Button>
+          </Button> */}
         </Box>
       </Card>
 
@@ -175,10 +175,11 @@ export default function Page() {
             <Table aria-label='customized table'>
               <TableHead>
                 <TableRow>
-                  <StyledTableCell sx={{ width: '28%' }}>Name</StyledTableCell>
+                  <StyledTableCell>Name</StyledTableCell>
                   <StyledTableCell>Email</StyledTableCell>
                   <StyledTableCell>Phone</StyledTableCell>
                   <StyledTableCell>Points</StyledTableCell>
+                  <StyledTableCell sx={{ width: '14%' }}>Actions</StyledTableCell>
                 </TableRow>
               </TableHead>
 
@@ -192,29 +193,6 @@ export default function Page() {
                     >
                       <NameContainer>
                         {deleting[data.id] ? <CircularProgress size={24} sx={{ color: 'primary.main' }} /> : data.name}
-
-                        <ActionIcons className='actionIcons'>
-                          <>
-                            <Delete
-                              color='error'
-                              sx={{ cursor: 'pointer' }}
-                              onClick={() => {
-                                // DeleteUser(data.id)
-                                setDeleteUserData(data)
-                                setOpenDeleteDialog(true)
-                              }}
-                            />
-                            <Edit
-                              color='info'
-                              sx={{ cursor: 'pointer' }}
-                              onClick={() => {
-                                setOpen(true)
-                                setUpdateUserData(data)
-                                setDrawerType('update')
-                              }}
-                            />
-                          </>
-                        </ActionIcons>
                       </NameContainer>
                     </StyledTableCell>
                     <StyledTableCell component='th' scope='row'>
@@ -225,6 +203,42 @@ export default function Page() {
                     </StyledTableCell>
                     <StyledTableCell component='th' scope='row'>
                       {data.points}
+                    </StyledTableCell>
+                    <StyledTableCell component='th' scope='row'>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          gap: '16px'
+                        }}
+                      >
+                        <Button
+                          variant='outlined'
+                          color='error'
+                          size='small'
+                          onClick={() => {
+                            setDeleteUserData(data)
+                            setOpenDeleteDialog(true)
+                          }}
+                        >
+                          Delete
+                        </Button>
+
+                        <Button
+                          variant='outlined'
+                          color='info'
+                          size='small'
+                          sx={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            setOpen(true)
+                            setUpdateUserData(data)
+                            setDrawerType('update')
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </Box>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
