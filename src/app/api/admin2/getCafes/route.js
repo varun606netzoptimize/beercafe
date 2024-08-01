@@ -1,10 +1,15 @@
+// File: /api/admin2/getCafes.js
+
+import { NextResponse } from 'next/server'
+
 import { PrismaClient } from '@prisma/client'
 
 import { verifyAdmin } from '../../utils/verifyAdmin'
 
 const prisma = new PrismaClient()
 
-export async function GET(req, res) {
+export async function GET(req) {
+  // Verify if the request is from an admin
   const adminAuthResponse = await verifyAdmin(req)
 
   if (adminAuthResponse) return adminAuthResponse
@@ -16,46 +21,54 @@ export async function GET(req, res) {
     const limit = parseInt(url.searchParams.get('limit')) || 10
     const sortBy = url.searchParams.get('sortBy') || 'name' // Default sorting by name
     const sortOrder = url.searchParams.get('sortOrder') || 'asc' // Default sorting order ascending
+    const ownerId = url.searchParams.get('ownerId') // Filter by ownerId if provided
+    const parentId = url.searchParams.get('parentId') // Filter by parentId if provided
 
     // Validate sortBy and sortOrder to prevent invalid values
-    const validSortFields = ['name', 'email', 'phone', 'points']
+    const validSortFields = ['name', 'location', 'createdAt']
     const validSortOrders = ['asc', 'desc']
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
 
-    // Fetch users with pagination and sorting
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        points: true
-      },
+    // Build the filter object based on ownerId and parentId
+    const filters = {}
+
+    if (ownerId) filters.ownerId = ownerId
+    if (parentId) filters.parentId = parentId
+
+    // Fetch cafes with pagination and sorting
+    const cafes = await prisma.cafe.findMany({
+      where: filters,
       orderBy: {
         [sortField]: sortDirection
       },
       skip: (page - 1) * limit,
-      take: limit
+      take: limit,
+      include: {
+        // Optionally include related models
+        manager: true // Include manager details if needed
+      }
     })
 
-    // Get the total number of users
-    const totalUsers = await prisma.user.count()
+    // Get the total number of cafes based on the filters
+    const totalCafes = await prisma.cafe.count({
+      where: filters
+    })
 
     // Calculate total number of pages
-    const totalPages = Math.ceil(totalUsers / limit)
+    const totalPages = Math.ceil(totalCafes / limit)
     const hasNextPage = page < totalPages
 
-    // Check if the current page has no users
-    if (users.length === 0 && page > totalPages) {
-      return new Response(
+    // Check if the current page has no cafes
+    if (cafes.length === 0 && page > totalPages) {
+      return new NextResponse(
         JSON.stringify({
-          message: 'No users found',
-          users: [],
+          message: 'No cafes found',
+          cafes: [],
           pagination: {
             page,
             limit,
-            totalUsers,
+            totalCafes,
             totalPages,
             hasNextPage: false
           }
@@ -64,16 +77,14 @@ export async function GET(req, res) {
       )
     }
 
-    console.log('Fetched users:', users)
-
-    return new Response(
+    return new NextResponse(
       JSON.stringify({
-        message: 'Users fetched successfully',
-        users,
+        message: 'Cafes fetched successfully',
+        cafes,
         pagination: {
           page,
           limit,
-          totalUsers,
+          totalCafes,
           totalPages,
           hasNextPage
         }
@@ -81,8 +92,8 @@ export async function GET(req, res) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Error fetching users:', error)
+    console.error('Error fetching cafes:', error)
 
-    return new Response(JSON.stringify({ message: 'Server error' }), { status: 500 })
+    return new NextResponse(JSON.stringify({ message: 'Server error' }), { status: 500 })
   }
 }

@@ -132,7 +132,7 @@ const LoginV2 = ({ mode }) => {
       .then(res => {
         setAuthToken({
           token: res.data.token,
-          role: res.data.role
+          role: res.data.user.role
         })
         router.push('/')
       })
@@ -182,22 +182,8 @@ const LoginV2 = ({ mode }) => {
           </div>
 
           <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
-            <Typography variant='h6' color='primary'>
-              Admin:
-            </Typography>
-
             <Typography variant='body2' color='primary'>
               Email: <span className='font-medium'>admin@beercafe.com</span> / Pass:{' '}
-              <span className='font-medium'>beercafe@123</span>
-            </Typography>
-
-            <Divider />
-
-            <Typography variant='h6' color='primary'>
-              Manager:
-            </Typography>
-            <Typography variant='body2' color='primary'>
-              Email: <span className='font-medium'>varun@email.com</span> / Pass:{' '}
               <span className='font-medium'>google@123</span>
             </Typography>
           </Alert>

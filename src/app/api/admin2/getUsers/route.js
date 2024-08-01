@@ -4,7 +4,7 @@ import { verifyAdmin } from '../../utils/verifyAdmin'
 
 const prisma = new PrismaClient()
 
-export async function GET(req, res) {
+export async function GET(req) {
   const adminAuthResponse = await verifyAdmin(req)
 
   if (adminAuthResponse) return adminAuthResponse
@@ -16,6 +16,7 @@ export async function GET(req, res) {
     const limit = parseInt(url.searchParams.get('limit')) || 10
     const sortBy = url.searchParams.get('sortBy') || 'name' // Default sorting by name
     const sortOrder = url.searchParams.get('sortOrder') || 'asc' // Default sorting order ascending
+    const userType = url.searchParams.get('userType') // Get userType from query parameters
 
     // Validate sortBy and sortOrder to prevent invalid values
     const validSortFields = ['name', 'email', 'phone', 'points']
@@ -23,14 +24,40 @@ export async function GET(req, res) {
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
 
-    // Fetch users with pagination and sorting
+    // Determine roleId based on userType
+    let roleId
+    let includeCafes = false
+
+    switch (userType) {
+      case 'manager':
+        roleId = '66ab602a353d40f4a7f8b439'
+        includeCafes = true
+        break
+      case 'owner':
+        roleId = '66ab602a353d40f4a7f8b438'
+        includeCafes = true
+        break
+      case 'admin':
+        roleId = '66ab602a353d40f4a7f8b437'
+        break
+      case 'user':
+        roleId = '66ab602a353d40f4a7f8b43a'
+        break
+      default:
+        roleId = null
+    }
+
+    // Fetch users with pagination, sorting, and optional cafe details
     const users = await prisma.user.findMany({
+      where: roleId ? { roleId } : {}, // Filter by roleId if it's defined
       select: {
         id: true,
         name: true,
         email: true,
         phone: true,
-        points: true
+        points: true,
+        ownedCafes: includeCafes ? { select: { id: true, name: true, location: true } } : false,
+        managedCafes: includeCafes ? { select: { id: true, name: true, location: true } } : false
       },
       orderBy: {
         [sortField]: sortDirection
@@ -39,8 +66,10 @@ export async function GET(req, res) {
       take: limit
     })
 
-    // Get the total number of users
-    const totalUsers = await prisma.user.count()
+    // Get the total number of users based on the roleId filter
+    const totalUsers = await prisma.user.count({
+      where: roleId ? { roleId } : {} // Count users with the roleId filter
+    })
 
     // Calculate total number of pages
     const totalPages = Math.ceil(totalUsers / limit)

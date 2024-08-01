@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }) => {
         }
       })
       .then(res => {
+        console.log(res.data)
+
         toast.success(
           res.data.userType == 'Unknown' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
         )
@@ -71,9 +73,10 @@ export const AuthProvider = ({ children }) => {
       })
       .finally(() => {
         setTokenCheck(true)
-        GetCafe()
 
-        GetMyDetails()
+        // GetCafe()
+
+        // GetMyDetails()
       })
   }
 

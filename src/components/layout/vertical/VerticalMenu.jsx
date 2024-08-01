@@ -38,8 +38,6 @@ const VerticalMenu = ({ scrollMenu }) => {
   const { transitionDuration } = verticalNavOptions
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
-  console.log('authToken:', authToken.role)
-
   return (
     // eslint-disable-next-line lines-around-comment
     /* Custom scrollbar instead of browser scroll, remove if you want browser scroll only */
@@ -61,7 +59,7 @@ const VerticalMenu = ({ scrollMenu }) => {
         renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        {authToken.role == 'Admin' ? (
+        {authToken.role == 'admin' ? (
           <>
             <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
               Dashboard
@@ -73,7 +71,7 @@ const VerticalMenu = ({ scrollMenu }) => {
               Customers
             </MenuItem>
           </>
-        ) : authToken.role == 'Manager' ? (
+        ) : authToken.role == 'manager' ? (
           <>
             <MenuItem href='/customers' icon={<i className='tabler-user-heart' />}>
               Customers
