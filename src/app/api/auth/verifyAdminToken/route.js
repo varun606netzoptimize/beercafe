@@ -15,17 +15,20 @@ export async function GET(req, res) {
     let userType
 
     switch (decoded.role) {
-      case 'Admin':
-        userType = 'Admin'
+      case 'admin':
+        userType = 'admin'
         break
-      case 'Manager':
-        userType = 'Manager'
+      case 'manager':
+        userType = 'manager'
         break
-      case 'User':
-        userType = 'User'
+      case 'user':
+        userType = 'user'
+        break
+      case 'owner':
+        userType = 'owner'
         break
       default:
-        userType = 'Unknown'
+        userType = 'unknown'
     }
 
     return new Response(JSON.stringify({ message: 'Token is valid', userType, user: decoded }), { status: 200 })

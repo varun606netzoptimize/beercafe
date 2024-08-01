@@ -39,9 +39,6 @@ export default function Page() {
     pageSize: 10
   })
 
-  const [rowSelectionModel, setRowSelectionModel] = useState([])
-
-  const [pageSize, setPageSize] = useState(10)
   const [totalRows, setTotalRows] = useState(0)
 
   const [sortBy, setSortBy] = useState('name')
@@ -66,7 +63,7 @@ export default function Page() {
   }, [authToken, paginationModel.page, sortBy, sortOrder])
 
   const GetUsers = () => {
-    const url = `${ENDPOINT.GET_CUSTOMERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=user`
 
     setIsLoading(true)
     axios
@@ -122,7 +119,6 @@ export default function Page() {
 
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'phone', headerName: 'Phone', flex: 1 },
     { field: 'points', headerName: 'Points', flex: 1 },
     {
@@ -186,7 +182,7 @@ export default function Page() {
         </Box>
       </Card>
 
-      <Box sx={{ height: 650, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <DataGrid
           loading={isLoading}
           rows={users.users}
@@ -197,16 +193,14 @@ export default function Page() {
           rowCount={totalRows}
           paginationMode='server'
           onPaginationModelChange={setPaginationModel}
-          onRowSelectionModelChange={newRowSelectionModel => {
-            setRowSelectionModel(newRowSelectionModel)
-          }}
           sortingMode='server'
           onSortModelChange={newSortModel => {
             console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
             setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
             setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
           }}
-          rowSelectionModel={rowSelectionModel}
+          rowSelectionModel={[]} // Set rowSelectionModel to an empty array
+          checkboxSelection={false} // Disable checkbox selection
         />
       </Box>
 

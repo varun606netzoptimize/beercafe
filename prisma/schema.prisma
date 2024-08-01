@@ -1,46 +1,45 @@
-// Prisma Schema
-
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL2")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-// User Model
-model User {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  email  String  @unique
-  phone  String? @unique(map: "phone_unique")
-  otp    String? @default("")
-  points Int?
+// UserRole Model
+model UserRole {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  role String @unique
+  User User[]
 }
 
-// Admin Model
-model Admin {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String @unique
-  password String
-}
-
-model Manager {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String  @unique
-  phone    String? @unique(map: "phone_unique")
-  password String
-  cafeId   String  @db.ObjectId
-  cafe     Cafe    @relation("CafeManagers", fields: [cafeId], references: [id])
-}
-
+// Cafe Model
 model Cafe {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   location  String
-  managers  Manager[] @relation("CafeManagers")
-  createdAt DateTime  @default(now())
+  ownerId   String   @db.ObjectId
+  owner     User     @relation(fields: [ownerId], references: [id], name: "CafeOwner")
+  managerId String?  @db.ObjectId
+  manager   User?    @relation(fields: [managerId], references: [id], name: "CafeManager")
+  parentId  String?  @db.ObjectId
+  parent    Cafe?    @relation("CafeBranches", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  branches  Cafe[]   @relation("CafeBranches")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// User Model
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String?  @unique // Make email optional
+  phone        String?  @unique(map: "phone_unique")
+  password     String?
+  roleId       String   @db.ObjectId
+  role         UserRole @relation(fields: [roleId], references: [id])
+  ownedCafes   Cafe[]   @relation("CafeOwner")
+  managedCafes Cafe[]   @relation("CafeManager")
+  points       Int? // Optional field for points
 }

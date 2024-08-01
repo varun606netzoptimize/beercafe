@@ -30,9 +30,6 @@ export default function Page() {
     pageSize: 10
   })
 
-  const [rowSelectionModel, setRowSelectionModel] = useState([])
-
-  const [pageSize, setPageSize] = useState(10)
   const [totalRows, setTotalRows] = useState(0)
 
   const [sortBy, setSortBy] = useState('name')
@@ -55,7 +52,7 @@ export default function Page() {
   }, [authToken, paginationModel.page, sortBy, sortOrder])
 
   const GetManagers = () => {
-    const url = `${ENDPOINT.GET_MANAGERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=manager`
 
     console.log(url)
 
@@ -68,8 +65,10 @@ export default function Page() {
         }
       })
       .then(res => {
-        setManagers({ managers: res.data.managers, pagination: res.data.pagination })
-        setTotalRows(res.data.pagination.totalManagers)
+        console.log(res.data)
+
+        setManagers({ managers: res.data.users, pagination: res.data.pagination })
+        setTotalRows(res.data.pagination.totalUsers)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -110,8 +109,7 @@ export default function Page() {
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },
-    { field: 'phone', headerName: 'Phone', flex: 1 },
-    { field: 'cafe', headerName: 'Cafe', flex: 1, renderCell: params => params?.row?.cafe?.name },
+    { field: 'cafe', headerName: 'Cafe', flex: 1, renderCell: params => params?.row?.managedCafes[0]?.name },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -150,7 +148,9 @@ export default function Page() {
     }
   ]
 
-  if (!authToken.token || authToken.role !== 'Admin') {
+  console.log('managers:', managers)
+
+  if (!authToken.token || authToken.role !== 'admin') {
     return null
   }
 
@@ -184,7 +184,7 @@ export default function Page() {
         </Box>
       </Card>
 
-      <Box sx={{ height: 650, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <DataGrid
           loading={isLoading}
           rows={managers.managers}
@@ -195,16 +195,14 @@ export default function Page() {
           rowCount={totalRows}
           paginationMode='server'
           onPaginationModelChange={setPaginationModel}
-          onRowSelectionModelChange={newRowSelectionModel => {
-            setRowSelectionModel(newRowSelectionModel)
-          }}
           sortingMode='server'
           onSortModelChange={newSortModel => {
             console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
             setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
             setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
           }}
-          rowSelectionModel={rowSelectionModel}
+          rowSelectionModel={[]} // Set rowSelectionModel to an empty array
+          checkboxSelection={false} // Disable checkbox selection
         />
       </Box>
 
