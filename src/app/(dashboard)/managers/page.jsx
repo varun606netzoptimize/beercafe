@@ -1,93 +1,50 @@
 'use client'
 import * as React from 'react'
-
 import { useContext, useEffect, useState } from 'react'
 
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell, { tableCellClasses } from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
-
 import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
-import { Delete, Edit } from '@mui/icons-material'
+import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddManagerDrawer from './AddManagerDrawer'
 import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14
-  }
-}))
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover
-  },
-
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0
-  }
-}))
-
-const NameContainer = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  '&:hover .actionIcons': {
-    opacity: 1
-  }
-}))
-
-const ActionIcons = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  right: 0,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  display: 'flex',
-  gap: 24,
-  opacity: 0,
-  transition: 'opacity 0.3s ease'
-}))
-
 export default function Page() {
-  const { authToken, tokenCheck, cafes } = useContext(AuthContext)
-
-  const [managers, setManagers] = useState([])
+  const { authToken, tokenCheck } = useContext(AuthContext)
+  const [managers, setManagers] = useState({ managers: [], pagination: null })
   const [isLoading, setIsLoading] = useState(false)
   const [deleting, setDeleting] = useState({})
   const [open, setOpen] = React.useState(false)
   const [drawerType, setDrawerType] = useState('create')
   const [updateManagerData, setUpdateManagerData] = useState(null)
-
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [deleteManagerData, setDeleteManagerData] = useState(null)
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10
+  })
+
+  const [rowSelectionModel, setRowSelectionModel] = useState([])
+
+  const [pageSize, setPageSize] = useState(10)
+  const [totalRows, setTotalRows] = useState(0)
+
+  const [sortBy, setSortBy] = useState('name')
+  const [sortOrder, setSortOrder] = useState('asc')
 
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
   }
 
   useEffect(() => {
-    if (tokenCheck) {
-      console.log('2')
-
-      if (!authToken.token) {
-        console.log('3')
-
-        redirect('/loginAs')
-      }
+    if (tokenCheck && !authToken.token) {
+      redirect('/loginAs')
     }
   }, [authToken])
 
@@ -95,10 +52,12 @@ export default function Page() {
     if (authToken.token) {
       GetManagers()
     }
-  }, [authToken])
+  }, [authToken, paginationModel.page, sortBy, sortOrder])
 
   const GetManagers = () => {
-    const url = ENDPOINT.GET_MANAGERS
+    const url = `${ENDPOINT.GET_MANAGERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
+
+    console.log(url)
 
     setIsLoading(true)
 
@@ -109,7 +68,8 @@ export default function Page() {
         }
       })
       .then(res => {
-        setManagers(res.data.managers)
+        setManagers({ managers: res.data.managers, pagination: res.data.pagination })
+        setTotalRows(res.data.pagination.totalManagers)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -121,12 +81,7 @@ export default function Page() {
 
   const DeleteManager = () => {
     const url = ENDPOINT.DELETE_MANAGER
-
     const userId = deleteManagerData.id
-
-    const userData = {
-      id: userId
-    }
 
     setDeleting(prev => ({ ...prev, [userId]: true }))
 
@@ -136,7 +91,7 @@ export default function Page() {
           Authorization: `Bearer ${authToken.token}`,
           'Content-Type': 'application/json'
         },
-        data: userData
+        data: { id: userId }
       })
       .then(res => {
         console.log('Manager deleted:', res.data)
@@ -151,6 +106,49 @@ export default function Page() {
         setDeleteManagerData(null)
       })
   }
+
+  const columns = [
+    { field: 'name', headerName: 'Name', flex: 1 },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'phone', headerName: 'Phone', flex: 1 },
+    { field: 'cafe', headerName: 'Cafe', flex: 1, renderCell: params => params?.row?.cafe?.name },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              // Handle edit
+              setUpdateManagerData(params?.row)
+              setDrawerType('update')
+              setOpen(true)
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant='outlined'
+            color='error'
+            size='small'
+            sx={{ marginLeft: 2 }}
+            onClick={() => {
+              setDeleteManagerData(params?.row)
+              setOpenDeleteDialog(true)
+            }}
+          >
+            Delete
+          </Button>
+        </Box>
+      ),
+      sortable: false
+    }
+  ]
 
   if (!authToken.token || authToken.role !== 'Admin') {
     return null
@@ -186,82 +184,29 @@ export default function Page() {
         </Box>
       </Card>
 
-      {isLoading ? (
-        <Box sx={{ minWidth: 700, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress size={32} />
-        </Box>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table aria-label='customized table'>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell>Email</StyledTableCell>
-                <StyledTableCell>Phone</StyledTableCell>
-                <StyledTableCell>Cafe</StyledTableCell>
-                <StyledTableCell sx={{ width: '14%' }}>Actions</StyledTableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {managers?.map(data => (
-                <StyledTableRow key={data.id}>
-                  <StyledTableCell component='th' scope='row' sx={{ cursor: 'default' }}>
-                    <NameContainer>
-                      {deleting[data.id] ? <CircularProgress size={24} sx={{ color: 'primary.main' }} /> : data.name}
-                    </NameContainer>
-                  </StyledTableCell>
-                  <StyledTableCell component='th' scope='row'>
-                    {data.email}
-                  </StyledTableCell>
-                  <StyledTableCell component='th' scope='row'>
-                    {data.phone}
-                  </StyledTableCell>
-                  <StyledTableCell component='th' scope='row'>
-                    {data.cafe.name}
-                  </StyledTableCell>
-                  <StyledTableCell component='th' scope='row'>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        gap: '16px'
-                      }}
-                    >
-                      <Button
-                        variant='outlined'
-                        color='error'
-                        size='small'
-                        onClick={() => {
-                          setDeleteManagerData(data)
-                          setOpenDeleteDialog(true)
-                        }}
-                      >
-                        Delete
-                      </Button>
-
-                      <Button
-                        variant='outlined'
-                        color='info'
-                        size='small'
-                        sx={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          setOpen(true)
-                          setUpdateManagerData(data)
-                          setDrawerType('update')
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </Box>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <Box sx={{ height: 650, width: '100%' }}>
+        <DataGrid
+          loading={isLoading}
+          rows={managers.managers}
+          columns={columns}
+          pagination
+          paginationModel={paginationModel}
+          pageSizeOptions={[10]}
+          rowCount={totalRows}
+          paginationMode='server'
+          onPaginationModelChange={setPaginationModel}
+          onRowSelectionModelChange={newRowSelectionModel => {
+            setRowSelectionModel(newRowSelectionModel)
+          }}
+          sortingMode='server'
+          onSortModelChange={newSortModel => {
+            console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
+            setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
+            setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
+          }}
+          rowSelectionModel={rowSelectionModel}
+        />
+      </Box>
 
       <AddManagerDrawer
         open={open}

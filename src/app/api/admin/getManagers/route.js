@@ -10,12 +10,17 @@ export async function GET(req, res) {
   if (adminAuthResponse) return adminAuthResponse
 
   try {
-    // Extract pagination parameters from query, default to page 1 and limit 10
+    // Extract pagination and sorting parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
+    const sortBy = url.searchParams.get('sortBy') || 'name' // Default to sorting by name
+    const sortOrder = url.searchParams.get('sortOrder') || 'asc' // Default to ascending order
 
-    // Fetch managers with pagination
+    // Determine the orderBy parameter
+    const orderBy = sortBy === 'cafe' ? { cafe: { name: sortOrder } } : { [sortBy]: sortOrder }
+
+    // Fetch managers with pagination and sorting
     const managers = await prisma.manager.findMany({
       select: {
         id: true,
@@ -31,9 +36,7 @@ export async function GET(req, res) {
           }
         }
       },
-      orderBy: {
-        name: 'asc' // Optional: sort managers alphabetically by name
-      },
+      orderBy,
       skip: (page - 1) * limit,
       take: limit
     })
@@ -55,6 +58,7 @@ export async function GET(req, res) {
             page,
             limit,
             totalPages,
+            totalManagers,
             hasNextPage: false
           }
         }),
@@ -72,6 +76,7 @@ export async function GET(req, res) {
           page,
           limit,
           totalPages,
+          totalManagers,
           hasNextPage
         }
       }),

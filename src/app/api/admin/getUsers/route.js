@@ -10,12 +10,20 @@ export async function GET(req, res) {
   if (adminAuthResponse) return adminAuthResponse
 
   try {
-    // Extract pagination parameters from query, default to page 1 and limit 10
+    // Extract pagination and sorting parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
+    const sortBy = url.searchParams.get('sortBy') || 'name' // Default sorting by name
+    const sortOrder = url.searchParams.get('sortOrder') || 'asc' // Default sorting order ascending
 
-    // Fetch users with pagination
+    // Validate sortBy and sortOrder to prevent invalid values
+    const validSortFields = ['name', 'email', 'phone', 'points']
+    const validSortOrders = ['asc', 'desc']
+    const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
+    const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
+
+    // Fetch users with pagination and sorting
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -25,7 +33,7 @@ export async function GET(req, res) {
         points: true
       },
       orderBy: {
-        name: 'asc' // Optional: sort users alphabetically by name
+        [sortField]: sortDirection
       },
       skip: (page - 1) * limit,
       take: limit
@@ -47,6 +55,7 @@ export async function GET(req, res) {
           pagination: {
             page,
             limit,
+            totalUsers,
             totalPages,
             hasNextPage: false
           }
@@ -64,6 +73,7 @@ export async function GET(req, res) {
         pagination: {
           page,
           limit,
+          totalUsers,
           totalPages,
           hasNextPage
         }

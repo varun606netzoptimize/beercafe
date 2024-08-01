@@ -77,6 +77,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
         console.log('user added:', apiUserData, res.data)
         GetUsers()
         onClose()
+        reset()
         setUpdateUserData(null)
       })
       .catch(err => {

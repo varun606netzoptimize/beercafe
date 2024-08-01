@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         setTokenCheck(true)
         GetCafe()
 
-        GetMyDetails()
+        // GetMyDetails()
       })
   }
 

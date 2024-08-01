@@ -38,8 +38,6 @@ const VerticalMenu = ({ scrollMenu }) => {
   const { transitionDuration } = verticalNavOptions
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
-  console.log('authToken:', authToken.role)
-
   return (
     // eslint-disable-next-line lines-around-comment
     /* Custom scrollbar instead of browser scroll, remove if you want browser scroll only */
