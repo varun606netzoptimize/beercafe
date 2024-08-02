@@ -1,26 +1,49 @@
+// utils/verifyAdmin.js
+import { NextResponse } from 'next/server'
+
+import { PrismaClient } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
-export const verifyAdmin = async req => {
-  const authHeader = req.headers.get('Authorization')
+const prisma = new PrismaClient()
+const SECRET_KEY = process.env.JWT_SECRET // Replace with your actual secret key
+const ADMIN_ROLE_ID = '66ab602a353d40f4a7f8b437' // Replace with actual role ID for admin
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ message: 'No token provided or invalid format' }), { status: 401 })
-  }
-
-  const token = authHeader.split(' ')[1]
-
+export async function verifyAdmin(req) {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    // Extract the token from the request headers
+    const authHeader = req.headers.get('Authorization')
 
-    // Check if the user is an admin
-    if (decoded.role !== 'admin') {
-      return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 403 })
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new NextResponse(JSON.stringify({ message: 'Unauthorized: Token missing or malformed' }), { status: 403 })
     }
 
-    return null // Return null if the user is an admin
-  } catch (err) {
-    console.error('Error verifying token:', err)
+    const token = authHeader.split(' ')[1] // Remove "Bearer " from the token
 
-    return new Response(JSON.stringify({ message: 'Invalid token' }), { status: 401 })
+    // Decode and verify the token
+    let decoded
+
+    try {
+      decoded = jwt.verify(token, SECRET_KEY)
+    } catch (err) {
+      return new NextResponse(JSON.stringify({ message: 'Unauthorized: Token verification failed' }), { status: 403 })
+    }
+
+    // Fetch the user associated with the token
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id } // Assuming the token contains the user ID
+    })
+
+    if (!user) {
+      return new NextResponse(JSON.stringify({ message: 'Unauthorized: User not found' }), { status: 403 })
+    }
+
+    // Check if the user's role ID matches the admin role ID
+    if (user.roleId !== ADMIN_ROLE_ID) {
+      return new NextResponse(JSON.stringify({ message: 'Unauthorized: User is not an admin' }), { status: 403 })
+    }
+
+    return null // Continue to the route handler if the admin is verified
+  } catch (error) {
+    return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), { status: 403 })
   }
 }

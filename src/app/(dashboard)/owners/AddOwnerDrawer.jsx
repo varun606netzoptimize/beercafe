@@ -26,14 +26,14 @@ const schema = yup.object().shape({
     .required('Confirm Password is required')
 })
 
-export default function AddManagerDrawer({
+export default function AddOwnerDrawer({
   open,
   onClose,
   drawerType,
-  GetManagers,
+  GetOwners,
   setDrawerType,
-  updateManagerData,
-  setUpdateManagerData
+  updateOwnerData,
+  setUpdateOwnerData
 }) {
   const { authToken, cafes } = React.useContext(AuthContext)
 
@@ -56,14 +56,14 @@ export default function AddManagerDrawer({
   const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(show => !show)
 
   React.useEffect(() => {
-    if (drawerType === 'update' && updateManagerData) {
-      setValue('name', updateManagerData.name)
-      setValue('email', updateManagerData.email)
-      setValue('points', updateManagerData.points || 0)
+    if (drawerType === 'update' && updateOwnerData) {
+      setValue('name', updateOwnerData.name)
+      setValue('email', updateOwnerData.email)
+      setValue('points', updateOwnerData.points || 0)
     } else if (drawerType === 'create') {
       reset()
     }
-  }, [drawerType, updateManagerData, setValue])
+  }, [drawerType, updateOwnerData, setValue])
 
   const createManager = async data => {
     const url = ENDPOINT.CREATE_USER
@@ -72,7 +72,7 @@ export default function AddManagerDrawer({
       name: data.name,
       email: data.email,
       password: data.password,
-      userType: 'manager'
+      userType: 'owner'
     }
 
     setIsLoading(true)
@@ -92,10 +92,10 @@ export default function AddManagerDrawer({
       })
       .finally(() => {
         reset()
-        GetManagers()
+        GetOwners()
         setIsLoading(false)
         onClose()
-        setUpdateManagerData(null)
+        setUpdateOwnerData(null)
       })
   }
 
@@ -103,11 +103,11 @@ export default function AddManagerDrawer({
     const url = ENDPOINT.UPDATE_USER
 
     const userData = {
-      id: updateManagerData.id,
+      id: updateOwnerData.id,
       name: data.name,
       email: data.email,
       password: data.password,
-      userType: 'manager'
+      userType: 'owner'
     }
 
     setIsLoading(true)
@@ -120,13 +120,13 @@ export default function AddManagerDrawer({
         }
       })
 
-      console.log('manager updated:', res.data)
+      console.log('owner updated:', res.data)
       reset()
-      GetManagers()
+      GetOwners()
       onClose()
-      setUpdateManagerData(null)
+      setUpdateOwnerData(null)
     } catch (err) {
-      toast.error(err.response.data.message ? err.response.data.message : 'Failed to update manager')
+      toast.error(err.response.data.message ? err.response.data.message : 'Failed to update owner')
 
       console.log('failed to update user data:', err.response)
     } finally {
@@ -139,7 +139,7 @@ export default function AddManagerDrawer({
       <form
         noValidate
         autoComplete='off'
-        onSubmit={handleSubmit(drawerType === 'update' && updateManagerData ? updateManager : createManager)}
+        onSubmit={handleSubmit(drawerType === 'update' && updateOwnerData ? updateManager : createManager)}
         style={{ marginTop: 16 }}
         className='flex flex-col gap-6'
       >
@@ -265,9 +265,9 @@ export default function AddManagerDrawer({
           {isLoading ? (
             <CircularProgress color='text' size={20} />
           ) : drawerType === 'update' ? (
-            'Update Manager'
+            'Update Owner'
           ) : (
-            'Add Manager'
+            'Add Owner'
           )}
         </Button>
       </form>
@@ -283,7 +283,7 @@ export default function AddManagerDrawer({
           onClose()
           reset()
           setValue()
-          setUpdateManagerData(null)
+          setUpdateOwnerData(null)
         }}
       >
         {DrawerList}

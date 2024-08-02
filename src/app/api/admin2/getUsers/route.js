@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 import { PrismaClient } from '@prisma/client'
 
 import { verifyAdmin } from '../../utils/verifyAdmin'
@@ -5,11 +7,12 @@ import { verifyAdmin } from '../../utils/verifyAdmin'
 const prisma = new PrismaClient()
 
 export async function GET(req) {
-  const adminAuthResponse = await verifyAdmin(req)
-
-  if (adminAuthResponse) return adminAuthResponse
-
   try {
+    // Verify admin authorization
+    const adminAuthResponse = await verifyAdmin(req)
+
+    if (adminAuthResponse) return adminAuthResponse
+
     // Extract pagination and sorting parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
@@ -56,8 +59,56 @@ export async function GET(req) {
         email: true,
         phone: true,
         points: true,
-        ownedCafes: includeCafes ? { select: { id: true, name: true, location: true } } : false,
-        managedCafes: includeCafes ? { select: { id: true, name: true, location: true } } : false
+        ownedCafes: includeCafes
+          ? {
+              select: {
+                id: true,
+                name: true,
+                location: true,
+                owner: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true
+                  }
+                },
+                manager: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true
+                  }
+                }
+              }
+            }
+          : false,
+        managedCafes: includeCafes
+          ? {
+              select: {
+                id: true,
+                name: true,
+                location: true,
+                owner: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true
+                  }
+                },
+                manager: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true
+                  }
+                }
+              }
+            }
+          : false
       },
       orderBy: {
         [sortField]: sortDirection
@@ -75,27 +126,8 @@ export async function GET(req) {
     const totalPages = Math.ceil(totalUsers / limit)
     const hasNextPage = page < totalPages
 
-    // Check if the current page has no users
-    if (users.length === 0 && page > totalPages) {
-      return new Response(
-        JSON.stringify({
-          message: 'No users found',
-          users: [],
-          pagination: {
-            page,
-            limit,
-            totalUsers,
-            totalPages,
-            hasNextPage: false
-          }
-        }),
-        { status: 200 }
-      )
-    }
-
-    console.log('Fetched users:', users)
-
-    return new Response(
+    // Return response with users and pagination info
+    return new NextResponse(
       JSON.stringify({
         message: 'Users fetched successfully',
         users,
@@ -110,8 +142,6 @@ export async function GET(req) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Error fetching users:', error)
-
-    return new Response(JSON.stringify({ message: 'Server error' }), { status: 500 })
+    return new NextResponse(JSON.stringify({ message: 'Server error' }), { status: 500 })
   }
 }

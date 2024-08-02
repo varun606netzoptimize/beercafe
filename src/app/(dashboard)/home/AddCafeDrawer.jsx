@@ -2,7 +2,17 @@
 import * as React from 'react'
 import { useState } from 'react'
 
-import { Box, Button, CircularProgress, Drawer, FormControl } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Drawer,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography
+} from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
@@ -11,6 +21,8 @@ import axios from 'axios'
 
 import { toast } from 'react-toastify'
 
+import { data } from 'autoprefixer'
+
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -18,10 +30,11 @@ import { ENDPOINT } from '@/endpoints'
 // Validation schema
 const schema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
-  location: yup.string().required('Location is required')
+  location: yup.string().required('Location is required'),
+  option: yup.string().required('Option is required')
 })
 
-export default function AddCafeDrawer({ open, onClose, GetCafe }) {
+export default function AddCafeDrawer({ open, onClose, GetCafe, owners }) {
   const { authToken } = React.useContext(AuthContext)
 
   const {
@@ -37,11 +50,12 @@ export default function AddCafeDrawer({ open, onClose, GetCafe }) {
 
   // Create cafe
   const createCafe = async data => {
-    const url = ENDPOINT.ADD_CAFE
+    const url = ENDPOINT.CREATE_CAFE
 
     const cafeData = {
       name: data.name,
-      location: data.location
+      location: data.location,
+      ownerId: data.option
     }
 
     setIsLoading(true)
@@ -114,6 +128,35 @@ export default function AddCafeDrawer({ open, onClose, GetCafe }) {
                 error: true
               })}
             />
+          )}
+        />
+
+        <Controller
+          name='option'
+          control={control}
+          render={({ field }) => (
+            <FormControl fullWidth>
+              <InputLabel>Option</InputLabel>
+              <Select
+                {...field}
+                label='Option'
+                onChange={e => {
+                  field.onChange(e.target.value)
+                }}
+                error={!!errors.option}
+                defaultValue=''
+              >
+                {owners.users?.map(data => {
+                  return (
+                    <MenuItem value={data.id} key={data.id}>
+                      {data.name}
+                    </MenuItem>
+                  )
+                })}
+                {/* Add more options here if needed */}
+              </Select>
+              {errors.option && <Typography color='error'>{errors.option.message}</Typography>}
+            </FormControl>
           )}
         />
 

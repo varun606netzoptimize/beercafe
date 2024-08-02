@@ -16,7 +16,6 @@ import { AuthContext } from '@/context/AuthContext'
 
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
-  email: yup.string().email('Invalid email address').required('Email is required'),
   phone: yup.string().length(10).required('Phone number is required')
 })
 
@@ -39,7 +38,6 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
   React.useEffect(() => {
     if (drawerType === 'update' && updateUserData) {
       setValue('name', updateUserData.name)
-      setValue('email', updateUserData.email)
       setValue('phone', updateUserData.phone)
       setValue('points', updateUserData.points || 0)
     } else if (drawerType === 'create') {
@@ -48,33 +46,25 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
   }, [drawerType, updateUserData, setValue, reset])
 
   const CreateUser = async data => {
-    const url = ENDPOINT.ADD_USER
+    const url = ENDPOINT.CREATE_USER
 
     const userData = {
       name: data.name,
-      email: data.email,
-      phone: data.phone
-    }
-
-    const userDataPoints = {
-      name: data.name,
-      email: data.email,
       phone: data.phone,
-      points: Number(data.points)
+      points: Number(data.points),
+      userType: 'user'
     }
-
-    const apiUserData = !data.points || data.points == '' ? userData : userDataPoints
 
     setIsLoading(true)
 
     await axios
-      .post(url, apiUserData, {
+      .post(url, userData, {
         headers: {
           Authorization: `Bearer ${authToken.token}`
         }
       })
       .then(res => {
-        console.log('user added:', apiUserData, res.data)
+        console.log('user added:', userData, res.data)
         GetUsers()
         onClose()
         reset()
@@ -95,26 +85,15 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
     const userData = {
       id: updateUserData.id,
       name: data.name,
-      email: data.email,
-      phone: data.phone
-    }
-
-    const userDataPoints = {
-      id: updateUserData.id,
-      name: data.name,
-      email: data.email,
       phone: data.phone,
-      points: Number(data.points)
+      points: Number(data.points),
+      userType: 'user'
     }
-
-    const apiUserData = !data.points || data.points === '' ? userData : userDataPoints
-
-    console.log(apiUserData)
 
     setIsLoading(true)
 
     try {
-      const res = await axios.put(url, apiUserData, {
+      const res = await axios.put(url, userData, {
         headers: {
           Authorization: `Bearer ${authToken.token}`,
           'Content-Type': 'application/json'
@@ -159,29 +138,6 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
                 error: true
 
                 // helperText: errors?.name?.message || errorState?.message[0]
-              })}
-            />
-          )}
-        />
-
-        <Controller
-          name='email'
-          control={control}
-          render={({ field }) => (
-            <CustomTextField
-              {...field}
-              fullWidth
-              type='email'
-              label='Email'
-              placeholder='Enter email'
-              onChange={e => {
-                field.onChange(e.target.value)
-                errorState !== null && setErrorState(null)
-              }}
-              {...((errors.email || errorState !== null) && {
-                error: true
-
-                // helperText: errors?.email?.message || errorState?.message[0]
               })}
             />
           )}

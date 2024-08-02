@@ -1,5 +1,3 @@
-// File: /api/admin2/getCafes.js
-
 import { NextResponse } from 'next/server'
 
 import { PrismaClient } from '@prisma/client'
@@ -9,12 +7,12 @@ import { verifyAdmin } from '../../utils/verifyAdmin'
 const prisma = new PrismaClient()
 
 export async function GET(req) {
-  // Verify if the request is from an admin
-  const adminAuthResponse = await verifyAdmin(req)
-
-  if (adminAuthResponse) return adminAuthResponse
-
   try {
+    // Verify if the request is from an admin
+    const adminAuthResponse = await verifyAdmin(req)
+
+    if (adminAuthResponse) return adminAuthResponse
+
     // Extract pagination and sorting parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
@@ -25,7 +23,7 @@ export async function GET(req) {
     const parentId = url.searchParams.get('parentId') // Filter by parentId if provided
 
     // Validate sortBy and sortOrder to prevent invalid values
-    const validSortFields = ['name', 'location', 'createdAt']
+    const validSortFields = ['name', 'location', 'createdAt', 'ownerName', 'managerName']
     const validSortOrders = ['asc', 'desc']
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
@@ -36,17 +34,20 @@ export async function GET(req) {
     if (ownerId) filters.ownerId = ownerId
     if (parentId) filters.parentId = parentId
 
-    // Fetch cafes with pagination and sorting
+    // Fetch cafes with pagination and sorting, including owner and manager details
     const cafes = await prisma.cafe.findMany({
       where: filters,
-      orderBy: {
-        [sortField]: sortDirection
-      },
+      orderBy:
+        sortField === 'ownerName'
+          ? { owner: { name: sortDirection } }
+          : sortField === 'managerName'
+            ? { manager: { name: sortDirection } }
+            : { [sortField]: sortDirection },
       skip: (page - 1) * limit,
       take: limit,
       include: {
-        // Optionally include related models
-        manager: true // Include manager details if needed
+        manager: true, // Include manager details if needed
+        owner: true // Include owner details
       }
     })
 

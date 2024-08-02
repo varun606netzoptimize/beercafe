@@ -6,34 +6,31 @@ import { redirect } from 'next/navigation'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell, { tableCellClasses } from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
-
+import { Box, Button, Card, TextField, Typography, CircularProgress, Dialog } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
-import AddUserDrawer from './AddUserDrawer'
+import AllCafesModal from './AllCafesModal'
 import ConfirmDelete from '@/components/Modal/ConfirmDelete'
+import AddOwnerDrawer from './AddOwnerDrawer'
 
 export default function Page() {
   const { authToken, tokenCheck } = useContext(AuthContext)
-  const [users, setUsers] = useState({ users: [], pagination: null })
+  const [owners, setOwners] = useState({ users: [], pagination: null })
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [open, setOpen] = React.useState(false)
   const [drawerType, setDrawerType] = useState('create')
-  const [updateUserData, setUpdateUserData] = useState(null)
-
+  const [updateOwnerData, setUpdateOwnerData] = useState(null)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-  const [deleteUserData, setDeleteUserData] = useState(null)
+  const [deleteOwnerData, setDeleteOwnerData] = useState(null)
+
+  const [open, setOpen] = useState(false)
+
+  const [addOpen, setAddOpen] = useState(false)
+
+  const [allCafes, setAllCafes] = useState(null)
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -45,28 +42,35 @@ export default function Page() {
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
 
+  const [searchQuery, setSearchQuery] = useState('')
+
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
   }
 
+  const toggleAddDrawer = newOpen => () => {
+    setAddOpen(newOpen)
+  }
+
   useEffect(() => {
-    if (tokenCheck) {
-      if (!authToken.token) {
-        redirect('/loginAs')
-      }
+    if (tokenCheck && !authToken.token) {
+      redirect('/loginAs')
     }
   }, [authToken])
 
   useEffect(() => {
     if (authToken.token) {
-      GetUsers()
+      GetOwners()
     }
   }, [authToken, paginationModel.page, sortBy, sortOrder])
 
-  const GetUsers = () => {
-    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=user`
+  const GetOwners = () => {
+    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner`
+
+    console.log(url)
 
     setIsLoading(true)
+
     axios
       .get(url, {
         headers: {
@@ -74,20 +78,20 @@ export default function Page() {
         }
       })
       .then(res => {
-        setUsers({ users: res.data.users, pagination: res.data.pagination })
+        setOwners({ users: res.data.users, pagination: res.data.pagination })
         setTotalRows(res.data.pagination.totalUsers)
       })
       .catch(err => {
         console.log('failed:', err.response)
       })
       .finally(() => {
-        setIsTableRendering(false)
         setIsLoading(false)
+        setIsTableRendering(false)
       })
   }
 
-  const DeleteUser = () => {
-    const url = `${ENDPOINT.DELETE_USER}?id=${deleteUserData.id}`
+  const DeleteManager = () => {
+    const url = `${ENDPOINT.DELETE_USER}?id=${deleteOwnerData.id}`
 
     setDeleting(true)
 
@@ -99,24 +103,55 @@ export default function Page() {
         }
       })
       .then(res => {
-        setUsers(prevUsers => ({
-          users: prevUsers.users.filter(user => user.id !== deleteUserData.id),
-          pagination: prevUsers.pagination
+        setOwners(prevOwners => ({
+          users: prevOwners.users.filter(user => user.id !== deleteOwnerData.id),
+          pagination: {
+            ...prevOwners.pagination,
+            totalUsers: prevOwners.pagination.totalUsers - 1
+          }
         }))
       })
       .catch(err => {
-        console.log('Failed to delete user:', err.response ? err.response.data : err.message)
+        console.log('Failed to delete manager:', err.response ? err.response.data : err.message)
       })
       .finally(() => {
         setDeleting(false)
         setOpenDeleteDialog(false)
+        setDeleteOwnerData(null)
       })
   }
 
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'phone', headerName: 'Phone', flex: 1 },
-    { field: 'points', headerName: 'Points', flex: 1 },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    {
+      field: 'cafe',
+      headerName: 'Cafe Owned',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          {params?.row?.ownedCafes[0]?.name ? (
+            <>
+              {params?.row?.ownedCafes[0]?.name}
+              <Button
+                variant='outlined'
+                color='info'
+                size='small'
+                sx={{ marginLeft: 2 }}
+                onClick={() => {
+                  setAllCafes(params?.row?.ownedCafes)
+                  setOpen(true)
+                }}
+              >
+                View All
+              </Button>
+            </>
+          ) : (
+            'No Cafe'
+          )}
+        </Box>
+      )
+    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -129,21 +164,21 @@ export default function Page() {
             size='small'
             sx={{ marginRight: 2 }}
             onClick={() => {
-              setOpen(true)
-              setUpdateUserData(params.row)
+              // Handle edit
+              setUpdateOwnerData(params?.row)
               setDrawerType('update')
+              setAddOpen(true)
             }}
           >
             Edit
           </Button>
-
           <Button
             variant='outlined'
             color='error'
             size='small'
             sx={{ marginLeft: 2 }}
             onClick={() => {
-              setDeleteUserData(params.row)
+              setDeleteOwnerData(params?.row)
               setOpenDeleteDialog(true)
             }}
           >
@@ -155,25 +190,25 @@ export default function Page() {
     }
   ]
 
-  if (!authToken.token) {
+  if (!authToken.token || authToken.role !== 'admin') {
     return null
   }
 
   return (
     <div className='flex flex-col gap-6'>
       <Card>
-        <Box sx={titleBoxStyle}>
-          <Typography variant='h5'>Manage Customers</Typography>
+        <Box sx={headerBox}>
+          <Typography variant='h5'>Manage Cafe Managers</Typography>
           <Button
             variant='contained'
             size='medium'
-            startIcon={<i className='tabler-user-plus' />}
+            startIcon={<i className='tabler-briefcase' />}
             onClick={() => {
-              setOpen(true)
+              setAddOpen(true)
               setDrawerType('create')
             }}
           >
-            Add New User
+            Add Cafe Owners
           </Button>
         </Box>
       </Card>
@@ -187,7 +222,7 @@ export default function Page() {
           <>
             <DataGrid
               loading={isLoading}
-              rows={users.users}
+              rows={owners.users}
               columns={columns}
               pagination
               paginationModel={paginationModel}
@@ -201,37 +236,39 @@ export default function Page() {
                 setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
                 setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
               }}
-              rowSelectionModel={[]} // Set rowSelectionModel to an empty array
-              checkboxSelection={false} // Disable checkbox selection
+              rowSelectionModel={[]}
+              checkboxSelection={false}
             />
           </>
         )}
       </Box>
 
-      <AddUserDrawer
-        open={open}
-        drawerType={drawerType}
-        onClose={toggleDrawer(false)}
-        toggleDrawer={toggleDrawer}
-        GetUsers={GetUsers}
-        setDrawerType={setDrawerType}
-        updateUserData={updateUserData}
-        setUpdateUserData={setUpdateUserData}
-      />
+      <AllCafesModal open={open} setOpen={setOpen} cafes={allCafes} />
 
       <ConfirmDelete
         openDeleteDialog={openDeleteDialog}
         setOpenDeleteDialog={setOpenDeleteDialog}
-        deleteUserData={deleteUserData}
-        setDeleteUserData={setDeleteUserData}
-        DeleteFunction={DeleteUser}
+        deleteUserData={deleteOwnerData}
+        setDeleteUserData={setDeleteOwnerData}
+        DeleteFunction={DeleteManager}
         isLoading={deleting}
+      />
+
+      <AddOwnerDrawer
+        open={addOpen}
+        onClose={toggleAddDrawer(false)}
+        toggleDrawer={toggleAddDrawer}
+        GetOwners={GetOwners}
+        drawerType={drawerType}
+        setDrawerType={setDrawerType}
+        updateOwnerData={updateOwnerData}
+        setUpdateOwnerData={setUpdateOwnerData}
       />
     </div>
   )
 }
 
-const titleBoxStyle = {
+const headerBox = {
   py: 2,
   rowGap: 2,
   px: 3,
