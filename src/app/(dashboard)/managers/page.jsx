@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -17,8 +17,10 @@ import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 export default function Page() {
   const { authToken, tokenCheck } = useContext(AuthContext)
   const [managers, setManagers] = useState({ managers: [], pagination: null })
+
+  const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const [deleting, setDeleting] = useState({})
+  const [deleting, setDeleting] = useState(false)
   const [open, setOpen] = React.useState(false)
   const [drawerType, setDrawerType] = useState('create')
   const [updateManagerData, setUpdateManagerData] = useState(null)
@@ -34,6 +36,8 @@ export default function Page() {
 
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
+
+  const [searchQuery, setSearchQuery] = useState('')
 
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
@@ -65,8 +69,6 @@ export default function Page() {
         }
       })
       .then(res => {
-        console.log(res.data)
-
         setManagers({ managers: res.data.users, pagination: res.data.pagination })
         setTotalRows(res.data.pagination.totalUsers)
       })
@@ -74,33 +76,34 @@ export default function Page() {
         console.log('failed:', err.response)
       })
       .finally(() => {
+        setIsTableRendering(false)
         setIsLoading(false)
       })
   }
 
   const DeleteManager = () => {
-    const url = ENDPOINT.DELETE_MANAGER
-    const userId = deleteManagerData.id
+    const url = `${ENDPOINT.DELETE_USER}?id=${deleteManagerData.id}`
 
-    setDeleting(prev => ({ ...prev, [userId]: true }))
+    setDeleting(true)
 
     axios
       .delete(url, {
         headers: {
           Authorization: `Bearer ${authToken.token}`,
           'Content-Type': 'application/json'
-        },
-        data: { id: userId }
+        }
       })
       .then(res => {
-        console.log('Manager deleted:', res.data)
-        setManagers(prevManagers => prevManagers.filter(manager => manager.id !== userId))
+        setManagers(prevUsers => ({
+          managers: prevUsers.managers.filter(managers => managers.id !== deleteManagerData.id),
+          pagination: prevUsers.pagination
+        }))
       })
       .catch(err => {
         console.log('Failed to delete manager:', err.response ? err.response.data : err.message)
       })
       .finally(() => {
-        setDeleting(prev => ({ ...prev, [userId]: false }))
+        setDeleting(false)
         setOpenDeleteDialog(false)
         setDeleteManagerData(null)
       })
@@ -109,7 +112,7 @@ export default function Page() {
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },
-    { field: 'cafe', headerName: 'Cafe', flex: 1, renderCell: params => params?.row?.managedCafes[0]?.name },
+    { field: 'cafe', headerName: 'Cafe Managed', flex: 1, renderCell: params => params?.row?.managedCafes[0]?.name },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -122,7 +125,6 @@ export default function Page() {
             size='small'
             sx={{ marginRight: 2 }}
             onClick={() => {
-              // Handle edit
               setUpdateManagerData(params?.row)
               setDrawerType('update')
               setOpen(true)
@@ -148,8 +150,6 @@ export default function Page() {
     }
   ]
 
-  console.log('managers:', managers)
-
   if (!authToken.token || authToken.role !== 'admin') {
     return null
   }
@@ -157,19 +157,8 @@ export default function Page() {
   return (
     <div className='flex flex-col gap-6'>
       <Card>
-        <Box
-          sx={{
-            py: 2,
-            rowGap: 2,
-            px: 3,
-            columnGap: 4,
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
-          <Typography variant='h5'>Manage Managers</Typography>
+        <Box sx={headerBox}>
+          <Typography variant='h5'>Manage Cafe Managers</Typography>
           <Button
             variant='contained'
             size='medium'
@@ -185,25 +174,33 @@ export default function Page() {
       </Card>
 
       <Box sx={{ width: '100%' }}>
-        <DataGrid
-          loading={isLoading}
-          rows={managers.managers}
-          columns={columns}
-          pagination
-          paginationModel={paginationModel}
-          pageSizeOptions={[10]}
-          rowCount={totalRows}
-          paginationMode='server'
-          onPaginationModelChange={setPaginationModel}
-          sortingMode='server'
-          onSortModelChange={newSortModel => {
-            console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
-            setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
-            setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
-          }}
-          rowSelectionModel={[]} // Set rowSelectionModel to an empty array
-          checkboxSelection={false} // Disable checkbox selection
-        />
+        {isTableRendering ? (
+          <Box className='flex items-center justify-center h-full'>
+            <CircularProgress size={32} />
+          </Box>
+        ) : (
+          <>
+            <DataGrid
+              loading={isLoading}
+              rows={managers.managers}
+              columns={columns}
+              pagination
+              paginationModel={paginationModel}
+              pageSizeOptions={[10]}
+              rowCount={totalRows}
+              paginationMode='server'
+              onPaginationModelChange={setPaginationModel}
+              sortingMode='server'
+              onSortModelChange={newSortModel => {
+                console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
+                setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
+                setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
+              }}
+              rowSelectionModel={[]} // Set rowSelectionModel to an empty array
+              checkboxSelection={false} // Disable checkbox selection
+            />
+          </>
+        )}
       </Box>
 
       <AddManagerDrawer
@@ -223,7 +220,19 @@ export default function Page() {
         deleteUserData={deleteManagerData}
         setDeleteUserData={setDeleteManagerData}
         DeleteFunction={DeleteManager}
+        isLoading={deleting}
       />
     </div>
   )
+}
+
+const headerBox = {
+  py: 2,
+  rowGap: 2,
+  px: 3,
+  columnGap: 4,
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  justifyContent: 'space-between'
 }

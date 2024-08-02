@@ -2,10 +2,17 @@ import { NextResponse } from 'next/server'
 
 import { PrismaClient } from '@prisma/client'
 
+import { verifyAdmin } from '../../utils/verifyAdmin'
+
 const prisma = new PrismaClient()
 
 export async function POST(req) {
   try {
+    // Verify if the user is an admin
+    const adminAuthResponse = await verifyAdmin(req)
+
+    if (adminAuthResponse) return adminAuthResponse
+
     // Extract data from the request body
     const { name, location, ownerId, managerId, parentId } = await req.json()
 

@@ -6,13 +6,15 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import { CircularProgress } from '@mui/material'
 
 export default function ConfirmDelete({
   openDeleteDialog,
   setOpenDeleteDialog,
   deleteUserData,
   setDeleteUserData,
-  DeleteFunction
+  DeleteFunction,
+  isLoading
 }) {
   function handleClose() {
     setDeleteUserData(null)
@@ -37,9 +39,13 @@ export default function ConfirmDelete({
           <Button onClick={handleClose} autoFocus variant='outlined' color='info'>
             Cancel
           </Button>
-          <Button onClick={DeleteFunction} variant='outlined' color='error'>
-            Delete
-          </Button>
+          {isLoading ? (
+            <CircularProgress size={22} color='error' />
+          ) : (
+            <Button onClick={DeleteFunction} variant='outlined' color='error'>
+              Delete
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </>

@@ -7,12 +7,8 @@ import { redirect } from 'next/navigation'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell, { tableCellClasses } from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
+import { DataGrid } from '@mui/x-data-grid'
+
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import { BarChart } from '@mui/x-charts/BarChart'
@@ -50,30 +46,11 @@ const chartSetting = {
 
 const valueFormatter = value => `${value}`
 
+import { ChartsNoDataOverlay } from '@mui/x-charts/ChartsOverlay'
+
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddCafeDrawer from './AddCafeDrawer'
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14
-  }
-}))
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover
-  },
-
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0
-  }
-}))
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -88,6 +65,8 @@ export default function Page() {
 
   const [cafeStats, setCafeStats] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  const [isTableRendering, setIsTableRendering] = useState(true)
   const [chartData, setChartData] = useState([])
 
   const [pieChartData, setPieChartData] = useState([
@@ -101,6 +80,17 @@ export default function Page() {
   ])
 
   const [open, setOpen] = useState(false)
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10
+  })
+
+  const [totalRows, setTotalRows] = useState(0)
+  const [sortBy, setSortBy] = useState('name')
+  const [sortOrder, setSortOrder] = useState('asc')
+
+  const [owners, setOwners] = useState({ users: [], pagination: null })
 
   const HandleClose = () => {
     setOpen(false)
@@ -125,18 +115,13 @@ export default function Page() {
   useEffect(() => {
     if (authToken.token) {
       GetCafe(1)
+      GetOwners()
       GetCafeStats()
     }
-  }, [authToken])
+  }, [authToken, paginationModel.page, sortBy, sortOrder])
 
-  function NextPage() {
-    if (cafes.hasNextPage) {
-      GetCafe((cafes.pagination.page += 1))
-    }
-  }
-
-  const GetCafe = page => {
-    const url = `${ENDPOINT.GET_CAFES}?page=${page}&limit=10`
+  const GetCafe = () => {
+    const url = `${ENDPOINT.GET_CAFES}?page=${paginationModel.page + 1}&size=10&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
 
     setIsLoading(true)
 
@@ -147,9 +132,9 @@ export default function Page() {
         }
       })
       .then(res => {
-        console.log({ cafes: res.data.cafes, pagination: res.data.pagination })
-
         setCafes({ cafes: res.data.cafes, pagination: res.data.pagination })
+        setTotalRows(res.data.pagination.totalCafes)
+
         processChartData(res.data.cafes)
         processPieChartData(res.data.cafes)
       })
@@ -158,6 +143,32 @@ export default function Page() {
       })
       .finally(() => {
         setIsLoading(false)
+        setIsTableRendering(false)
+      })
+  }
+
+  const GetOwners = () => {
+    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner`
+
+    console.log(url)
+
+    setIsLoading(true)
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: 'Bearer ' + authToken.token
+        }
+      })
+      .then(res => {
+        setOwners({ users: res.data.users, pagination: res.data.pagination })
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+      .finally(() => {
+        setIsLoading(false)
+        setIsTableRendering(false)
       })
   }
 
@@ -215,6 +226,39 @@ export default function Page() {
     // setPieChartData(data)
   }
 
+  const columns = [
+    { field: 'name', headerName: 'Name', flex: 1 },
+    { field: 'location', headerName: 'Location', flex: 1 },
+    {
+      field: 'owner',
+      headerName: 'Owner',
+      flex: 1,
+      renderCell: params => <Box>{params?.row?.owner?.name}</Box>
+    },
+    {
+      field: 'manager',
+      headerName: 'Manager',
+      flex: 1,
+      renderCell: params => <Box>{params?.row?.manager?.name}</Box>
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <Button variant='outlined' color='info' size='small' sx={{ marginRight: 2 }} onClick={() => {}}>
+            Edit
+          </Button>
+          <Button variant='outlined' color='error' size='small' sx={{ marginLeft: 2 }} onClick={() => {}}>
+            Delete
+          </Button>
+        </Box>
+      ),
+      sortable: false
+    }
+  ]
+
   if (!authToken.token) {
     return null
   }
@@ -235,43 +279,33 @@ export default function Page() {
         </Box>
       </Card>
 
-      {isLoading ? (
+      {isTableRendering ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <CircularProgress size={32} />
         </Box>
       ) : (
         <Box>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <TableContainer component={Paper}>
-                  <Table aria-label='customized table'>
-                    <TableHead>
-                      <TableRow>
-                        <StyledTableCell>Cafe Name</StyledTableCell>
-                        <StyledTableCell>Location</StyledTableCell>
-                        <StyledTableCell>Managers</StyledTableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {cafes.cafes?.map(data => (
-                        <StyledTableRow key={data.id}>
-                          <StyledTableCell component='th' scope='row'>
-                            {data.name}
-                          </StyledTableCell>
-                          <StyledTableCell component='th' scope='row'>
-                            {data.location}
-                          </StyledTableCell>
-                          <StyledTableCell component='th' scope='row'>
-                            {data.managers.length}
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                {/* <Button onClick={NextPage}>Next</Button> */}
-              </Box>
+            <Grid item xs={12} md={12}>
+              <DataGrid
+                loading={isLoading}
+                rows={cafes.cafes}
+                columns={columns}
+                pagination
+                paginationModel={paginationModel}
+                pageSizeOptions={[10]}
+                rowCount={totalRows}
+                paginationMode='server'
+                onPaginationModelChange={setPaginationModel}
+                sortingMode='server'
+                onSortModelChange={newSortModel => {
+                  console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
+                  setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
+                  setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
+                }}
+                rowSelectionModel={[]}
+                checkboxSelection={false}
+              />
             </Grid>
             <Grid item xs={12} md={6}>
               <Item sx={centerItem}>
@@ -338,7 +372,7 @@ export default function Page() {
         </Box>
       )}
 
-      <AddCafeDrawer open={open} onClose={HandleClose} GetCafe={GetCafe} />
+      <AddCafeDrawer open={open} onClose={HandleClose} owners={owners} GetCafe={GetCafe} />
     </div>
   )
 }

@@ -1,19 +1,28 @@
+import { NextResponse } from 'next/server'
+
 import { PrismaClient } from '@prisma/client'
+
+import { verifyAdmin } from '../../utils/verifyAdmin'
 
 const prisma = new PrismaClient()
 
 export async function POST(req) {
   try {
+    // Verify admin authorization
+    const adminAuthResponse = await verifyAdmin(req)
+
+    if (adminAuthResponse) return adminAuthResponse
+
     const { name, email, phone, password, userType, points } = await req.json()
 
     // Validate required fields based on user type
     if (!userType) {
-      return new Response(JSON.stringify({ message: 'User type is required' }), { status: 400 })
+      return new NextResponse(JSON.stringify({ message: 'User type is required' }), { status: 400 })
     }
 
     if (userType === 'manager' || userType === 'owner' || userType === 'admin') {
       if (!name || !email || !password) {
-        return new Response(JSON.stringify({ message: 'Name, email, and password are required' }), { status: 400 })
+        return new NextResponse(JSON.stringify({ message: 'Name, email, and password are required' }), { status: 400 })
       }
 
       // Check if email already exists
@@ -22,7 +31,7 @@ export async function POST(req) {
       })
 
       if (existingUser) {
-        return new Response(JSON.stringify({ message: 'Email already exists' }), { status: 400 })
+        return new NextResponse(JSON.stringify({ message: 'Email already exists' }), { status: 400 })
       }
 
       // Determine role ID based on user type
@@ -39,7 +48,7 @@ export async function POST(req) {
           roleId = '66ab602a353d40f4a7f8b437' // Replace with actual role ID for admin
           break
         default:
-          return new Response(JSON.stringify({ message: 'Invalid user type' }), { status: 400 })
+          return new NextResponse(JSON.stringify({ message: 'Invalid user type' }), { status: 400 })
       }
 
       // Create manager, owner, or admin
@@ -53,7 +62,7 @@ export async function POST(req) {
         }
       })
 
-      return new Response(
+      return new NextResponse(
         JSON.stringify({
           message: `${userType.charAt(0).toUpperCase() + userType.slice(1)} created successfully`,
           user: newUser
@@ -62,7 +71,7 @@ export async function POST(req) {
       )
     } else if (userType === 'user') {
       if (!name || !phone) {
-        return new Response(JSON.stringify({ message: 'Name and phone are required' }), { status: 400 })
+        return new NextResponse(JSON.stringify({ message: 'Name and phone are required' }), { status: 400 })
       }
 
       // Check if phone number already exists
@@ -71,7 +80,7 @@ export async function POST(req) {
       })
 
       if (existingUser) {
-        return new Response(JSON.stringify({ message: 'Phone number already exists' }), { status: 400 })
+        return new NextResponse(JSON.stringify({ message: 'Phone number already exists' }), { status: 400 })
       }
 
       // Create user
@@ -84,13 +93,13 @@ export async function POST(req) {
         }
       })
 
-      return new Response(JSON.stringify({ message: 'User created successfully', user: newUser }), { status: 201 })
+      return new NextResponse(JSON.stringify({ message: 'User created successfully', user: newUser }), { status: 201 })
     } else {
-      return new Response(JSON.stringify({ message: 'Invalid user type' }), { status: 400 })
+      return new NextResponse(JSON.stringify({ message: 'Invalid user type' }), { status: 400 })
     }
   } catch (error) {
     console.error('Error creating user:', error)
 
-    return new Response(JSON.stringify({ message: 'Error creating user' }), { status: 500 })
+    return new NextResponse(JSON.stringify({ message: 'Error creating user' }), { status: 500 })
   }
 }
