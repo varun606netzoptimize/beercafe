@@ -11,31 +11,46 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel
 } from '@mui/material'
+
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 import axios from 'axios'
-
 import { toast } from 'react-toastify'
-
-import { data } from 'autoprefixer'
 
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 
-// Validation schema
-const schema = yup.object().shape({
+// Validation schemas
+const mainCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
   option: yup.string().required('Option is required')
 })
 
-export default function AddCafeDrawer({ open, onClose, GetCafe, owners }) {
-  const { authToken } = React.useContext(AuthContext)
+const branchCafeSchema = yup.object().shape({
+  name: yup.string().required('Cafe name is required'),
+  location: yup.string().required('Location is required'),
+  parentCafe: yup.string().required('Parent cafe is required'),
+  manager: yup.string().nullable()
+})
+
+const getValidationSchema = radioValue => {
+  return radioValue === 'mainCafe' ? mainCafeSchema : branchCafeSchema
+}
+
+export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes }) {
+  const { authToken, managers } = React.useContext(AuthContext)
+  const [radioValue, setRadioValue] = useState('mainCafe')
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     control,
@@ -43,47 +58,76 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners }) {
     reset,
     formState: { errors }
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(getValidationSchema(radioValue)),
+    defaultValues: {
+      radioValue: 'mainCafe'
+    }
   })
 
-  const [isLoading, setIsLoading] = useState(false)
+  const handleChange = event => {
+    const { value } = event.target
+
+    setRadioValue(value)
+  }
 
   // Create cafe
   const createCafe = async data => {
     const url = ENDPOINT.CREATE_CAFE
 
-    const cafeData = {
+    const mainCafeData = {
       name: data.name,
       location: data.location,
       ownerId: data.option
     }
 
+    const branchCafeData = {
+      name: data.name,
+      location: data.location,
+      parentId: data.parentCafe,
+      ...(data.manager && { managerId: data.manager })
+    }
+
+    const finalData = radioValue === 'mainCafe' ? mainCafeData : branchCafeData
+
+    console.log(finalData)
+
     setIsLoading(true)
 
-    await axios
-      .post(url, cafeData, {
+    try {
+      const response = await axios.post(url, finalData, {
         headers: {
           Authorization: `Bearer ${authToken.token}`
         }
       })
-      .then(res => {
-        console.log('user added:', res.data)
-        toast.success(data.name + ' Cafe Added')
-        reset()
-      })
-      .catch(err => {
-        reset()
-        console.log('failed to user data:', err.response)
-      })
-      .finally(() => {
-        setIsLoading(false)
-        onClose()
-        GetCafe()
-      })
+
+      console.log('cafe added:', response.data)
+      toast.success(data.name + ' Cafe Added')
+      reset()
+    } catch (err) {
+      toast.error('Failed to add cafe')
+    } finally {
+      setIsLoading(false)
+      onClose()
+      GetCafe()
+    }
   }
 
   const DrawerList = (
     <Box sx={{ width: 400, padding: 4 }} role='presentation'>
+      <FormControl>
+        <FormLabel id='demo-controlled-radio-buttons-group'>Cafe Type</FormLabel>
+        <RadioGroup
+          aria-labelledby='demo-controlled-radio-buttons-group'
+          name='radioValue'
+          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 4 }}
+          value={radioValue}
+          onChange={handleChange}
+        >
+          <FormControlLabel value='mainCafe' control={<Radio />} label='Main Cafe' />
+          <FormControlLabel value='branchCafe' control={<Radio />} label='Branch Cafe' />
+        </RadioGroup>
+      </FormControl>
+
       <form
         noValidate
         autoComplete='off'
@@ -104,9 +148,8 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners }) {
               onChange={e => {
                 field.onChange(e.target.value)
               }}
-              {...(errors.name && {
-                error: true
-              })}
+              error={!!errors.name}
+              helperText={errors.name?.message}
             />
           )}
         />
@@ -120,65 +163,114 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners }) {
               fullWidth
               label='Location'
               placeholder='Enter location'
-              autoComplete='off' // Prevent autofill
+              autoComplete='off'
               onChange={e => {
                 field.onChange(e.target.value)
               }}
-              {...(errors.location && {
-                error: true
-              })}
+              error={!!errors.location}
+              helperText={errors.location?.message}
             />
           )}
         />
 
-        <Controller
-          name='option'
-          control={control}
-          render={({ field }) => (
-            <FormControl fullWidth>
-              <InputLabel>Option</InputLabel>
-              <Select
-                {...field}
-                label='Option'
-                onChange={e => {
-                  field.onChange(e.target.value)
-                }}
-                error={!!errors.option}
-                defaultValue=''
-              >
-                {owners.users?.map(data => {
-                  return (
+        {radioValue === 'mainCafe' ? (
+          <Controller
+            name='option'
+            control={control}
+            render={({ field }) => (
+              <FormControl fullWidth>
+                <InputLabel>Cafe Owner</InputLabel>
+                <Select
+                  {...field}
+                  label='Cafe Owner'
+                  onChange={e => {
+                    field.onChange(e.target.value)
+                  }}
+                  error={!!errors.option}
+                  defaultValue=''
+                >
+                  {owners.users?.map(data => (
                     <MenuItem value={data.id} key={data.id}>
                       {data.name}
                     </MenuItem>
-                  )
-                })}
-                {/* Add more options here if needed */}
-              </Select>
-              {errors.option && <Typography color='error'>{errors.option.message}</Typography>}
-            </FormControl>
-          )}
-        />
+                  ))}
+                </Select>
+                {errors.option && <Typography color='error'>{errors.option.message}</Typography>}
+              </FormControl>
+            )}
+          />
+        ) : (
+          <>
+            <Controller
+              name='parentCafe'
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Parent Cafe</InputLabel>
+                  <Select
+                    {...field}
+                    label='Parent Cafe'
+                    onChange={e => {
+                      field.onChange(e.target.value)
+                    }}
+                    error={!!errors.parentCafe}
+                    defaultValue=''
+                  >
+                    {cafes.map(data => (
+                      <MenuItem value={data.id} key={data.id}>
+                        {data.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.parentCafe && <Typography color='error'>{errors.parentCafe.message}</Typography>}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name='manager'
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Manager</InputLabel>
+                  <Select
+                    {...field}
+                    label='Manager'
+                    onChange={e => {
+                      field.onChange(e.target.value)
+                    }}
+                    error={!!errors.manager}
+                    defaultValue=''
+                  >
+                    {managers.managers.map(data => (
+                      <MenuItem value={data.id} key={data.id}>
+                        {data.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.manager && <Typography color='error'>{errors.manager.message}</Typography>}
+                </FormControl>
+              )}
+            />
+          </>
+        )}
 
         <Button fullWidth variant='contained' type='submit'>
-          {isLoading ? <CircularProgress color='text' size={20} /> : 'Add Cafe'}
+          {isLoading ? <CircularProgress color='inherit' size={20} /> : 'Add Cafe'}
         </Button>
       </form>
     </Box>
   )
 
   return (
-    <>
-      <Drawer
-        anchor='right'
-        open={open}
-        onClose={() => {
-          onClose()
-          reset()
-        }}
-      >
-        {DrawerList}
-      </Drawer>
-    </>
+    <Drawer
+      anchor='right'
+      open={open}
+      onClose={() => {
+        onClose()
+        reset()
+      }}
+    >
+      {DrawerList}
+    </Drawer>
   )
 }

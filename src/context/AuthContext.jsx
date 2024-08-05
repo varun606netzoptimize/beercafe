@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [tokenCheck, setTokenCheck] = useState(false)
   const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
   const [managerDetails, setManagerDetails] = useState(null)
+  const [managers, setManagers] = useState({ managers: [], pagination: null })
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -73,10 +74,8 @@ export const AuthProvider = ({ children }) => {
       })
       .finally(() => {
         setTokenCheck(true)
-
-        // GetCafe()
-
-        // GetMyDetails()
+        GetCafe()
+        GetManagers()
       })
   }
 
@@ -97,8 +96,8 @@ export const AuthProvider = ({ children }) => {
       })
   }
 
-  const GetMyDetails = () => {
-    const url = ENDPOINT.GET_MY_DETAILS
+  const GetManagers = () => {
+    const url = `${ENDPOINT.GET_USERS}?userType=manager`
 
     axios
       .get(url, {
@@ -107,7 +106,7 @@ export const AuthProvider = ({ children }) => {
         }
       })
       .then(res => {
-        setManagerDetails(res.data.user)
+        setManagers({ managers: res.data.users, pagination: res.data.pagination })
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -115,7 +114,9 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ authToken, setAuthToken, tokenCheck, cafes, setCafes, managerDetails }}>
+    <AuthContext.Provider
+      value={{ authToken, setAuthToken, tokenCheck, cafes, setCafes, managerDetails, managers, setManagers }}
+    >
       {children}
     </AuthContext.Provider>
   )
