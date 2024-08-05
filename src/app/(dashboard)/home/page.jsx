@@ -68,6 +68,8 @@ export default function Page() {
   const [deleteCafeData, setDeleteCafeData] = useState(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  const [updateCafeData, setUpdateCafeData] = useState(null)
+
   const [cafeStats, setCafeStats] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -85,6 +87,7 @@ export default function Page() {
   ])
 
   const [open, setOpen] = useState(false)
+  const [drawerType, setDrawerType] = useState('create')
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -277,7 +280,17 @@ export default function Page() {
       flex: 1,
       renderCell: params => (
         <Box>
-          <Button variant='outlined' color='info' size='small' sx={{ marginRight: 2 }} onClick={() => {}}>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              setOpen(true)
+              setDrawerType('update')
+              setUpdateCafeData(params.row)
+            }}
+          >
             Edit
           </Button>
           <Button
@@ -412,7 +425,16 @@ export default function Page() {
         </Box>
       )}
 
-      <AddCafeDrawer open={open} onClose={HandleClose} owners={owners} GetCafe={GetCafe} cafes={parentCafes} />
+      <AddCafeDrawer
+        open={open}
+        onClose={HandleClose}
+        owners={owners}
+        GetCafe={GetCafe}
+        cafes={parentCafes}
+        updateCafeData={updateCafeData}
+        drawerType={drawerType}
+        setDrawerType={setDrawerType}
+      />
       <DeleteCafe
         isLoading={isDeleting}
         openDeleteDialog={openDeleteDialog}

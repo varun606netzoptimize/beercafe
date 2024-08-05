@@ -47,7 +47,16 @@ const getValidationSchema = radioValue => {
   return radioValue === 'mainCafe' ? mainCafeSchema : branchCafeSchema
 }
 
-export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes }) {
+export default function AddCafeDrawer({
+  open,
+  onClose,
+  GetCafe,
+  owners,
+  cafes,
+  updateCafeData,
+  drawerType,
+  setDrawerType
+}) {
   const { authToken, managers } = React.useContext(AuthContext)
   const [radioValue, setRadioValue] = useState('mainCafe')
   const [isLoading, setIsLoading] = useState(false)
@@ -56,6 +65,7 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes })
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(getValidationSchema(radioValue)),
@@ -63,6 +73,25 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes })
       radioValue: 'mainCafe'
     }
   })
+
+  React.useEffect(() => {
+    if (drawerType === 'update' && updateCafeData) {
+      if (updateCafeData.parentId) {
+        setRadioValue('branchCafe')
+        setValue('name', updateCafeData.name)
+        setValue('location', updateCafeData.location)
+        setValue('parentCafe', updateCafeData.parentId)
+        setValue('manager', updateCafeData.managerId)
+      } else {
+        setRadioValue('mainCafe')
+        setValue('name', updateCafeData.name)
+        setValue('location', updateCafeData.location)
+        setValue('option', updateCafeData.ownerId)
+      }
+    } else if (drawerType === 'create') {
+      reset()
+    }
+  }, [drawerType, updateCafeData, setValue])
 
   const handleChange = event => {
     const { value } = event.target
@@ -112,6 +141,48 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes })
     }
   }
 
+  // Create cafe
+  const updateCafe = async data => {
+    const url = ENDPOINT.UPDATE_CAFE
+
+    const mainCafeData = {
+      id: updateCafeData.id,
+      name: data.name,
+      location: data.location,
+      ownerId: data.option
+    }
+
+    const branchCafeData = {
+      id: updateCafeData.id,
+      name: data.name,
+      location: data.location,
+      parentId: data.parentCafe,
+      ...(data.manager && { managerId: data.manager })
+    }
+
+    const finalData = radioValue === 'mainCafe' ? mainCafeData : branchCafeData
+
+    setIsLoading(true)
+
+    try {
+      const response = await axios.put(url, finalData, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+
+      console.log('cafe added:', response.data)
+      toast.success(data.name + ' Cafe Added')
+      reset()
+    } catch (err) {
+      toast.error('Failed to add cafe')
+    } finally {
+      setIsLoading(false)
+      onClose()
+      GetCafe()
+    }
+  }
+
   const DrawerList = (
     <Box sx={{ width: 400, padding: 4 }} role='presentation'>
       <FormControl>
@@ -123,15 +194,20 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes })
           value={radioValue}
           onChange={handleChange}
         >
-          <FormControlLabel value='mainCafe' control={<Radio />} label='Main Cafe' />
-          <FormControlLabel value='branchCafe' control={<Radio />} label='Branch Cafe' />
+          <FormControlLabel value='mainCafe' disabled={drawerType === 'update'} control={<Radio />} label='Main Cafe' />
+          <FormControlLabel
+            value='branchCafe'
+            disabled={drawerType === 'update'}
+            control={<Radio />}
+            label='Branch Cafe'
+          />
         </RadioGroup>
       </FormControl>
 
       <form
         noValidate
         autoComplete='off'
-        onSubmit={handleSubmit(createCafe)}
+        onSubmit={handleSubmit(drawerType === 'update' && updateCafeData ? updateCafe : createCafe)}
         style={{ marginTop: 16 }}
         className='flex flex-col gap-6'
       >
@@ -255,7 +331,13 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes })
         )}
 
         <Button fullWidth variant='contained' type='submit'>
-          {isLoading ? <CircularProgress color='inherit' size={20} /> : 'Add Cafe'}
+          {isLoading ? (
+            <CircularProgress color='inherit' size={20} />
+          ) : drawerType === 'update' ? (
+            'Update Cafe'
+          ) : (
+            'Add Cafe'
+          )}
         </Button>
       </form>
     </Box>
@@ -268,6 +350,7 @@ export default function AddCafeDrawer({ open, onClose, GetCafe, owners, cafes })
       onClose={() => {
         onClose()
         reset()
+        setDrawerType('create')
       }}
     >
       {DrawerList}
