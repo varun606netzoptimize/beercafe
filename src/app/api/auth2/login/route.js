@@ -1,37 +1,35 @@
-import { NextResponse } from 'next/server'
-
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
-
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key' // Replace with your actual secret key
 
 export async function POST(req) {
   try {
+    // Parse request body
     const { email, password } = await req.json()
 
     // Validate input
     if (!email || !password) {
-      return new NextResponse(JSON.stringify({ message: 'Email and password are required' }), { status: 400 })
+      return new Response(JSON.stringify({ message: 'Email and password are required' }), { status: 400 })
     }
 
-    // Find user by email with role
+    // Find user by email
     const user = await prisma.user.findUnique({
       where: { email },
-      include: {
-        role: true // Include the role relation
-      }
+      include: { userType: true } // Include userType to access role
     })
 
     if (!user) {
-      return new NextResponse(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 })
+      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 })
     }
 
-    // Check if password matches (for demo purposes, replace with actual password verification logic)
-    // For real-world applications, use bcrypt or similar library for password hashing and comparison
-    if (user.password !== password) {
-      return new NextResponse(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 })
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+
+    if (!isPasswordValid) {
+      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 })
     }
 
     // Generate JWT
@@ -39,13 +37,14 @@ export async function POST(req) {
       {
         id: user.id,
         name: user.name,
-        role: user.role.role // Now role should be correctly populated
+        email: user.email,
+        role: user.userType.type // Assuming role type is stored in userType
       },
       SECRET_KEY,
       { expiresIn: '1h' } // Set token expiration
     )
 
-    return new NextResponse(
+    return new Response(
       JSON.stringify({
         message: 'Login successful',
         token,
@@ -53,8 +52,8 @@ export async function POST(req) {
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone,
-          role: user.role.role
+          phoneNumber: user.phoneNumber,
+          role: user.userType.type // Assuming role type is stored in userType
         }
       }),
       { status: 200 }
@@ -62,6 +61,8 @@ export async function POST(req) {
   } catch (error) {
     console.error('Error during login:', error)
 
-    return new NextResponse(JSON.stringify({ message: 'Error during login' }), { status: 500 })
+    return new Response(JSON.stringify({ message: 'Error during login' }), { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }

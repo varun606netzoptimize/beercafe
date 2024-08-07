@@ -1,45 +1,71 @@
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL2")
+  url      = env("DATABASE_URL3")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-// UserRole Model
-model UserRole {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  role String @unique
-  User User[]
-}
-
-// Cafe Model
 model Cafe {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  location  String
-  ownerId   String   @db.ObjectId
-  owner     User     @relation(fields: [ownerId], references: [id], name: "CafeOwner")
-  managerId String?  @db.ObjectId
-  manager   User?    @relation(fields: [managerId], references: [id], name: "CafeManager")
-  parentId  String?  @db.ObjectId
-  parent    Cafe?    @relation("CafeBranches", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  branches  Cafe[]   @relation("CafeBranches")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  location            String
+  address             String
+  description         String?
+  parentId            String?   @db.ObjectId
+  priceConversionRate Float?
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  deletedAt           DateTime? @map("deleted_at")
+
+  parent   Cafe?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Cafe[] @relation("ParentChild")
+
+  cafeUsers CafeUser[]
+
+  @@map("cafes")
 }
 
-// User Model
+model CafeUser {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  cafeId    String    @db.ObjectId
+  userId    String    @db.ObjectId
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+  cafe Cafe @relation(fields: [cafeId], references: [id])
+
+  @@map("cafe_users")
+}
+
 model User {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  email        String?  @unique // Make email optional
-  phone        String?  @unique(map: "phone_unique")
-  password     String?
-  roleId       String   @db.ObjectId
-  role         UserRole @relation(fields: [roleId], references: [id])
-  ownedCafes   Cafe[]   @relation("CafeOwner")
-  managedCafes Cafe[]   @relation("CafeManager")
-  points       Int? // Optional field for points
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String?   @unique
+  phoneNumber String?   @map("phone_number")
+  password    String?
+  userTypeId  String    @db.ObjectId
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  userType  UserType   @relation(fields: [userTypeId], references: [id])
+  cafeUsers CafeUser[]
+
+  @@map("users")
+}
+
+model UserType {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  type      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  users User[]
+
+  @@map("user_type")
 }

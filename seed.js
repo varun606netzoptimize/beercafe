@@ -7,15 +7,15 @@ async function main() {
   const roles = ['admin', 'owner', 'manager', 'user']
 
   // Create each role if it does not exist
-  for (const role of roles) {
+  for (const type of roles) {
     try {
-      await prisma.userRole.create({
-        data: { role }
+      await prisma.userType.create({
+        data: { type }
       })
     } catch (error) {
       if (error.code === 'P2002') {
-        // This error code means a unique constraint failed (duplicate role)
-        console.log(`Role "${role}" already exists.`)
+        // This error code means a unique constraint failed (duplicate type)
+        console.log(`Role "${type}" already exists.`)
       } else {
         // Rethrow any other error
         throw error

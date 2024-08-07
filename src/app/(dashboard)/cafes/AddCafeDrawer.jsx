@@ -1,6 +1,7 @@
 'use client'
+
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import {
   Box,
@@ -17,11 +18,9 @@ import {
   FormControlLabel,
   FormLabel
 } from '@mui/material'
-
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
@@ -33,12 +32,17 @@ import { ENDPOINT } from '@/endpoints'
 const mainCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
-  option: yup.string().required('Option is required')
+  address: yup.string().required('Address is required'),
+  description: yup.string().required('Description is required'),
+  priceConversionRate: yup.number().required('Price conversion rate is required').positive('Must be positive')
 })
 
 const branchCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
+  address: yup.string().required('Address is required'),
+  description: yup.string().required('Description is required'),
+  priceConversionRate: yup.number().required('Price conversion rate is required').positive('Must be positive'),
   parentCafe: yup.string().required('Parent cafe is required'),
   manager: yup.string().nullable()
 })
@@ -66,32 +70,19 @@ export default function AddCafeDrawer({
     handleSubmit,
     reset,
     setValue,
-    formState: { errors }
+    formState: { errors, isSubmitted },
+    trigger
   } = useForm({
     resolver: yupResolver(getValidationSchema(radioValue)),
+    mode: 'onBlur',
     defaultValues: {
       radioValue: 'mainCafe'
     }
   })
 
-  React.useEffect(() => {
-    if (drawerType === 'update' && updateCafeData) {
-      if (updateCafeData.parentId) {
-        setRadioValue('branchCafe')
-        setValue('name', updateCafeData.name)
-        setValue('location', updateCafeData.location)
-        setValue('parentCafe', updateCafeData.parentId)
-        setValue('manager', updateCafeData.managerId)
-      } else {
-        setRadioValue('mainCafe')
-        setValue('name', updateCafeData.name)
-        setValue('location', updateCafeData.location)
-        setValue('option', updateCafeData.ownerId)
-      }
-    } else if (drawerType === 'create') {
-      reset()
-    }
-  }, [drawerType, updateCafeData, setValue])
+  useEffect(() => {
+    trigger()
+  }, [radioValue, trigger])
 
   const handleChange = event => {
     const { value } = event.target
@@ -101,24 +92,27 @@ export default function AddCafeDrawer({
 
   // Create cafe
   const createCafe = async data => {
+    console.log('createCafe called with data:', data)
     const url = ENDPOINT.CREATE_CAFE
 
     const mainCafeData = {
       name: data.name,
       location: data.location,
-      ownerId: data.option
+      address: data.address,
+      description: data.description,
+      priceConversionRate: data.priceConversionRate
     }
 
     const branchCafeData = {
       name: data.name,
       location: data.location,
-      parentId: data.parentCafe,
-      ...(data.manager && { managerId: data.manager })
+      address: data.address,
+      description: data.description,
+      priceConversionRate: data.priceConversionRate,
+      parentId: data.parentCafe
     }
 
     const finalData = radioValue === 'mainCafe' ? mainCafeData : branchCafeData
-
-    console.log(finalData)
 
     setIsLoading(true)
 
@@ -133,48 +127,7 @@ export default function AddCafeDrawer({
       toast.success(data.name + ' Cafe Added')
       reset()
     } catch (err) {
-      toast.error('Failed to add cafe')
-    } finally {
-      setIsLoading(false)
-      onClose()
-      GetCafe()
-    }
-  }
-
-  // Create cafe
-  const updateCafe = async data => {
-    const url = ENDPOINT.UPDATE_CAFE
-
-    const mainCafeData = {
-      id: updateCafeData.id,
-      name: data.name,
-      location: data.location,
-      ownerId: data.option
-    }
-
-    const branchCafeData = {
-      id: updateCafeData.id,
-      name: data.name,
-      location: data.location,
-      parentId: data.parentCafe,
-      ...(data.manager && { managerId: data.manager })
-    }
-
-    const finalData = radioValue === 'mainCafe' ? mainCafeData : branchCafeData
-
-    setIsLoading(true)
-
-    try {
-      const response = await axios.put(url, finalData, {
-        headers: {
-          Authorization: `Bearer ${authToken.token}`
-        }
-      })
-
-      console.log('cafe added:', response.data)
-      toast.success(data.name + ' Cafe Added')
-      reset()
-    } catch (err) {
+      console.error('Error adding cafe:', err)
       toast.error('Failed to add cafe')
     } finally {
       setIsLoading(false)
@@ -207,7 +160,7 @@ export default function AddCafeDrawer({
       <form
         noValidate
         autoComplete='off'
-        onSubmit={handleSubmit(drawerType === 'update' && updateCafeData ? updateCafe : createCafe)}
+        onSubmit={handleSubmit(createCafe)}
         style={{ marginTop: 16 }}
         className='flex flex-col gap-6'
       >
@@ -224,8 +177,8 @@ export default function AddCafeDrawer({
               onChange={e => {
                 field.onChange(e.target.value)
               }}
-              error={!!errors.name}
-              helperText={errors.name?.message}
+              error={isSubmitted && !!errors.name}
+              helperText={isSubmitted && errors.name?.message}
             />
           )}
         />
@@ -243,101 +196,103 @@ export default function AddCafeDrawer({
               onChange={e => {
                 field.onChange(e.target.value)
               }}
-              error={!!errors.location}
-              helperText={errors.location?.message}
+              error={isSubmitted && !!errors.location}
+              helperText={isSubmitted && errors.location?.message}
             />
           )}
         />
 
-        {radioValue === 'mainCafe' ? (
+        <Controller
+          name='address'
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              label='Address'
+              placeholder='Enter address'
+              autoComplete='off'
+              onChange={e => {
+                field.onChange(e.target.value)
+              }}
+              error={isSubmitted && !!errors.address}
+              helperText={isSubmitted && errors.address?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name='description'
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              label='Description'
+              placeholder='Enter description'
+              autoComplete='off'
+              onChange={e => {
+                field.onChange(e.target.value)
+              }}
+              error={isSubmitted && !!errors.description}
+              helperText={isSubmitted && errors.description?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name='priceConversionRate'
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              label='Price Conversion Rate'
+              placeholder='Enter price conversion rate'
+              type='number'
+              autoComplete='off'
+              onChange={e => {
+                field.onChange(e.target.value)
+              }}
+              error={isSubmitted && !!errors.priceConversionRate}
+              helperText={isSubmitted && errors.priceConversionRate?.message}
+            />
+          )}
+        />
+
+        {radioValue === 'branchCafe' && (
           <Controller
-            name='option'
+            name='parentCafe'
             control={control}
             render={({ field }) => (
               <FormControl fullWidth>
-                <InputLabel>Cafe Owner</InputLabel>
+                <InputLabel>Parent Cafe</InputLabel>
                 <Select
                   {...field}
-                  label='Cafe Owner'
+                  label='Parent Cafe'
                   onChange={e => {
                     field.onChange(e.target.value)
                   }}
-                  error={!!errors.option}
-                  defaultValue=''
+                  value={field.value || ''}
                 >
-                  {owners.users?.map(data => (
-                    <MenuItem value={data.id} key={data.id}>
-                      {data.name}
+                  {cafes.map(cafe => (
+                    <MenuItem key={cafe.id} value={cafe.id}>
+                      {cafe.name}
                     </MenuItem>
                   ))}
                 </Select>
-                {errors.option && <Typography color='error'>{errors.option.message}</Typography>}
+                {isSubmitted && errors.parentCafe && (
+                  <Typography color='error' variant='caption'>
+                    {errors.parentCafe.message}
+                  </Typography>
+                )}
               </FormControl>
             )}
           />
-        ) : (
-          <>
-            <Controller
-              name='parentCafe'
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth>
-                  <InputLabel>Parent Cafe</InputLabel>
-                  <Select
-                    {...field}
-                    label='Parent Cafe'
-                    onChange={e => {
-                      field.onChange(e.target.value)
-                    }}
-                    error={!!errors.parentCafe}
-                    defaultValue=''
-                  >
-                    {cafes.map(data => (
-                      <MenuItem value={data.id} key={data.id}>
-                        {data.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors.parentCafe && <Typography color='error'>{errors.parentCafe.message}</Typography>}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name='manager'
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth>
-                  <InputLabel>Manager</InputLabel>
-                  <Select
-                    {...field}
-                    label='Manager'
-                    onChange={e => {
-                      field.onChange(e.target.value)
-                    }}
-                    error={!!errors.manager}
-                    defaultValue=''
-                  >
-                    {managers.managers.map(data => (
-                      <MenuItem value={data.id} key={data.id}>
-                        {data.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors.manager && <Typography color='error'>{errors.manager.message}</Typography>}
-                </FormControl>
-              )}
-            />
-          </>
         )}
 
         <Button fullWidth variant='contained' type='submit'>
-          {isLoading ? (
-            <CircularProgress color='inherit' size={20} />
-          ) : drawerType === 'update' ? (
-            'Update Cafe'
-          ) : (
-            'Add Cafe'
-          )}
+          {isLoading ? <CircularProgress color='inherit' size={20} /> : 'Add Cafe'}
         </Button>
       </form>
     </Box>

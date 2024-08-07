@@ -50,7 +50,7 @@ import { ChartsNoDataOverlay } from '@mui/x-charts/ChartsOverlay'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
-import AddCafeDrawer from './AddCafeDrawer'
+import AddCafeDrawer from '../cafes/AddCafeDrawer'
 import DeleteCafe from './DeleteCafe'
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -340,26 +340,6 @@ export default function Page() {
       ) : (
         <Box>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={12}>
-              <DataGrid
-                loading={isLoading}
-                rows={cafes.cafes}
-                columns={columns}
-                pagination
-                paginationModel={paginationModel}
-                pageSizeOptions={[10]}
-                rowCount={totalRows}
-                paginationMode='server'
-                onPaginationModelChange={setPaginationModel}
-                sortingMode='server'
-                onSortModelChange={newSortModel => {
-                  setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
-                  setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
-                }}
-                rowSelectionModel={[]}
-                checkboxSelection={false}
-              />
-            </Grid>
             <Grid item xs={12} md={6}>
               <Item sx={centerItem}>
                 <BarChart
@@ -425,7 +405,7 @@ export default function Page() {
         </Box>
       )}
 
-      <AddCafeDrawer
+      {/* <AddCafeDrawer
         open={open}
         onClose={HandleClose}
         owners={owners}
@@ -434,7 +414,7 @@ export default function Page() {
         updateCafeData={updateCafeData}
         drawerType={drawerType}
         setDrawerType={setDrawerType}
-      />
+      /> */}
       <DeleteCafe
         isLoading={isDeleting}
         openDeleteDialog={openDeleteDialog}
