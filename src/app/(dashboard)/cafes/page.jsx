@@ -125,7 +125,7 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={titleBoxStyle}>
-          <Typography variant='h5'>Manage Cafes</Typography>
+          <Typography variant='h5'>Manage Cafe</Typography>
           <Button
             variant='contained'
             size='medium'
