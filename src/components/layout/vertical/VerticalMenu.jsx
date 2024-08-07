@@ -64,11 +64,11 @@ const VerticalMenu = ({ scrollMenu }) => {
             <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
               Dashboard
             </MenuItem>
-            <MenuItem href='/owners' icon={<i className='tabler-user-screen' />}>
-              Cafe Owners
+            <MenuItem href='/cafes' icon={<i className='tabler-layout-dashboard' />}>
+              Manage Cafes
             </MenuItem>
-            <MenuItem href='/managers' icon={<i className='tabler-briefcase' />}>
-              Cafe Managers
+            <MenuItem href='/owners' icon={<i className='tabler-user-screen' />}>
+              Manage Users
             </MenuItem>
             <MenuItem href='/customers' icon={<i className='tabler-user-heart' />}>
               Customers
