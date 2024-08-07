@@ -51,6 +51,7 @@ import { ChartsNoDataOverlay } from '@mui/x-charts/ChartsOverlay'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddCafeDrawer from './AddCafeDrawer'
+import DeleteCafe from './DeleteCafe'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -62,6 +63,12 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Page() {
   const { authToken, tokenCheck, cafes, setCafes } = useContext(AuthContext)
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [deleteCafeData, setDeleteCafeData] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const [updateCafeData, setUpdateCafeData] = useState(null)
 
   const [cafeStats, setCafeStats] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -80,6 +87,7 @@ export default function Page() {
   ])
 
   const [open, setOpen] = useState(false)
+  const [drawerType, setDrawerType] = useState('create')
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -172,6 +180,31 @@ export default function Page() {
       })
   }
 
+  const DeleteFunction = () => {
+    const url = `${ENDPOINT.DELETE_CAFE}?id=${deleteCafeData.id}`
+
+    setIsDeleting(true)
+
+    axios
+      .delete(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        GetCafe()
+        setDeleteCafeData(null)
+        setOpenDeleteDialog(false)
+      })
+      .catch(err => {
+        console.log('failed to delete')
+      })
+      .finally(() => {
+        setIsDeleting(false)
+      })
+  }
+
   const GetCafeStats = () => {
     const url = ENDPOINT.CAFE_STATS
 
@@ -247,10 +280,29 @@ export default function Page() {
       flex: 1,
       renderCell: params => (
         <Box>
-          <Button variant='outlined' color='info' size='small' sx={{ marginRight: 2 }} onClick={() => {}}>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              setOpen(true)
+              setDrawerType('update')
+              setUpdateCafeData(params.row)
+            }}
+          >
             Edit
           </Button>
-          <Button variant='outlined' color='error' size='small' sx={{ marginLeft: 2 }} onClick={() => {}}>
+          <Button
+            variant='outlined'
+            color='error'
+            size='small'
+            sx={{ marginLeft: 2 }}
+            onClick={() => {
+              setOpenDeleteDialog(true)
+              setDeleteCafeData(params.row)
+            }}
+          >
             Delete
           </Button>
         </Box>
@@ -258,6 +310,8 @@ export default function Page() {
       sortable: false
     }
   ]
+
+  const parentCafes = cafes.cafes.filter(cafe => cafe.parentId === null)
 
   if (!authToken.token) {
     return null
@@ -299,7 +353,6 @@ export default function Page() {
                 onPaginationModelChange={setPaginationModel}
                 sortingMode='server'
                 onSortModelChange={newSortModel => {
-                  console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
                   setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
                   setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
                 }}
@@ -372,7 +425,24 @@ export default function Page() {
         </Box>
       )}
 
-      <AddCafeDrawer open={open} onClose={HandleClose} owners={owners} GetCafe={GetCafe} />
+      <AddCafeDrawer
+        open={open}
+        onClose={HandleClose}
+        owners={owners}
+        GetCafe={GetCafe}
+        cafes={parentCafes}
+        updateCafeData={updateCafeData}
+        drawerType={drawerType}
+        setDrawerType={setDrawerType}
+      />
+      <DeleteCafe
+        isLoading={isDeleting}
+        openDeleteDialog={openDeleteDialog}
+        setOpenDeleteDialog={setOpenDeleteDialog}
+        deleteCafeData={deleteCafeData}
+        setDeleteCafeData={setDeleteCafeData}
+        DeleteFunction={DeleteFunction}
+      />
     </div>
   )
 }

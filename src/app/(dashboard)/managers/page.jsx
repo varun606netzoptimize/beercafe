@@ -15,8 +15,7 @@ import AddManagerDrawer from './AddManagerDrawer'
 import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 
 export default function Page() {
-  const { authToken, tokenCheck } = useContext(AuthContext)
-  const [managers, setManagers] = useState({ managers: [], pagination: null })
+  const { authToken, tokenCheck, managers, setManagers } = useContext(AuthContext)
 
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -36,8 +35,6 @@ export default function Page() {
 
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
-
-  const [searchQuery, setSearchQuery] = useState('')
 
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
