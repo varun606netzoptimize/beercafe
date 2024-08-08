@@ -21,3 +21,8 @@ export const ENDPOINT = {
   GET_MY_DETAILS: baseURL + '/api/admin/getMyDetails',
   DELETE_CAFE: baseURL + '/api/admin2/deleteCafe'
 }
+
+export const POS_ENDPOINTS = {
+  GET_ORDER: baseURL + '/api/pos/orders',
+  PROCESS_ORDER: baseURL + '/api/pos/orders/process'
+}
