@@ -16,7 +16,7 @@ const Navbar = () => {
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
-        redirect('/loginAs')
+        redirect('/login')
       }
     }
   }, [authToken])

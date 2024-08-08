@@ -23,31 +23,10 @@ export default function AllCafesModal({ open, setOpen, cafes }) {
     setOpen(false)
   }
 
-  const handlePageChange = newPage => {
-    setPaginationModel(prev => ({
-      ...prev,
-      page: newPage
-    }))
-  }
-
-  const handlePageSizeChange = newPageSize => {
-    setPaginationModel(prev => ({
-      ...prev,
-      pageSize: newPageSize
-    }))
-  }
-
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'location', headerName: 'Location', flex: 1 },
-    {
-      field: 'manager',
-      headerName: 'Managers',
-      flex: 1,
-      renderCell: params => (
-        <Box>{params?.row?.manager?.name ? params?.row?.manager?.name : `${params?.row?.owner?.name} (owner)`}</Box>
-      )
-    }
+    { field: 'address', headerName: 'Address', flex: 1 }
   ]
 
   // Slice the data for pagination

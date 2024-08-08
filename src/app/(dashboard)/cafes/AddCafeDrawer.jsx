@@ -178,7 +178,6 @@ export default function AddCafeDrawer({
                 field.onChange(e.target.value)
               }}
               error={isSubmitted && !!errors.name}
-              helperText={isSubmitted && errors.name?.message}
             />
           )}
         />
@@ -197,7 +196,6 @@ export default function AddCafeDrawer({
                 field.onChange(e.target.value)
               }}
               error={isSubmitted && !!errors.location}
-              helperText={isSubmitted && errors.location?.message}
             />
           )}
         />
@@ -216,7 +214,6 @@ export default function AddCafeDrawer({
                 field.onChange(e.target.value)
               }}
               error={isSubmitted && !!errors.address}
-              helperText={isSubmitted && errors.address?.message}
             />
           )}
         />
@@ -235,7 +232,6 @@ export default function AddCafeDrawer({
                 field.onChange(e.target.value)
               }}
               error={isSubmitted && !!errors.description}
-              helperText={isSubmitted && errors.description?.message}
             />
           )}
         />
@@ -255,7 +251,6 @@ export default function AddCafeDrawer({
                 field.onChange(e.target.value)
               }}
               error={isSubmitted && !!errors.priceConversionRate}
-              helperText={isSubmitted && errors.priceConversionRate?.message}
             />
           )}
         />
@@ -265,7 +260,7 @@ export default function AddCafeDrawer({
             name='parentCafe'
             control={control}
             render={({ field }) => (
-              <FormControl fullWidth>
+              <FormControl fullWidth error={isSubmitted && errors.parentCafe}>
                 <InputLabel>Parent Cafe</InputLabel>
                 <Select
                   {...field}
@@ -281,11 +276,6 @@ export default function AddCafeDrawer({
                     </MenuItem>
                   ))}
                 </Select>
-                {isSubmitted && errors.parentCafe && (
-                  <Typography color='error' variant='caption'>
-                    {errors.parentCafe.message}
-                  </Typography>
-                )}
               </FormControl>
             )}
           />

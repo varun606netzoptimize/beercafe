@@ -52,7 +52,7 @@ export default function Page() {
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
-        redirect('/loginAs')
+        redirect('/login')
       }
     }
   }, [authToken])
