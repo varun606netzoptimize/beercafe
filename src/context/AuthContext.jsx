@@ -75,7 +75,6 @@ export const AuthProvider = ({ children }) => {
       .finally(() => {
         setTokenCheck(true)
         GetCafe()
-        GetManagers()
       })
   }
 
@@ -90,23 +89,6 @@ export const AuthProvider = ({ children }) => {
       })
       .then(res => {
         setCafes({ cafes: res.data.cafes, pagination: res.data.pagination })
-      })
-      .catch(err => {
-        console.log('failed:', err.response)
-      })
-  }
-
-  const GetManagers = () => {
-    const url = `${ENDPOINT.GET_USERS}?userType=manager`
-
-    axios
-      .get(url, {
-        headers: {
-          Authorization: 'Bearer ' + authToken.token
-        }
-      })
-      .then(res => {
-        setManagers({ managers: res.data.users, pagination: res.data.pagination })
       })
       .catch(err => {
         console.log('failed:', err.response)

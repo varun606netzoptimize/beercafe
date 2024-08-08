@@ -46,7 +46,7 @@ const Navigation = props => {
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
-        redirect('/loginAs')
+        redirect('/login')
       }
     }
   }, [authToken])
