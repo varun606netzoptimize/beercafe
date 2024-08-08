@@ -17,3 +17,8 @@ export const ENDPOINT = {
   DELETE_CAFE: baseURL + '/api/admin/deleteCafe',
   DELETE_USER: baseURL + '/api/admin/deleteUser'
 }
+
+export const POS_ENDPOINTS = {
+  GET_ORDER: baseURL + '/api/pos/orders',
+  PROCESS_ORDER: baseURL + '/api/pos/orders/process'
+}

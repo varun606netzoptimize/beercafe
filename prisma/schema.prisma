@@ -22,7 +22,10 @@ model Cafe {
   parent   Cafe?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children Cafe[] @relation("ParentChild")
 
-  cafeUsers CafeUser[]
+  cafeUsers     CafeUser[]
+  CafeCustomers CafeCustomers[]
+  CafeBrands    CafeBrands[]
+  MachineMaster MachineMaster[]
 
   @@map("cafes")
 }
@@ -68,4 +71,135 @@ model UserType {
   users User[]
 
   @@map("user_type")
+}
+
+model Customer {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  firstname     String
+  lastname      String
+  phoneNumber   String?         @map("phone_number")
+  points        Int
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  deletedAt     DateTime?       @map("deleted_at")
+  customerRFID  CustomerRFID[]
+  CafeCustomers CafeCustomers[]
+  Order         Order[]
+}
+
+model CafeCustomers {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  cafeId     String    @db.ObjectId
+  customerID String    @db.ObjectId
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  cafe     Cafe?     @relation(fields: [cafeId], references: [id])
+  Customer Customer? @relation(fields: [customerID], references: [id])
+}
+
+model RFIDMaster {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  rfidNumber   String         @map("rfid_number")
+  expiry       DateTime       @map("expiry")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  deletedAt    DateTime?      @map("deleted_at")
+  customerRFID CustomerRFID[]
+}
+
+model CustomerRFID {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  customerId   String      @db.ObjectId
+  rFIDMasterId String      @db.ObjectId
+  Customer     Customer?   @relation(fields: [customerId], references: [id])
+  RFIDMaster   RFIDMaster? @relation(fields: [rFIDMasterId], references: [id])
+}
+
+model Brands {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  logo        String
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  deletedAt   DateTime?    @map("deleted_at")
+  CafeBrands  CafeBrands[]
+  Product     Product[]
+}
+
+model CafeBrands {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  BrandID String @db.ObjectId
+  CafeID  String @db.ObjectId
+
+  Brand Brands? @relation(fields: [BrandID], references: [id])
+  Cafe  Cafe?   @relation(fields: [CafeID], references: [id])
+}
+
+model Product {
+  id          String             @id @default(auto()) @map("_id") @db.ObjectId
+  brandId     String             @db.ObjectId
+  cafeId      String
+  name        String
+  SKU         String             @unique
+  description String?
+  quantity    Int
+  image       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  deletedAt   DateTime?
+  variations  ProductVariation[]
+  Brand       Brands             @relation(fields: [brandId], references: [id])
+}
+
+model ProductVariation {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  productId    String        @db.ObjectId
+  key          String
+  value        String?
+  salePrice    Float
+  regularPrice Float
+  points       Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  product      Product?      @relation(fields: [productId], references: [id])
+  OrderDetail  OrderDetail[]
+}
+
+model Order {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  customerId    String        @db.ObjectId
+  amount        Float
+  rfidMasterId  String?
+  paymentMode   String
+  paymentStatus String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+  details       OrderDetail[]
+
+  Customer Customer @relation(fields: [customerId], references: [id])
+}
+
+model OrderDetail {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  orderId            String            @db.ObjectId
+  quantity           String
+  amount             Float
+  productVariationId String            @db.ObjectId
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  order              Order?            @relation(fields: [orderId], references: [id])
+  productVariation   ProductVariation? @relation(fields: [productVariationId], references: [id])
+}
+
+model MachineMaster {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  cafeId           String @db.ObjectId
+  machineRefNumber String @unique
+
+  Cafe Cafe @relation(fields: [cafeId], references: [id])
 }
