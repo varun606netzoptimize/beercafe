@@ -36,6 +36,7 @@ export async function POST(req, res) {
         paymentStatus: 'PAID'
       }
     })
+
     const response = {
       auth_id: '3123213213',
       order_id: orderUpdate.id,

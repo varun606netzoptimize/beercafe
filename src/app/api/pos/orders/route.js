@@ -54,6 +54,7 @@ export async function POST(req, res) {
         headers: { 'Content-Type': 'application/json' }
       })
     }
+
     const response = {
       auth_id: '3123213213',
       brand_id: rfidRecord[0].customerRFID[0].Customer.Order[0].details[0].productVariation.product.Brand.id,
