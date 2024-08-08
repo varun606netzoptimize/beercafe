@@ -42,8 +42,6 @@ export default function Page() {
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
 
-  const [searchQuery, setSearchQuery] = useState('')
-
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
   }
@@ -54,17 +52,17 @@ export default function Page() {
 
   useEffect(() => {
     if (tokenCheck && !authToken.token) {
-      redirect('/loginAs')
+      redirect('/login')
     }
   }, [authToken])
 
   useEffect(() => {
     if (authToken.token) {
-      GetOwners()
+      GetUsers()
     }
   }, [authToken, paginationModel.page, sortBy, sortOrder])
 
-  const GetOwners = () => {
+  const GetUsers = () => {
     const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner`
 
     console.log(url)
@@ -122,35 +120,48 @@ export default function Page() {
   }
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'email', headerName: 'Email', flex: 1 },
     {
-      field: 'cafe',
-      headerName: 'Cafe Owned',
+      field: 'name',
+      headerName: 'Name',
       flex: 1,
       renderCell: params => (
         <Box>
-          {params?.row?.ownedCafes[0]?.name ? (
-            <>
-              {params?.row?.ownedCafes[0]?.name}
-              <Button
-                variant='outlined'
-                color='info'
-                size='small'
-                sx={{ marginLeft: 2 }}
-                onClick={() => {
-                  setAllCafes(params?.row?.ownedCafes)
-                  setOpen(true)
-                }}
-              >
-                View All
-              </Button>
-            </>
-          ) : (
-            'No Cafe'
-          )}
+          <h4>{params?.row?.name}</h4>
         </Box>
       )
+    },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'phoneNumber', headerName: 'Phone', flex: 1 },
+    { field: 'userType', headerName: 'Role', flex: 1 },
+    {
+      field: 'cafe',
+      headerName: 'Cafe',
+      flex: 1,
+      renderCell: params => <Box>{params?.row?.cafes[0]?.name}</Box>
+    },
+    {
+      field: 'branches_owned',
+      headerName: 'Branches',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          {params?.row?.userType == 'owner' && (
+            <Button
+              variant='outlined'
+              color='info'
+              size='small'
+              sx={{ marginRight: 2 }}
+              onClick={() => {
+                setAllCafes(params?.row?.branches_owned)
+                setOpen(true)
+              }}
+            >
+              View
+            </Button>
+          )}
+        </Box>
+      ),
+      sortable: false
     },
     {
       field: 'actions',
@@ -258,7 +269,7 @@ export default function Page() {
         open={addOpen}
         onClose={toggleAddDrawer(false)}
         toggleDrawer={toggleAddDrawer}
-        GetOwners={GetOwners}
+        GetUsers={GetUsers}
         drawerType={drawerType}
         setDrawerType={setDrawerType}
         updateOwnerData={updateOwnerData}

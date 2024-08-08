@@ -33,7 +33,7 @@ export default function Page() {
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
-        redirect('/loginAs')
+        redirect('/login')
       }
     }
   }, [authToken])
@@ -69,7 +69,16 @@ export default function Page() {
   }
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <h4>{params?.row?.name}</h4>
+        </Box>
+      )
+    },
     { field: 'location', headerName: 'Location', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
     {

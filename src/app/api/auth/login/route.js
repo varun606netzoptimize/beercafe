@@ -1,48 +1,68 @@
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
+const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key' // Replace with your actual secret key
 
-export async function POST(req, res) {
+export async function POST(req) {
   try {
+    // Parse request body
     const { email, password } = await req.json()
 
-    // Find the user by email in both Manager and Admin tables
-    const manager = await prisma.manager.findUnique({
-      where: { email }
+    // Validate input
+    if (!email || !password) {
+      return new Response(JSON.stringify({ message: 'Email and password are required' }), { status: 400 })
+    }
+
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { userType: true } // Include userType to access role
     })
 
-    const admin = await prisma.admin.findUnique({
-      where: { email }
-    })
-
-    const user = manager || admin
-    const role = manager ? 'Manager' : 'Admin'
-
-    // Check if user exists
     if (!user) {
-      return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })
+      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 })
     }
 
-    // Compare the provided password with the stored hash
-    const isMatch = await bcrypt.compare(password, user.password)
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password)
 
-    if (!isMatch) {
-      return new Response(JSON.stringify({ message: 'Invalid credentials' }), { status: 401 })
+    if (!isPasswordValid) {
+      return new Response(JSON.stringify({ message: 'Invalid email or password' }), { status: 401 })
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user.id, role }, process.env.JWT_SECRET, { expiresIn: '1h' })
+    // Generate JWT
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.userType.type // Assuming role type is stored in userType
+      },
+      SECRET_KEY,
+      { expiresIn: '1h' } // Set token expiration
+    )
 
-    // Return the response with token and user details
-    return new Response(JSON.stringify({ token, email: user.email, role }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return new Response(
+      JSON.stringify({
+        message: 'Login successful',
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.userType.type // Assuming role type is stored in userType
+        }
+      }),
+      { status: 200 }
+    )
   } catch (error) {
-    console.error(error)
+    console.error('Error during login:', error)
 
-    return new Response(JSON.stringify({ message: 'Server error' }), { status: 500 })
+    return new Response(JSON.stringify({ message: 'Error during login' }), { status: 500 })
+  } finally {
+    await prisma.$disconnect()
   }
 }

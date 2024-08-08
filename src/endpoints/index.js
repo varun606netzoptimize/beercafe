@@ -1,14 +1,14 @@
 const baseURL = process.env.NEXT_PUBLIC_APP_URL
 
 export const ENDPOINT = {
-  LOGIN: baseURL + '/api/auth2/login',
+  LOGIN: baseURL + '/api/auth/login',
   VERIFY: baseURL + '/api/auth/verifyAdminToken',
   REQUEST_OTP: baseURL + '/api/auth/requestOTP',
   VERIFY_OTP: baseURL + '/api/auth/verifyOTP',
   GET_CAFES: baseURL + '/api/admin/getCafes',
   CAFE_STATS: baseURL + '/api/admin/cafeStats',
   GET_MANAGERS: baseURL + '/api/admin/getManagers/',
-  GET_USERS: baseURL + '/api/admin2/getUsers/',
+  GET_USERS: baseURL + '/api/admin/getUsers/',
   CREATE_USER: baseURL + '/api/admin2/createUser',
   DELETE_USER: baseURL + '/api/admin2/deleteUser',
   UPDATE_USER: baseURL + '/api/admin2/updateUser',
