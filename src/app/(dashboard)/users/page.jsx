@@ -5,26 +5,26 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { styled } from '@mui/material/styles'
-import { Box, Button, Card, TextField, Typography, CircularProgress, Dialog } from '@mui/material'
+import { Box, Button, Card, Typography, CircularProgress } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AllCafesModal from './AllCafesModal'
 import ConfirmDelete from '@/components/Modal/ConfirmDelete'
-import AddOwnerDrawer from './AddOwnerDrawer'
+import AddOwnerDrawer from './AddUserDrawer'
 
 export default function Page() {
-  const { authToken, tokenCheck } = useContext(AuthContext)
+  const { authToken, tokenCheck, cafes } = useContext(AuthContext)
   const [owners, setOwners] = useState({ users: [], pagination: null })
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [drawerType, setDrawerType] = useState('create')
-  const [updateOwnerData, setUpdateOwnerData] = useState(null)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-  const [deleteOwnerData, setDeleteOwnerData] = useState(null)
+  const [deleteUserData, setDeleteUserData] = useState(null)
+
+  const [updateUserData, setUpdateUserData] = useState(null)
 
   const [open, setOpen] = useState(false)
 
@@ -89,7 +89,7 @@ export default function Page() {
   }
 
   const DeleteManager = () => {
-    const url = `${ENDPOINT.DELETE_USER}?id=${deleteOwnerData.id}`
+    const url = `${ENDPOINT.DELETE_USER}?id=${deleteUserData.id}`
 
     setDeleting(true)
 
@@ -102,7 +102,7 @@ export default function Page() {
       })
       .then(res => {
         setOwners(prevOwners => ({
-          users: prevOwners.users.filter(user => user.id !== deleteOwnerData.id),
+          users: prevOwners.users.filter(user => user.id !== deleteUserData.id),
           pagination: {
             ...prevOwners.pagination,
             totalUsers: prevOwners.pagination.totalUsers - 1
@@ -115,7 +115,7 @@ export default function Page() {
       .finally(() => {
         setDeleting(false)
         setOpenDeleteDialog(false)
-        setDeleteOwnerData(null)
+        setDeleteUserData(null)
       })
   }
 
@@ -176,7 +176,7 @@ export default function Page() {
             sx={{ marginRight: 2 }}
             onClick={() => {
               // Handle edit
-              setUpdateOwnerData(params?.row)
+              setUpdateUserData(params?.row)
               setDrawerType('update')
               setAddOpen(true)
             }}
@@ -189,7 +189,7 @@ export default function Page() {
             size='small'
             sx={{ marginLeft: 2 }}
             onClick={() => {
-              setDeleteOwnerData(params?.row)
+              setDeleteUserData(params?.row)
               setOpenDeleteDialog(true)
             }}
           >
@@ -209,7 +209,7 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={headerBox}>
-          <Typography variant='h5'>Manage Cafe Owners</Typography>
+          <Typography variant='h5'>Manage Cafe Users</Typography>
           <Button
             variant='contained'
             size='medium'
@@ -219,7 +219,7 @@ export default function Page() {
               setDrawerType('create')
             }}
           >
-            Add Cafe Owners
+            Add Cafe User
           </Button>
         </Box>
       </Card>
@@ -259,8 +259,8 @@ export default function Page() {
       <ConfirmDelete
         openDeleteDialog={openDeleteDialog}
         setOpenDeleteDialog={setOpenDeleteDialog}
-        deleteUserData={deleteOwnerData}
-        setDeleteUserData={setDeleteOwnerData}
+        deleteUserData={deleteUserData}
+        setDeleteUserData={setDeleteUserData}
         DeleteFunction={DeleteManager}
         isLoading={deleting}
       />
@@ -268,12 +268,11 @@ export default function Page() {
       <AddOwnerDrawer
         open={addOpen}
         onClose={toggleAddDrawer(false)}
-        toggleDrawer={toggleAddDrawer}
-        GetUsers={GetUsers}
         drawerType={drawerType}
+        updateUserData={updateUserData}
         setDrawerType={setDrawerType}
-        updateOwnerData={updateOwnerData}
-        setUpdateOwnerData={setUpdateOwnerData}
+        cafes={cafes.cafes}
+        GetUsers={GetUsers}
       />
     </div>
   )

@@ -25,7 +25,7 @@ export default function DeleteCafe({
   }
 
   function handleDelete() {
-    if (!deleteCafeData.parentId) {
+    if (deleteCafeData.children.length) {
       setShowConfirmDialog(true)
     } else {
       DeleteFunction()
@@ -57,7 +57,7 @@ export default function DeleteCafe({
             Cancel
           </Button>
 
-          <Button onClick={handleDelete} variant='outlined' color='error' sx={{ width: '90px' }}>
+          <Button onClick={handleDelete} color='error' sx={{ width: '90px' }}>
             {isLoading ? <CircularProgress size={22} color='error' /> : 'Delete'}
           </Button>
         </DialogActions>
@@ -81,7 +81,7 @@ export default function DeleteCafe({
           <Button onClick={handleClose} variant='outlined' color='info'>
             Cancel
           </Button>
-          <Button onClick={handleConfirmDelete} variant='outlined' color='error' sx={{ width: '90px' }}>
+          <Button onClick={handleConfirmDelete} color='error' sx={{ width: '90px' }}>
             {isLoading ? <CircularProgress size={22} color='error' /> : 'Delete'}
           </Button>
         </DialogActions>

@@ -13,7 +13,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
-export default function AllCafesModal({ open, setOpen, cafes }) {
+export default function ViewManagerModal({ open, setOpen, managers }) {
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10
@@ -25,15 +25,15 @@ export default function AllCafesModal({ open, setOpen, cafes }) {
 
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'location', headerName: 'Location', flex: 1 },
-    { field: 'address', headerName: 'Address', flex: 1 },
-    { field: 'manager', headerName: 'Manager', flex: 1, renderCell: params => <Box>{params?.row?.users[0]?.name}</Box> }
+    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'phoneNumber', headerName: 'Phone Number', flex: 1 },
+    { field: 'userType', headerName: 'Role', flex: 1 }
   ]
 
   // Slice the data for pagination
   const { page, pageSize } = paginationModel
   const startIndex = page * pageSize
-  const paginatedData = cafes?.slice(startIndex, startIndex + pageSize)
+  const paginatedData = managers?.slice(startIndex, startIndex + pageSize)
 
   return (
     <>
@@ -56,7 +56,7 @@ export default function AllCafesModal({ open, setOpen, cafes }) {
             onPaginationModelChange={newPaginationModel => {
               setPaginationModel(newPaginationModel)
             }}
-            rowCount={cafes?.length} // Total row count
+            rowCount={managers?.length} // Total row count
           />
         </DialogContent>
         <DialogActions>

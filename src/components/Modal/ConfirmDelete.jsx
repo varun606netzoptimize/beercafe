@@ -39,13 +39,9 @@ export default function ConfirmDelete({
           <Button onClick={handleClose} autoFocus variant='outlined' color='info'>
             Cancel
           </Button>
-          {isLoading ? (
-            <CircularProgress size={22} color='error' />
-          ) : (
-            <Button onClick={DeleteFunction} variant='outlined' color='error'>
-              Delete
-            </Button>
-          )}
+          <Button onClick={DeleteFunction} sx={{ width: 80 }} color='error'>
+            {isLoading ? <CircularProgress size={22} color='error' /> : 'Delete'}
+          </Button>
         </DialogActions>
       </Dialog>
     </>

@@ -1,4 +1,5 @@
 'use client'
+
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 
@@ -6,29 +7,41 @@ import { redirect } from 'next/navigation'
 
 import axios from 'axios'
 import { styled } from '@mui/material/styles'
-import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddCafeDrawer from './AddCafeDrawer'
+import ViewManagerModal from './ViewManagerModal'
+import DeleteCafe from './DeleteCafe'
 
 export default function Page() {
   const { authToken, tokenCheck, cafes, setCafes } = useContext(AuthContext)
-
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [totalRows, setTotalRows] = useState(0)
   const [sortOrder, setSortOrder] = useState('asc')
   const [sortBy, setSortBy] = useState('name')
 
+  const [updateCafeData, setUpdateCafeData] = useState(null)
+
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10
   })
 
+  const [isDeleting, setDeleting] = useState(false)
+
   const [open, setOpen] = useState(false)
   const [drawerType, setDrawerType] = useState('create')
+  const [groupedCafes, setGroupedCafes] = useState([])
+
+  const [viewManagers, setViewManagers] = useState(false)
+  const [managers, setManagers] = useState(null)
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const [deleteCafeData, setDeleteCafeData] = useState(null)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -45,7 +58,7 @@ export default function Page() {
   }, [authToken, paginationModel.page, sortBy, sortOrder])
 
   const GetCafe = () => {
-    const url = `${ENDPOINT.GET_CAFES}?page=${paginationModel.page + 1}&size=10&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    const url = `${ENDPOINT.GET_CAFES}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
 
     setIsLoading(true)
 
@@ -56,8 +69,11 @@ export default function Page() {
         }
       })
       .then(res => {
-        setCafes({ cafes: res.data.cafes, pagination: res.data.pagination })
+        const cafesData = res.data.cafes
+
+        setCafes({ cafes: cafesData, pagination: res.data.pagination })
         setTotalRows(res.data.pagination.totalCafes)
+        groupCafes(cafesData)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -68,14 +84,54 @@ export default function Page() {
       })
   }
 
+  const DeleteCafeFN = () => {
+    const url = `${ENDPOINT.DELETE_CAFE}?cafeId=${deleteCafeData?.id}`
+
+    setDeleting(true)
+
+    axios
+      .delete(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        GetCafe()
+      })
+      .catch(err => {
+        console.log('Failed to delete manager:', err.response ? err.response.data : err.message)
+      })
+      .finally(() => {
+        setDeleting(false)
+        setOpenDeleteDialog(false)
+        setDeleteCafeData(null)
+      })
+  }
+
+  const groupCafes = cafesData => {
+    const parentCafes = cafesData.filter(cafe => cafe.parentId === null)
+    const branches = cafesData.filter(cafe => cafe.parentId !== null)
+
+    const grouped = parentCafes.map(parentCafe => {
+      return {
+        ...parentCafe,
+        isParent: true,
+        children: branches.filter(branch => branch.parentId === parentCafe.id)
+      }
+    })
+
+    setGroupedCafes(grouped.flatMap(cafe => [cafe, ...cafe.children]))
+  }
+
   const columns = [
     {
       field: 'name',
       headerName: 'Name',
       flex: 1,
       renderCell: params => (
-        <Box>
-          <h4>{params?.row?.name}</h4>
+        <Box sx={{ paddingLeft: params.row.isParent ? 0 : 4 }}>
+          {params.row.isParent ? <h3> {params.row.name}</h3> : <p>{params.row.name}</p>}
         </Box>
       )
     },
@@ -85,7 +141,32 @@ export default function Page() {
       field: 'owner',
       headerName: 'Owner',
       flex: 1,
-      renderCell: params => <Box>{params?.row?.owner?.name}</Box>
+      renderCell: params => <Box>{params.row.owner?.name}</Box>
+    },
+    {
+      field: 'manager',
+      headerName: 'Manager',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          {params.row.users.length > 0 ? (
+            <Button
+              variant='outlined'
+              color='info'
+              size='small'
+              sx={{ marginRight: 2 }}
+              onClick={() => {
+                setViewManagers(true)
+                setManagers(params.row.users)
+              }}
+            >
+              View
+            </Button>
+          ) : (
+            <p style={{ color: '#808390' }}>No managers assigned</p>
+          )}
+        </Box>
+      )
     },
     {
       field: 'actions',
@@ -153,7 +234,7 @@ export default function Page() {
       ) : (
         <DataGrid
           loading={isLoading}
-          rows={cafes.cafes}
+          rows={groupedCafes}
           columns={columns}
           pagination
           paginationModel={paginationModel}
@@ -178,6 +259,18 @@ export default function Page() {
         setDrawerType={setDrawerType}
         GetCafe={GetCafe}
         cafes={parentCafes}
+        updateCafeData={updateCafeData}
+      />
+
+      <ViewManagerModal open={viewManagers} setOpen={setViewManagers} managers={managers} />
+
+      <DeleteCafe
+        openDeleteDialog={openDeleteDialog}
+        setOpenDeleteDialog={setOpenDeleteDialog}
+        deleteCafeData={deleteCafeData}
+        setDeleteCafeData={setDeleteCafeData}
+        isLoading={isDeleting}
+        DeleteFunction={DeleteCafeFN}
       />
     </div>
   )

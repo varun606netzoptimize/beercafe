@@ -90,6 +90,26 @@ export default function AddCafeDrawer({
     setRadioValue(value)
   }
 
+  useEffect(() => {
+    if (drawerType === 'update' && updateCafeData) {
+      setValue('name', updateCafeData.name)
+      setValue('location', updateCafeData.location)
+      setValue('address', updateCafeData.address)
+      setValue('description', updateCafeData.description)
+      setValue('priceConversionRate', updateCafeData.priceConversionRate)
+
+      if (updateCafeData.parentId) {
+        setRadioValue('branchCafe')
+        setValue('parentCafe', updateCafeData.parentId)
+      } else {
+        setRadioValue('mainCafe')
+      }
+    } else if (drawerType === 'create') {
+      reset()
+      setRadioValue('mainCafe')
+    }
+  }, [drawerType, updateCafeData, setValue, reset])
+
   // Create cafe
   const createCafe = async data => {
     console.log('createCafe called with data:', data)
@@ -136,6 +156,55 @@ export default function AddCafeDrawer({
     }
   }
 
+  // Update cafe
+  const updateCafe = async data => {
+    console.log('createCafe called with data:', data)
+    const url = ENDPOINT.UPDATE_CAFE
+
+    const mainCafeData = {
+      id: updateCafeData.id,
+      name: data.name,
+      location: data.location,
+      address: data.address,
+      description: data.description,
+      priceConversionRate: data.priceConversionRate
+    }
+
+    const branchCafeData = {
+      id: updateCafeData.id,
+      name: data.name,
+      location: data.location,
+      address: data.address,
+      description: data.description,
+      priceConversionRate: data.priceConversionRate,
+      parentId: data.parentCafe
+    }
+
+    const finalData = radioValue === 'mainCafe' ? mainCafeData : branchCafeData
+
+    setIsLoading(true)
+
+    try {
+      const response = await axios.put(url, finalData, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+
+      console.log('cafe added:', response.data)
+      toast.success(data.name + ' Cafe Added')
+      reset()
+    } catch (err) {
+      console.error('Error adding cafe:', err)
+      toast.error('Failed to add cafe')
+    } finally {
+      setIsLoading(false)
+      onClose()
+      GetCafe()
+      setDrawerType('create')
+    }
+  }
+
   const DrawerList = (
     <Box sx={{ width: 400, padding: 4 }} role='presentation'>
       <FormControl>
@@ -160,7 +229,7 @@ export default function AddCafeDrawer({
       <form
         noValidate
         autoComplete='off'
-        onSubmit={handleSubmit(createCafe)}
+        onSubmit={handleSubmit(drawerType === 'create' ? createCafe : updateCafe)}
         style={{ marginTop: 16 }}
         className='flex flex-col gap-6'
       >
@@ -282,7 +351,13 @@ export default function AddCafeDrawer({
         )}
 
         <Button fullWidth variant='contained' type='submit'>
-          {isLoading ? <CircularProgress color='inherit' size={20} /> : 'Add Cafe'}
+          {isLoading ? (
+            <CircularProgress color='inherit' size={20} />
+          ) : drawerType === 'update' ? (
+            'Update Cafe'
+          ) : (
+            'Add Cafe'
+          )}
         </Button>
       </form>
     </Box>

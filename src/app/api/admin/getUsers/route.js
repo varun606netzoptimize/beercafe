@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 
 import { PrismaClient } from '@prisma/client'
 
+import AddCafeDrawer from '@/app/(dashboard)/cafes/AddCafeDrawer'
+
 const prisma = new PrismaClient()
 
 export async function GET(req) {
@@ -87,19 +89,12 @@ export async function GET(req) {
                   priceConversionRate: true,
                   parentId: true,
                   cafeUsers: {
-                    // Assuming `cafeUsers` is the linking model/table
+                    // Fetch only name and id of users (managers) associated with each branch
                     select: {
                       user: {
-                        // Fetch users (managers) associated with each branch
                         select: {
                           id: true,
-                          name: true,
-                          email: true,
-                          phoneNumber: true,
-                          userType: true,
-                          createdAt: true,
-                          updatedAt: true,
-                          deletedAt: true
+                          name: true
                         }
                       }
                     }
@@ -119,10 +114,7 @@ export async function GET(req) {
           parentId: branch.parentId,
           users: branch.cafeUsers.map(cafeUser => ({
             id: cafeUser.user.id,
-            name: cafeUser.user.name,
-            email: cafeUser.user.email,
-            phoneNumber: cafeUser.user.phoneNumber,
-            userType: cafeUser.user.userType
+            name: cafeUser.user.name
           }))
         }))
 
