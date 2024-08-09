@@ -15,7 +15,8 @@ export const ENDPOINT = {
   UPDATE_CAFE: baseURL + '/api/admin/updateCafe',
   GET_MY_DETAILS: baseURL + '/api/admin/getMyDetails',
   DELETE_CAFE: baseURL + '/api/admin/deleteCafe',
-  DELETE_USER: baseURL + '/api/admin/deleteUser'
+  DELETE_USER: baseURL + '/api/admin/deleteUser',
+  GET_MY_CAFES: baseURL + '/api/admin/getOwnerCafes'
 }
 
 export const POS_ENDPOINTS = {

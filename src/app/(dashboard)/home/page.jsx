@@ -51,19 +51,13 @@ export default function Page() {
 
   useEffect(() => {
     if (tokenCheck) {
-      if (authToken.role === 'Manager') {
-        redirect('/users')
-      }
-
-      if (authToken.role === 'User') {
-        redirect('/comingSoon')
-      }
-
       if (!authToken.token) {
         redirect('/login')
       }
     }
   }, [authToken])
+
+  console.log(authToken.role)
 
   if (!authToken.token) {
     return null

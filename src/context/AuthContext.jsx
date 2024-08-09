@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useEffect, useState } from 'react'
+import { createContext, use, useEffect, useState } from 'react'
 
 import axios from 'axios'
 
@@ -22,6 +22,8 @@ export const AuthProvider = ({ children }) => {
   const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
   const [managerDetails, setManagerDetails] = useState(null)
   const [managers, setManagers] = useState({ managers: [], pagination: null })
+
+  const [currentUser, setCurrentUser] = useState(null)
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -55,6 +57,8 @@ export const AuthProvider = ({ children }) => {
       })
       .then(res => {
         console.log(res.data)
+
+        setCurrentUser(res.data.user)
 
         toast.success(
           res.data.userType == 'Unknown' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
@@ -97,7 +101,17 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ authToken, setAuthToken, tokenCheck, cafes, setCafes, managerDetails, managers, setManagers }}
+      value={{
+        authToken,
+        setAuthToken,
+        tokenCheck,
+        cafes,
+        setCafes,
+        managerDetails,
+        managers,
+        setManagers,
+        currentUser
+      }}
     >
       {children}
     </AuthContext.Provider>
