@@ -17,12 +17,26 @@ export async function DELETE(req) {
     // Find the cafe with its related children (assuming children is the correct field name)
     const cafe = await prisma.cafe.findUnique({
       where: { id: cafeId },
-      include: { children: true } // Use the correct field name for related branches
+      include: { children: true } // Ensure 'children' is the correct relation name in your schema
     })
 
     if (!cafe) {
       return new NextResponse(JSON.stringify({ message: 'Cafe not found' }), { status: 404 })
     }
+
+    // Delete associated CafeUser records for the main cafe
+    await prisma.cafeUser.deleteMany({
+      where: { cafeId: cafeId }
+    })
+
+    // Delete associated CafeUser records for all child cafes (branches)
+    await prisma.cafeUser.deleteMany({
+      where: {
+        cafeId: {
+          in: cafe.children.map(child => child.id)
+        }
+      }
+    })
 
     // Delete all child cafes (branches) first
     await prisma.cafe.deleteMany({

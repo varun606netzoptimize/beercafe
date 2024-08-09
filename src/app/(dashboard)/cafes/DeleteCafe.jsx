@@ -25,7 +25,7 @@ export default function DeleteCafe({
   }
 
   function handleDelete() {
-    if (deleteCafeData.children.length) {
+    if (deleteCafeData?.children?.length) {
       setShowConfirmDialog(true)
     } else {
       DeleteFunction()

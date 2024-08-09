@@ -13,7 +13,6 @@ export async function GET(req) {
     const sortBy = url.searchParams.get('sortBy') || 'name'
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
     const ownerId = url.searchParams.get('ownerId')
-    const parentId = url.searchParams.get('parentId')
 
     // Validate sortBy and sortOrder
     const validSortFields = ['name', 'location', 'createdAt']
@@ -21,18 +20,26 @@ export async function GET(req) {
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
 
-    // Build the filter object based on ownerId and parentId
-    const filters = {}
+    if (!ownerId) {
+      return new NextResponse(JSON.stringify({ message: 'Owner ID is required' }), {
+        status: 400
+      })
+    }
 
-    if (ownerId) filters.ownerId = ownerId
-    if (parentId) filters.parentId = parentId
-
-    // Fetch cafes with pagination and sorting, including associated users and parent cafe owner
-    const cafes = await prisma.cafe.findMany({
-      where: filters,
-      orderBy: { [sortField]: sortDirection },
-      skip: (page - 1) * limit,
-      take: limit,
+    // Get all cafes owned by the user
+    const ownedCafes = await prisma.cafe.findMany({
+      where: {
+        cafeUsers: {
+          some: {
+            userId: ownerId,
+            user: {
+              userType: {
+                type: 'owner'
+              }
+            }
+          }
+        }
+      },
       include: {
         cafeUsers: {
           include: {
@@ -59,15 +66,57 @@ export async function GET(req) {
       }
     })
 
-    // Get the total number of cafes based on the filters
-    const totalCafes = await prisma.cafe.count({ where: filters })
+    // Extract the IDs of the owned cafes
+    const ownedCafeIds = ownedCafes.map(cafe => cafe.id)
 
-    // Calculate total number of pages
-    const totalPages = Math.ceil(totalCafes / limit)
-    const hasNextPage = page < totalPages
+    // Get cafes where parentId matches any of the owned cafe IDs
+    const childCafes = await prisma.cafe.findMany({
+      where: {
+        parentId: {
+          in: ownedCafeIds
+        }
+      },
+      include: {
+        cafeUsers: {
+          include: {
+            user: {
+              include: {
+                userType: true
+              }
+            }
+          }
+        },
+        parent: {
+          include: {
+            cafeUsers: {
+              include: {
+                user: {
+                  include: {
+                    userType: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
 
-    // Map the cafes to include user and user type information
-    const result = cafes.map(cafe => {
+    // Combine owned cafes and child cafes
+    const result = [...ownedCafes, ...childCafes]
+
+    // Apply pagination and sorting
+    const sortedAndPagedResult = result
+      .sort((a, b) => {
+        if (a[sortField] < b[sortField]) return sortDirection === 'asc' ? -1 : 1
+        if (a[sortField] > b[sortField]) return sortDirection === 'asc' ? 1 : -1
+
+        return 0
+      })
+      .slice((page - 1) * limit, page * limit)
+
+    // Map the cafes to include user and owner information
+    const resultWithUsers = sortedAndPagedResult.map(cafe => {
       let owners = []
 
       // Collect owners from the parent cafe if it exists
@@ -135,11 +184,16 @@ export async function GET(req) {
       }
     })
 
+    // Calculate total number of pages
+    const totalCafes = result.length
+    const totalPages = Math.ceil(totalCafes / limit)
+    const hasNextPage = page < totalPages
+
     // Return the response with pagination info
     return new NextResponse(
       JSON.stringify({
         message: 'Cafes fetched successfully',
-        cafes: result,
+        cafes: resultWithUsers,
         pagination: {
           page,
           limit,

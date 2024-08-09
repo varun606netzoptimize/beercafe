@@ -64,7 +64,7 @@ const VerticalMenu = ({ scrollMenu }) => {
             <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
               Dashboard
             </MenuItem>
-            <MenuItem href='/cafes' icon={<i className='tabler-user-screen' />}>
+            <MenuItem href='/cafes' icon={<i className='tabler-beer' />}>
               Manage Cafes
             </MenuItem>
             <MenuItem href='/users' icon={<i className='tabler-user-screen' />}>
@@ -74,14 +74,13 @@ const VerticalMenu = ({ scrollMenu }) => {
               Customers
             </MenuItem> */}
           </>
-        ) : authToken.role == 'manager' ? (
+        ) : authToken.role == 'owner' ? (
           <>
-            {/* <MenuItem href='/customers' icon={<i className='tabler-user-heart' />}>
-              Customers
-            </MenuItem> */}
-
-            <MenuItem href='/report' icon={<i className='tabler-report' />}>
-              Report
+            <MenuItem href='/home' icon={<i className='tabler-layout-dashboard' />}>
+              Dashboard
+            </MenuItem>
+            <MenuItem href='/myCafes' icon={<i className='tabler-beer' />}>
+              Manage My Cafes
             </MenuItem>
           </>
         ) : (

@@ -182,8 +182,17 @@ const LoginV2 = ({ mode }) => {
           </div>
 
           <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+            <h4>Admin Credentials:</h4>
             <Typography variant='body2' color='primary'>
               Email: <span className='font-medium'>admin@beercafe.com</span> / Pass:{' '}
+              <span className='font-medium'>google@123</span>
+            </Typography>
+
+            <Divider />
+
+            <h4>Owner Credentials:</h4>
+            <Typography variant='body2' color='primary'>
+              Email: <span className='font-medium'>akash@email.com</span> / Pass:{' '}
               <span className='font-medium'>google@123</span>
             </Typography>
           </Alert>
