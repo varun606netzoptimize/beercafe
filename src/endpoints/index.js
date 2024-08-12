@@ -16,7 +16,11 @@ export const ENDPOINT = {
   GET_MY_DETAILS: baseURL + '/api/admin/getMyDetails',
   DELETE_CAFE: baseURL + '/api/admin/deleteCafe',
   DELETE_USER: baseURL + '/api/admin/deleteUser',
-  GET_MY_CAFES: baseURL + '/api/admin/getOwnerCafes'
+  GET_MY_CAFES: baseURL + '/api/admin/getOwnerCafes',
+  GET_CUSTOMERS: baseURL + '/api/admin/getCustomers/',
+  GET_MY_CUSTOMERS: baseURL + '/api/admin/getCafeCustomers',
+  CREATE_CUSTOMER: baseURL + '/api/admin/createCustomer',
+  UPDATE_CUSTOMER: baseURL + '/api/admin/updateCustomer'
 }
 
 export const POS_ENDPOINTS = {

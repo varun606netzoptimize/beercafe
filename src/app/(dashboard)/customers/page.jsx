@@ -5,14 +5,6 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { styled } from '@mui/material/styles'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell, { tableCellClasses } from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
 import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
 
 import { DataGrid } from '@mui/x-data-grid'
@@ -21,6 +13,7 @@ import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import AddUserDrawer from './AddUserDrawer'
 import ConfirmDelete from '@/components/Modal/ConfirmDelete'
+import ViewCafeModal from './ViewCafeModal'
 
 export default function Page() {
   const { authToken, tokenCheck } = useContext(AuthContext)
@@ -42,8 +35,11 @@ export default function Page() {
 
   const [totalRows, setTotalRows] = useState(0)
 
-  const [sortBy, setSortBy] = useState('name')
+  const [sortBy, setSortBy] = useState('firstname')
   const [sortOrder, setSortOrder] = useState('asc')
+
+  const [cafes, setCafes] = useState(null)
+  const [showCafes, setShowCafes] = useState(false)
 
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
@@ -64,7 +60,7 @@ export default function Page() {
   }, [authToken, paginationModel.page, sortBy, sortOrder])
 
   const GetUsers = () => {
-    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=user`
+    const url = `${ENDPOINT.GET_CUSTOMERS}?sortOrder=${sortOrder}&sortBy=${sortBy}`
 
     setIsLoading(true)
     axios
@@ -74,8 +70,8 @@ export default function Page() {
         }
       })
       .then(res => {
-        setUsers({ users: res.data.users, pagination: res.data.pagination })
-        setTotalRows(res.data.pagination.totalUsers)
+        setUsers({ users: res.data.customers, pagination: res.data.pagination })
+        setTotalRows(res.data.pagination.totalCustomers)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -113,10 +109,40 @@ export default function Page() {
       })
   }
 
+  function fullName(firstName, lastName) {
+    return `${firstName} ${lastName}`
+  }
+
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'phone', headerName: 'Phone', flex: 1 },
+    {
+      field: 'firstname',
+      headerName: 'Name',
+      flex: 1,
+      renderCell: params => <Box>{fullName(params.row.firstname, params.row.lastname)}</Box>
+    },
+    { field: 'phoneNumber', headerName: 'Phone', flex: 1 },
     { field: 'points', headerName: 'Points', flex: 1 },
+    {
+      field: 'cafes',
+      headerName: 'Cafes',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              setCafes(params?.row?.cafes)
+              setShowCafes(true)
+            }}
+          >
+            View
+          </Button>
+        </Box>
+      )
+    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -227,6 +253,8 @@ export default function Page() {
         DeleteFunction={DeleteUser}
         isLoading={deleting}
       />
+
+      <ViewCafeModal open={showCafes} setOpen={setShowCafes} cafes={cafes} />
     </div>
   )
 }

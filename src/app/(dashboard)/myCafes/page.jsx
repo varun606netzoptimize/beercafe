@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { styled } from '@mui/material/styles'
 import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
@@ -15,6 +14,7 @@ import { ENDPOINT } from '@/endpoints'
 import ViewManagerModal from '../cafes/ViewManagerModal'
 import DeleteCafe from '../cafes/DeleteCafe'
 import AddMyCafeDrawer from './AddMyCafeDrawer'
+import ViewMyCustomers from './ViewMyCustomers'
 
 export default function Page() {
   const { authToken, tokenCheck, currentUser } = useContext(AuthContext)
@@ -41,6 +41,9 @@ export default function Page() {
   const [sortBy, setSortBy] = useState('name')
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [deleteCafeData, setDeleteCafeData] = useState(null)
+
+  const [customers, setCustomers] = useState(null)
+  const [viewCustomers, setViewCustomers] = useState(false)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -107,6 +110,27 @@ export default function Page() {
       })
   }
 
+  const GetMyCustomers = cafeId => {
+    const url = `${ENDPOINT.GET_MY_CUSTOMERS}/${cafeId}`
+
+    setIsLoading(true)
+
+    axios
+      .get(url)
+      .then(res => {
+        setViewCustomers(true)
+        setIsLoading(false)
+        setCustomers(res.data.customers)
+      })
+      .catch(err => {
+        setIsLoading(false)
+        console.log('failed:', err.response)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
+
   const groupCafes = cafesData => {
     const parentCafes = cafesData.filter(cafe => cafe.parentId === null)
     const branches = cafesData.filter(cafe => cafe.parentId !== null)
@@ -157,6 +181,26 @@ export default function Page() {
           ) : (
             <p style={{ color: '#808390' }}>No owner assigned</p>
           )}
+        </Box>
+      )
+    },
+    {
+      field: 'customers',
+      headerName: 'Customers',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              GetMyCustomers(params?.row?.id)
+            }}
+          >
+            View
+          </Button>
         </Box>
       )
     },
@@ -270,6 +314,8 @@ export default function Page() {
       )}
 
       <ViewManagerModal open={viewManagers} setOpen={setViewManagers} managers={managers} />
+
+      <ViewMyCustomers open={viewCustomers} setOpen={setViewCustomers} customers={customers} />
 
       <DeleteCafe
         openDeleteDialog={openDeleteDialog}

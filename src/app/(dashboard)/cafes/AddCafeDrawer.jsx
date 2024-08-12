@@ -192,7 +192,7 @@ export default function AddCafeDrawer({
       })
 
       console.log('cafe added:', response.data)
-      toast.success(data.name + ' Cafe Added')
+      toast.success(data.name + ' Cafe Updated')
       reset()
     } catch (err) {
       console.error('Error adding cafe:', err)

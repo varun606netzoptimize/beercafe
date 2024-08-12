@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { styled } from '@mui/material/styles'
 import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 

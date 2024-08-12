@@ -87,6 +87,17 @@ model Customer {
   Order         Order[]
 }
 
+model Otp {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  phoneNumber String   @map("phone_number")
+  otp         String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now()) @map("created_at")
+  verified    Boolean  @default(false)
+
+  @@index([phoneNumber])
+}
+
 model CafeCustomers {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   cafeId     String    @db.ObjectId

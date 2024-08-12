@@ -13,7 +13,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
-export default function ViewManagerModal({ open, setOpen, managers }) {
+export default function ViewMyCustomers({ open, setOpen, customers }) {
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10
@@ -23,17 +23,25 @@ export default function ViewManagerModal({ open, setOpen, managers }) {
     setOpen(false)
   }
 
+  function fullName(firstName, lastName) {
+    return `${firstName} ${lastName}`
+  }
+
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'email', headerName: 'Email', flex: 1 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      renderCell: params => <Box>{fullName(params.row.firstname, params.row.lastname)}</Box>
+    },
     { field: 'phoneNumber', headerName: 'Phone Number', flex: 1 },
-    { field: 'userType', headerName: 'Role', flex: 1 }
+    { field: 'points', headerName: 'Points', flex: 1 }
   ]
 
   // Slice the data for pagination
   const { page, pageSize } = paginationModel
   const startIndex = page * pageSize
-  const paginatedData = managers?.slice(startIndex, startIndex + pageSize)
+  const paginatedData = customers?.slice(startIndex, startIndex + pageSize)
 
   return (
     <>
@@ -56,7 +64,7 @@ export default function ViewManagerModal({ open, setOpen, managers }) {
             onPaginationModelChange={newPaginationModel => {
               setPaginationModel(newPaginationModel)
             }}
-            rowCount={managers?.length}
+            rowCount={customers?.length}
           />
         </DialogContent>
         <DialogActions>
