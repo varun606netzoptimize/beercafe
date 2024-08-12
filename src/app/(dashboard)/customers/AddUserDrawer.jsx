@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 
-import { Box, Button, CircularProgress, Drawer, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Drawer } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
@@ -15,8 +15,10 @@ import { ENDPOINT } from '@/endpoints'
 import { AuthContext } from '@/context/AuthContext'
 
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  phone: yup.string().length(10).required('Phone number is required')
+  firstname: yup.string().required('First Name is required'),
+  lastname: yup.string().required('Last Name is required'),
+  phoneNumber: yup.string().length(10, 'Phone number must be 10 digits').required('Phone number is required'),
+  points: yup.number().optional()
 })
 
 export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData, setUpdateUserData, drawerType }) {
@@ -37,8 +39,9 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
 
   React.useEffect(() => {
     if (drawerType === 'update' && updateUserData) {
-      setValue('name', updateUserData.name)
-      setValue('phone', updateUserData.phone)
+      setValue('firstname', updateUserData.firstname)
+      setValue('lastname', updateUserData.lastname)
+      setValue('phoneNumber', updateUserData.phoneNumber)
       setValue('points', updateUserData.points || 0)
     } else if (drawerType === 'create') {
       reset()
@@ -46,48 +49,46 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
   }, [drawerType, updateUserData, setValue, reset])
 
   const CreateUser = async data => {
-    const url = ENDPOINT.CREATE_USER
+    const url = ENDPOINT.CREATE_CUSTOMER
 
     const userData = {
-      name: data.name,
-      phone: data.phone,
-      points: Number(data.points),
-      userType: 'user'
+      firstname: data.firstname,
+      lastname: data.lastname,
+      phoneNumber: data.phoneNumber,
+      points: Number(data.points)
     }
 
     setIsLoading(true)
 
-    await axios
-      .post(url, userData, {
+    try {
+      const res = await axios.post(url, userData, {
         headers: {
           Authorization: `Bearer ${authToken.token}`
         }
       })
-      .then(res => {
-        console.log('user added:', userData, res.data)
-        GetUsers()
-        onClose()
-        reset()
-        setUpdateUserData(null)
-      })
-      .catch(err => {
-        toast.error(err.response.data.message ? err.response.data.message : 'Failed to add user')
-        console.log('failed to add user data:', err.response.data)
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
+
+      console.log('User added:', userData, res.data)
+      GetUsers()
+      onClose()
+      reset()
+      setUpdateUserData(null)
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to add user')
+      console.log('Failed to add user data:', err.response?.data)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const UpdateUser = async data => {
-    const url = ENDPOINT.UPDATE_USER
+    const url = ENDPOINT.UPDATE_CUSTOMER
 
     const userData = {
       id: updateUserData.id,
-      name: data.name,
-      phone: data.phone,
-      points: Number(data.points),
-      userType: 'user'
+      firstname: data.firstname,
+      lastname: data.lastname,
+      phoneNumber: data.phoneNumber,
+      points: Number(data.points)
     }
 
     setIsLoading(true)
@@ -100,13 +101,13 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
         }
       })
 
-      console.log('user updated:', res.data)
+      console.log('User updated:', res.data)
       GetUsers()
       onClose()
       setUpdateUserData(null)
     } catch (err) {
-      toast.error(err.response.data.message ? err.response.data.message : 'Failed to update user')
-      console.log('failed to update user data:', err.response)
+      toast.error(err.response?.data?.message || 'Failed to update user')
+      console.log('Failed to update user data:', err.response)
     } finally {
       setIsLoading(false)
     }
@@ -122,29 +123,49 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
         className='flex flex-col gap-6'
       >
         <Controller
-          name='name'
+          name='firstname'
           control={control}
           render={({ field }) => (
             <CustomTextField
               {...field}
               fullWidth
-              label='Name'
-              placeholder='Enter full name'
+              label='First Name'
+              placeholder='Enter first name'
               onChange={e => {
                 field.onChange(e.target.value)
                 errorState !== null && setErrorState(null)
               }}
-              {...((errors.name || errorState !== null) && {
-                error: true
-
-                // helperText: errors?.name?.message || errorState?.message[0]
+              {...((errors.firstname || errorState !== null) && {
+                error: true,
+                helperText: errors?.firstname?.message || errorState?.message
               })}
             />
           )}
         />
 
         <Controller
-          name='phone'
+          name='lastname'
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              label='Last Name'
+              placeholder='Enter last name'
+              onChange={e => {
+                field.onChange(e.target.value)
+                errorState !== null && setErrorState(null)
+              }}
+              {...((errors.lastname || errorState !== null) && {
+                error: true,
+                helperText: errors?.lastname?.message || errorState?.message
+              })}
+            />
+          )}
+        />
+
+        <Controller
+          name='phoneNumber'
           control={control}
           render={({ field }) => (
             <CustomTextField
@@ -152,15 +173,14 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
               fullWidth
               type='number'
               label='Phone Number'
-              placeholder='Enter phone number'
+              placeholder='Enter phoneNumber number'
               onChange={e => {
                 field.onChange(e.target.value)
                 errorState !== null && setErrorState(null)
               }}
-              {...((errors.phone || errorState !== null) && {
-                error: true
-
-                // helperText: errors?.phone?.message || errorState?.message[0]
+              {...((errors.phoneNumber || errorState !== null) && {
+                error: true,
+                helperText: errors?.phoneNumber?.message || errorState?.message
               })}
             />
           )}
@@ -187,7 +207,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
         <Button fullWidth variant='contained' type='submit'>
           {isLoading ? (
             <CircularProgress color='text' size={20} />
-          ) : drawerType == 'update' ? (
+          ) : drawerType === 'update' ? (
             'Update User'
           ) : (
             'Add User'
@@ -206,11 +226,11 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
           onClose()
           reset()
           setUpdateUserData(null)
-          setValue()
         }}
       >
         {DrawerList}
       </Drawer>
+      <ToastContainer />
     </>
   )
 }
