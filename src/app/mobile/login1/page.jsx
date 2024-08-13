@@ -5,14 +5,10 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import axios from 'axios'
-
 import { toast } from 'react-toastify'
-
-import { CircularProgress } from '@mui/material'
+import { Alert, CircularProgress, Typography } from '@mui/material'
 
 import { ENDPOINT } from '@/endpoints'
-
-import appLogo from '../../../../public/appLogo.png'
 
 export default function Page() {
   const router = useRouter()
@@ -51,11 +47,18 @@ export default function Page() {
           style={{
             fontSize: '20px',
             lineHeight: '29px',
-            marginTop: '12px'
+            marginTop: '12px',
+            textAlign: 'center' // Added to center-align text
           }}
         >
           Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
         </p>
+
+        <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+          <Typography variant='body2' color='primary'>
+            Phone: <span className='font-medium'>9876543210</span>
+          </Typography>
+        </Alert>
 
         <div style={{ width: '100%', marginTop: '36px' }}>
           <p
@@ -105,9 +108,7 @@ export default function Page() {
             height: '50px',
             cursor: 'pointer'
           }}
-          onClick={() => {
-            GetOTP()
-          }}
+          onClick={GetOTP}
         >
           {isLoading ? (
             <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
@@ -120,7 +121,8 @@ export default function Page() {
           style={{
             fontSize: '18px',
             lineHeight: '26px',
-            marginTop: '30px'
+            marginTop: '30px',
+            textAlign: 'center' // Added to center-align text
           }}
         >
           By logging in, you agree to Beercafe <strong>terms and conditions</strong> & <strong>privacy policy.</strong>
@@ -133,7 +135,6 @@ export default function Page() {
 const container = { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }
 
 const bottomBox = {
-  height: '54%',
   borderTopLeftRadius: '40px',
   borderTopRightRadius: '40px',
   backgroundColor: '#FFCA5C',
