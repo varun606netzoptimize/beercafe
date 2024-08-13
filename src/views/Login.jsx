@@ -269,7 +269,7 @@ const LoginV2 = ({ mode }) => {
             <Divider className='gap-2 text-textPrimary'>or</Divider>
 
             <div className='flex justify-center items-center flex-wrap gap-2'>
-              <Typography color='primary' component={Link} href='/userLogin'>
+              <Typography color='primary' component={Link} href='/mobile/login1'>
                 Login as a user
               </Typography>
             </div>

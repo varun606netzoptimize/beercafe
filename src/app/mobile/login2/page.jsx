@@ -36,6 +36,8 @@ export default function Page() {
       const response = await axios.post(url, userData)
 
       toast.success('Logged in successfully')
+
+      // Add a redirect after successful login if necessary
     } catch (error) {
       console.log(error)
       toast.error('Failed to verify OTP')
@@ -46,7 +48,7 @@ export default function Page() {
 
   return (
     <div style={container}>
-      <div style={{ height: '60%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={appLogo.src} alt='App Logo' width={197} height={224} />
       </div>
       <div style={bottomBox}>
@@ -93,7 +95,7 @@ export default function Page() {
           )}
         </div>
 
-        <p style={{ fontSize: '18px', lineHeight: '26px', marginTop: '30px' }}>
+        <p style={{ fontSize: '18px', lineHeight: '26px', marginTop: '30px', textAlign: 'center' }}>
           We sent One Time Password to {phone}{' '}
           <strong style={{ cursor: 'pointer' }} onClick={() => router.back()}>
             change number
@@ -107,12 +109,12 @@ export default function Page() {
 const container = { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }
 
 const bottomBox = {
-  height: '40%',
   borderTopLeftRadius: '40px',
   borderTopRightRadius: '40px',
   backgroundColor: '#FFCA5C',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '32px'
+  padding: '32px',
+  width: '100%' // Ensure it takes full width
 }
