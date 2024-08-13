@@ -6,13 +6,17 @@ const prisma = new PrismaClient()
 
 export async function GET(req) {
   try {
-    // Extract pagination and sorting parameters from query
+    // Extract pagination, sorting, and search parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
     const sortBy = url.searchParams.get('sortBy') || 'name'
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
     const ownerId = url.searchParams.get('ownerId')
+    let search = url.searchParams.get('search') || ''
+
+    // Trim and format the search query
+    search = search.trim().replace(/\s+/g, ' ')
 
     // Validate sortBy and sortOrder
     const validSortFields = ['name', 'location', 'createdAt']
@@ -38,7 +42,16 @@ export async function GET(req) {
               }
             }
           }
-        }
+        },
+        AND: [
+          {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' } },
+              { address: { contains: search, mode: 'insensitive' } },
+              { location: { contains: search, mode: 'insensitive' } }
+            ]
+          }
+        ]
       },
       include: {
         cafeUsers: {
@@ -74,7 +87,16 @@ export async function GET(req) {
       where: {
         parentId: {
           in: ownedCafeIds
-        }
+        },
+        AND: [
+          {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' } },
+              { address: { contains: search, mode: 'insensitive' } },
+              { location: { contains: search, mode: 'insensitive' } }
+            ]
+          }
+        ]
       },
       include: {
         cafeUsers: {

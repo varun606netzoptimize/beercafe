@@ -20,7 +20,9 @@ export const ENDPOINT = {
   GET_CUSTOMERS: baseURL + '/api/admin/getCustomers/',
   GET_MY_CUSTOMERS: baseURL + '/api/admin/getCafeCustomers',
   CREATE_CUSTOMER: baseURL + '/api/admin/createCustomer',
-  UPDATE_CUSTOMER: baseURL + '/api/admin/updateCustomer'
+  UPDATE_CUSTOMER: baseURL + '/api/admin/updateCustomer',
+  GENERATE_OTP: baseURL + '/api/auth/generateOTP',
+  VERIFY_OTP: baseURL + '/api/auth/verifyOTP'
 }
 
 export const POS_ENDPOINTS = {

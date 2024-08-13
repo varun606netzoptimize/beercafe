@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, Typography, CircularProgress } from '@mui/material'
+import { Box, Button, Card, Typography, CircularProgress, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -15,7 +15,7 @@ import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 import AddOwnerDrawer from './AddUserDrawer'
 
 export default function Page() {
-  const { authToken, tokenCheck, cafes } = useContext(AuthContext)
+  const { authToken, tokenCheck, cafes, setPageTitle } = useContext(AuthContext)
   const [owners, setOwners] = useState({ users: [], pagination: null })
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -38,7 +38,8 @@ export default function Page() {
   })
 
   const [totalRows, setTotalRows] = useState(0)
-
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
 
@@ -59,11 +60,22 @@ export default function Page() {
   useEffect(() => {
     if (authToken.token) {
       GetUsers()
+      setPageTitle('Manage Users')
     }
-  }, [authToken, paginationModel.page, sortBy, sortOrder])
+  }, [authToken, paginationModel.page, sortBy, sortOrder, debouncedSearch])
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search) // Update the debounced search after delay
+    }, 500) // 500ms delay
+
+    return () => {
+      clearTimeout(handler) // Clear the timeout on cleanup to prevent unnecessary API calls
+    }
+  }, [search])
 
   const GetUsers = () => {
-    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner`
+    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner&search=${debouncedSearch}`
 
     console.log(url)
 
@@ -140,30 +152,6 @@ export default function Page() {
       renderCell: params => <Box>{params?.row?.cafes[0]?.name}</Box>
     },
     {
-      field: 'branches_owned',
-      headerName: 'Branches',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          {params?.row?.userType == 'owner' && (
-            <Button
-              variant='outlined'
-              color='info'
-              size='small'
-              sx={{ marginRight: 2 }}
-              onClick={() => {
-                setAllCafes(params?.row?.branches_owned)
-                setOpen(true)
-              }}
-            >
-              View
-            </Button>
-          )}
-        </Box>
-      ),
-      sortable: false
-    },
-    {
       field: 'actions',
       headerName: 'Actions',
       flex: 1,
@@ -209,7 +197,15 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={headerBox}>
-          <Typography variant='h5'>Manage Cafe Users</Typography>
+          <TextField
+            id='outlined-basic'
+            label='Search'
+            variant='outlined'
+            size='small'
+            onChange={e => {
+              setSearch(e.target.value)
+            }}
+          />
           <Button
             variant='contained'
             size='medium'

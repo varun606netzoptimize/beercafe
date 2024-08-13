@@ -13,7 +13,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
-export default function ViewManagerModal({ open, setOpen, managers }) {
+export default function ViewManagerModal({ open, setOpen, staff }) {
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10
@@ -33,7 +33,7 @@ export default function ViewManagerModal({ open, setOpen, managers }) {
   // Slice the data for pagination
   const { page, pageSize } = paginationModel
   const startIndex = page * pageSize
-  const paginatedData = managers?.slice(startIndex, startIndex + pageSize)
+  const paginatedData = staff?.staff?.slice(startIndex, startIndex + pageSize)
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function ViewManagerModal({ open, setOpen, managers }) {
         onClose={handleClose}
         aria-describedby='alert-dialog-slide-description'
       >
-        <DialogTitle>{'Branch Cafes'}</DialogTitle>
+        <DialogTitle>{staff?.name}</DialogTitle>
         <DialogContent>
           <DataGrid
             rows={paginatedData}
@@ -56,7 +56,7 @@ export default function ViewManagerModal({ open, setOpen, managers }) {
             onPaginationModelChange={newPaginationModel => {
               setPaginationModel(newPaginationModel)
             }}
-            rowCount={managers?.length}
+            rowCount={staff?.staff?.length}
           />
         </DialogContent>
         <DialogActions>

@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -17,7 +17,7 @@ import AddMyCafeDrawer from './AddMyCafeDrawer'
 import ViewMyCustomers from './ViewMyCustomers'
 
 export default function Page() {
-  const { authToken, tokenCheck, currentUser } = useContext(AuthContext)
+  const { authToken, tokenCheck, currentUser, setPageTitle } = useContext(AuthContext)
 
   const [isDeleting, setDeleting] = useState(false)
   const [myCafes, setMyCafes] = useState({ cafes: [], pagination: {} })
@@ -26,11 +26,17 @@ export default function Page() {
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [totalRows, setTotalRows] = useState(0)
   const [viewManagers, setViewManagers] = useState(false)
-  const [managers, setManagers] = useState(null)
+
+  const [staff, setStaff] = useState({
+    name: null,
+    staff: []
+  })
 
   const [drawerType, setDrawerType] = useState('create')
   const [updateCafeData, setUpdateCafeData] = useState(null)
   const [groupedCafes, setGroupedCafes] = useState([])
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -56,14 +62,24 @@ export default function Page() {
   useEffect(() => {
     if (authToken.token) {
       if (currentUser) {
-        console.log('hit')
         GetMyCafes()
+        setPageTitle('Manage My Cafes')
       }
     }
-  }, [authToken, paginationModel.page, sortBy, sortOrder, currentUser])
+  }, [authToken, paginationModel.page, sortBy, sortOrder, currentUser, debouncedSearch])
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search) // Update the debounced search after delay
+    }, 500) // 500ms delay
+
+    return () => {
+      clearTimeout(handler) // Clear the timeout on cleanup to prevent unnecessary API calls
+    }
+  }, [search])
 
   async function GetMyCafes() {
-    const url = `${ENDPOINT.GET_MY_CAFES}?ownerId=${currentUser?.id}&page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    const url = `${ENDPOINT.GET_MY_CAFES}?ownerId=${currentUser?.id}&page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${debouncedSearch}`
 
     setIsLoading(true)
 
@@ -160,65 +176,26 @@ export default function Page() {
     { field: 'location', headerName: 'Location', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
     {
-      field: 'owner',
-      headerName: 'Owner',
+      field: 'staff',
+      headerName: 'Staff',
       flex: 1,
       renderCell: params => (
         <Box>
-          {params.row.owners.length > 0 ? (
+          {params.row.owners.length > 0 || params.row.users.length > 0 ? (
             <Button
               variant='outlined'
               color='info'
               size='small'
               sx={{ marginRight: 2 }}
               onClick={() => {
+                const combinedManagers = [...params.row.owners, ...params.row.users]
+
                 setViewManagers(true)
-                setManagers(params.row.owners)
-              }}
-            >
-              View
-            </Button>
-          ) : (
-            <p style={{ color: '#808390' }}>No owner assigned</p>
-          )}
-        </Box>
-      )
-    },
-    {
-      field: 'customers',
-      headerName: 'Customers',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          <Button
-            variant='outlined'
-            color='info'
-            size='small'
-            sx={{ marginRight: 2 }}
-            onClick={() => {
-              GetMyCustomers(params?.row?.id)
-            }}
-          >
-            View
-          </Button>
-        </Box>
-      )
-    },
-    {
-      field: 'manager',
-      headerName: 'Manager',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          {params.row.users.length > 0 ? (
-            <Button
-              variant='outlined'
-              color='info'
-              size='small'
-              sx={{ marginRight: 2 }}
-              onClick={() => {
-                setViewManagers(true)
-                setManagers(params.row.users)
+
+                setStaff({
+                  name: params.row.name,
+                  staff: combinedManagers
+                })
               }}
             >
               View
@@ -276,7 +253,15 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={titleBoxStyle}>
-          <Typography variant='h5'>Manage Cafe</Typography>
+          <TextField
+            id='outlined-basic'
+            label='Search'
+            variant='outlined'
+            size='small'
+            onChange={e => {
+              setSearch(e.target.value)
+            }}
+          />
           <Button
             variant='contained'
             size='medium'
@@ -313,7 +298,7 @@ export default function Page() {
         />
       )}
 
-      <ViewManagerModal open={viewManagers} setOpen={setViewManagers} managers={managers} />
+      <ViewManagerModal open={viewManagers} setOpen={setViewManagers} staff={staff} />
 
       <ViewMyCustomers open={viewCustomers} setOpen={setViewCustomers} customers={customers} />
 

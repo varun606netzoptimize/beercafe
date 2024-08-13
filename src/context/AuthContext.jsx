@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     role: null
   })
 
+  const [pageTitle, setPageTitle] = useState('')
   const [tokenCheck, setTokenCheck] = useState(false)
   const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
   const [managerDetails, setManagerDetails] = useState(null)
@@ -110,7 +111,9 @@ export const AuthProvider = ({ children }) => {
         managerDetails,
         managers,
         setManagers,
-        currentUser
+        currentUser,
+        setPageTitle,
+        pageTitle
       }}
     >
       {children}
