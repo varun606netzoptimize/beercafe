@@ -6,12 +6,13 @@ const prisma = new PrismaClient()
 
 export async function GET(req) {
   try {
-    // Extract pagination and sorting parameters from query
+    // Extract pagination, sorting, and search parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
     const sortBy = url.searchParams.get('sortBy') || 'firstname'
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
+    const search = url.searchParams.get('search') || '' // Get search query
 
     // Validate sortBy and sortOrder
     const validSortFields = ['firstname', 'lastname', 'createdAt', 'phoneNumber', 'points']
@@ -19,8 +20,23 @@ export async function GET(req) {
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'firstname'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
 
-    // Fetch customers with pagination and sorting
+    // Fetch customers with pagination, sorting, and search
     const customers = await prisma.customer.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { firstname: { contains: search, mode: 'insensitive' } }, // Search by first name
+              { lastname: { contains: search, mode: 'insensitive' } }, // Search by last name
+              { phoneNumber: { contains: search, mode: 'insensitive' } }, // Search by phone number
+              // Adjust for points field if it's a number
+              ...(isNaN(Number(search))
+                ? [] // No search criteria for points if `search` is not a number
+                : [{ points: { equals: Number(search) } }]) // Search by points as an exact match
+            ]
+          }
+        ]
+      },
       orderBy: { [sortField]: sortDirection },
       skip: (page - 1) * limit,
       take: limit,
@@ -70,8 +86,21 @@ export async function GET(req) {
       }
     })
 
-    // Get the total number of customers
-    const totalCustomers = await prisma.customer.count()
+    // Get the total number of customers with search criteria
+    const totalCustomers = await prisma.customer.count({
+      where: {
+        AND: [
+          {
+            OR: [
+              { firstname: { contains: search, mode: 'insensitive' } },
+              { lastname: { contains: search, mode: 'insensitive' } },
+              { phoneNumber: { contains: search, mode: 'insensitive' } },
+              ...(isNaN(Number(search)) ? [] : [{ points: { equals: Number(search) } }])
+            ]
+          }
+        ]
+      }
+    })
 
     // Calculate total number of pages
     const totalPages = Math.ceil(totalCustomers / limit)

@@ -64,6 +64,7 @@ const Logo = ({ color }) => {
         isHovered={isHovered}
         isCollapsed={layout === 'collapsed'}
         transitionDuration={transitionDuration}
+        style={{ marginTop: '5px' }}
       >
         {themeConfig.templateName}
       </LogoText>

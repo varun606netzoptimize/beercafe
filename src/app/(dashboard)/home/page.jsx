@@ -47,17 +47,17 @@ const mockBarData = {
 }
 
 export default function Page() {
-  const { authToken, tokenCheck } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle } = useContext(AuthContext)
 
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
         redirect('/login')
       }
+
+      setPageTitle('Dashboard')
     }
   }, [authToken])
-
-  console.log(authToken.role)
 
   if (!authToken.token) {
     return null

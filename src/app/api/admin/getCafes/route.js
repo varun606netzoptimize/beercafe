@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 
 export async function GET(req) {
   try {
-    // Extract pagination and sorting parameters from query
+    // Extract pagination, sorting, and search parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
@@ -14,6 +14,7 @@ export async function GET(req) {
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
     const ownerId = url.searchParams.get('ownerId')
     const parentId = url.searchParams.get('parentId')
+    const search = url.searchParams.get('search') || ''
 
     // Validate sortBy and sortOrder
     const validSortFields = ['name', 'location', 'createdAt']
@@ -21,11 +22,19 @@ export async function GET(req) {
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
 
-    // Build the filter object based on ownerId and parentId
+    // Build the filter object based on ownerId, parentId, and search
     const filters = {}
 
     if (ownerId) filters.ownerId = ownerId
     if (parentId) filters.parentId = parentId
+
+    if (search) {
+      filters.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { location: { contains: search, mode: 'insensitive' } },
+        { address: { contains: search, mode: 'insensitive' } }
+      ]
+    }
 
     // Fetch cafes with pagination and sorting, including associated users and parent cafe owner
     const cafes = await prisma.cafe.findMany({

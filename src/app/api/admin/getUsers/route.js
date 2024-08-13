@@ -2,18 +2,17 @@ import { NextResponse } from 'next/server'
 
 import { PrismaClient } from '@prisma/client'
 
-import AddCafeDrawer from '@/app/(dashboard)/cafes/AddCafeDrawer'
-
 const prisma = new PrismaClient()
 
 export async function GET(req) {
   try {
-    // Extract pagination and sorting parameters from query
+    // Extract pagination, sorting, and search parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
     const sortBy = url.searchParams.get('sortBy') || 'name'
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
+    const search = url.searchParams.get('search') || '' // Get search query
     const excludedUserTypeId = '66b3583586109427057d989f' // Define the userTypeId to exclude
 
     // Validate sortBy and sortOrder
@@ -22,12 +21,26 @@ export async function GET(req) {
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
     const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
 
-    // Fetch users with pagination and sorting
+    // Fetch users with pagination, sorting, and search
     const users = await prisma.user.findMany({
       where: {
         userTypeId: {
           not: excludedUserTypeId // Exclude users with the specified userTypeId
-        }
+        },
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } }, // Search by user name
+          { email: { contains: search, mode: 'insensitive' } }, // Search by email
+          { phoneNumber: { contains: search, mode: 'insensitive' } }, // Search by phone number
+          {
+            cafeUsers: {
+              some: {
+                cafe: {
+                  name: { contains: search, mode: 'insensitive' } // Search by cafe name
+                }
+              }
+            }
+          }
+        ]
       },
       orderBy: { [sortField]: sortDirection },
       skip: (page - 1) * limit,
@@ -60,12 +73,26 @@ export async function GET(req) {
       }
     })
 
-    // Get the total number of users excluding the specified userTypeId
+    // Get the total number of users excluding the specified userTypeId and including search criteria
     const totalUsers = await prisma.user.count({
       where: {
         userTypeId: {
           not: excludedUserTypeId // Exclude users with the specified userTypeId
-        }
+        },
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { phoneNumber: { contains: search, mode: 'insensitive' } },
+          {
+            cafeUsers: {
+              some: {
+                cafe: {
+                  name: { contains: search, mode: 'insensitive' }
+                }
+              }
+            }
+          }
+        ]
       }
     })
 

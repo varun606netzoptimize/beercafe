@@ -44,7 +44,7 @@ export default function ViewCafeModal({ open, setOpen, cafes }) {
         onClose={handleClose}
         aria-describedby='alert-dialog-slide-description'
       >
-        <DialogTitle>{'Branch Cafes'}</DialogTitle>
+        <DialogTitle>{'Cafe Name'}</DialogTitle>
         <DialogContent>
           <DataGrid
             rows={paginatedData} // Use sliced data

@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
 
 import { DataGrid } from '@mui/x-data-grid'
 
@@ -16,7 +16,7 @@ import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 import ViewCafeModal from './ViewCafeModal'
 
 export default function Page() {
-  const { authToken, tokenCheck } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle } = useContext(AuthContext)
   const [users, setUsers] = useState({ users: [], pagination: null })
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -37,7 +37,8 @@ export default function Page() {
 
   const [sortBy, setSortBy] = useState('firstname')
   const [sortOrder, setSortOrder] = useState('asc')
-
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [cafes, setCafes] = useState(null)
   const [showCafes, setShowCafes] = useState(false)
 
@@ -56,11 +57,22 @@ export default function Page() {
   useEffect(() => {
     if (authToken.token) {
       GetUsers()
+      setPageTitle('Manager Customers')
     }
-  }, [authToken, paginationModel.page, sortBy, sortOrder])
+  }, [authToken, paginationModel.page, sortBy, sortOrder, debouncedSearch])
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search) // Update the debounced search after delay
+    }, 500) // 500ms delay
+
+    return () => {
+      clearTimeout(handler) // Clear the timeout on cleanup to prevent unnecessary API calls
+    }
+  }, [search])
 
   const GetUsers = () => {
-    const url = `${ENDPOINT.GET_CUSTOMERS}?sortOrder=${sortOrder}&sortBy=${sortBy}`
+    const url = `${ENDPOINT.GET_CUSTOMERS}?sortOrder=${sortOrder}&sortBy=${sortBy}&search=${debouncedSearch}`
 
     setIsLoading(true)
     axios
@@ -189,7 +201,15 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={titleBoxStyle}>
-          <Typography variant='h5'>Manage Customers</Typography>
+          <TextField
+            id='outlined-basic'
+            label='Search'
+            variant='outlined'
+            size='small'
+            onChange={e => {
+              setSearch(e.target.value)
+            }}
+          />
           <Button
             variant='contained'
             size='medium'

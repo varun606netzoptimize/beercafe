@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, Card, CircularProgress, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -16,7 +16,7 @@ import ViewManagerModal from './ViewManagerModal'
 import DeleteCafe from './DeleteCafe'
 
 export default function Page() {
-  const { authToken, tokenCheck, cafes, setCafes } = useContext(AuthContext)
+  const { authToken, tokenCheck, cafes, setCafes, setPageTitle } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [totalRows, setTotalRows] = useState(0)
@@ -36,8 +36,14 @@ export default function Page() {
   const [drawerType, setDrawerType] = useState('create')
   const [groupedCafes, setGroupedCafes] = useState([])
 
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [viewManagers, setViewManagers] = useState(false)
-  const [managers, setManagers] = useState(null)
+
+  const [staff, setStaff] = useState({
+    name: null,
+    staff: []
+  })
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [deleteCafeData, setDeleteCafeData] = useState(null)
@@ -53,11 +59,22 @@ export default function Page() {
   useEffect(() => {
     if (authToken.token) {
       GetCafe()
+      setPageTitle('Manage Cafes')
     }
-  }, [authToken, paginationModel.page, sortBy, sortOrder])
+  }, [authToken, paginationModel.page, sortBy, sortOrder, debouncedSearch])
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search) // Update the debounced search after delay
+    }, 500) // 500ms delay
+
+    return () => {
+      clearTimeout(handler) // Clear the timeout on cleanup to prevent unnecessary API calls
+    }
+  }, [search])
 
   const GetCafe = () => {
-    const url = `${ENDPOINT.GET_CAFES}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    const url = `${ENDPOINT.GET_CAFES}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${debouncedSearch}`
 
     setIsLoading(true)
 
@@ -137,51 +154,32 @@ export default function Page() {
     { field: 'location', headerName: 'Location', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
     {
-      field: 'owner',
-      headerName: 'Owner',
+      field: 'staff',
+      headerName: 'Staff',
       flex: 1,
       renderCell: params => (
         <Box>
-          {params.row.owners.length > 0 ? (
+          {params.row.owners.length > 0 || params.row.users.length > 0 ? (
             <Button
               variant='outlined'
               color='info'
               size='small'
               sx={{ marginRight: 2 }}
               onClick={() => {
+                const combinedManagers = [...params.row.owners, ...params.row.users]
+
                 setViewManagers(true)
-                setManagers(params.row.owners)
+
+                setStaff({
+                  name: params.row.name,
+                  staff: combinedManagers
+                })
               }}
             >
               View
             </Button>
           ) : (
-            <p style={{ color: '#808390' }}>No owner assigned</p>
-          )}
-        </Box>
-      )
-    },
-    {
-      field: 'manager',
-      headerName: 'Manager',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          {params.row.users.length > 0 ? (
-            <Button
-              variant='outlined'
-              color='info'
-              size='small'
-              sx={{ marginRight: 2 }}
-              onClick={() => {
-                setViewManagers(true)
-                setManagers(params.row.users)
-              }}
-            >
-              View
-            </Button>
-          ) : (
-            <p style={{ color: '#808390' }}>No manager assigned</p>
+            <p style={{ color: '#808390' }}>No staff assigned</p>
           )}
         </Box>
       )
@@ -233,7 +231,15 @@ export default function Page() {
     <div className='flex flex-col gap-6'>
       <Card>
         <Box sx={titleBoxStyle}>
-          <Typography variant='h5'>Manage Cafe</Typography>
+          <TextField
+            id='outlined-basic'
+            label='Search'
+            variant='outlined'
+            size='small'
+            onChange={e => {
+              setSearch(e.target.value)
+            }}
+          />
           <Button
             variant='contained'
             size='medium'
@@ -280,7 +286,7 @@ export default function Page() {
         updateCafeData={updateCafeData}
       />
 
-      <ViewManagerModal open={viewManagers} setOpen={setViewManagers} managers={managers} />
+      <ViewManagerModal open={viewManagers} setOpen={setViewManagers} staff={staff} />
 
       <DeleteCafe
         openDeleteDialog={openDeleteDialog}
