@@ -15,8 +15,7 @@ import ConfirmDelete from '@/components/Modal/ConfirmDelete'
 import AddOwnerDrawer from './AddUserDrawer'
 
 export default function Page() {
-  const { authToken, tokenCheck, cafes, setPageTitle } = useContext(AuthContext)
-  const [owners, setOwners] = useState({ users: [], pagination: null })
+  const { authToken, tokenCheck, cafes, setPageTitle, users, setUsers } = useContext(AuthContext)
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -88,7 +87,7 @@ export default function Page() {
         }
       })
       .then(res => {
-        setOwners({ users: res.data.users, pagination: res.data.pagination })
+        setUsers({ users: res.data.users, pagination: res.data.pagination })
         setTotalRows(res.data.pagination.totalUsers)
       })
       .catch(err => {
@@ -113,7 +112,7 @@ export default function Page() {
         }
       })
       .then(res => {
-        setOwners(prevOwners => ({
+        setUsers(prevOwners => ({
           users: prevOwners.users.filter(user => user.id !== deleteUserData.id),
           pagination: {
             ...prevOwners.pagination,
@@ -229,7 +228,7 @@ export default function Page() {
           <>
             <DataGrid
               loading={isLoading}
-              rows={owners.users}
+              rows={users.users}
               columns={columns}
               pagination
               paginationModel={paginationModel}

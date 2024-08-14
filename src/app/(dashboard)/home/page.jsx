@@ -47,7 +47,7 @@ const mockBarData = {
 }
 
 export default function Page() {
-  const { authToken, tokenCheck, setPageTitle } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle, cafes, users } = useContext(AuthContext)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -70,19 +70,76 @@ export default function Page() {
           <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
               <Typography variant='h6'>Total Cafes</Typography>
-              <Typography variant='h4'>6</Typography>
+              <Typography variant='h4'>
+                {cafes?.pagination?.totalCafes ? (
+                  cafes?.pagination?.totalCafes
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
             </Card>
           </Grid>
           <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#28C76F' }}>
-              <Typography variant='h6'>Total Branches</Typography>
-              <Typography variant='h4'>12</Typography>
+              <Typography variant='h6'>Parent Cafes</Typography>
+              <Typography variant='h4'>
+                {cafes?.pagination?.totalCafes ? (
+                  cafes?.cafes?.filter(cafe => cafe.parentId === null)?.length
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
             </Card>
           </Grid>
           <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#808390' }}>
-              <Typography variant='h6'>Active Users</Typography>
-              <Typography variant='h4'>12</Typography>
+            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#00BAD1' }}>
+              <Typography variant='h6'>Branch Cafes</Typography>
+              <Typography variant='h4'>
+                {cafes?.pagination?.totalCafes ? (
+                  cafes?.cafes?.filter(cafe => cafe.parentId !== null)?.length
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
+              <Typography variant='h6'>Total Users</Typography>
+              <Typography variant='h4'>
+                {users?.pagination?.totalUsers ? (
+                  users?.pagination?.totalUsers
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#28C76F' }}>
+              <Typography variant='h6'>Cafe Owners</Typography>
+              <Typography variant='h4'>
+                {users?.pagination?.totalUsers ? (
+                  users?.users?.filter(user => user.userType === 'owner')?.length
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#00BAD1' }}>
+              <Typography variant='h6'>Cafe Staff</Typography>
+              <Typography variant='h4'>
+                {users?.pagination?.totalUsers ? (
+                  users?.users?.filter(user => user.userType !== 'owner')?.length
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
             </Card>
           </Grid>
         </Grid>

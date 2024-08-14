@@ -21,10 +21,10 @@ export const AuthProvider = ({ children }) => {
   const [pageTitle, setPageTitle] = useState('')
   const [tokenCheck, setTokenCheck] = useState(false)
   const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
-  const [managerDetails, setManagerDetails] = useState(null)
-  const [managers, setManagers] = useState({ managers: [], pagination: null })
-
+  const [users, setUsers] = useState({ users: [], pagination: null })
   const [currentUser, setCurrentUser] = useState(null)
+  const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
+  const [brands, setBrands] = useState(null)
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -80,6 +80,8 @@ export const AuthProvider = ({ children }) => {
       .finally(() => {
         setTokenCheck(true)
         GetCafe()
+        GetUsers()
+        GetBrands()
       })
   }
 
@@ -100,6 +102,40 @@ export const AuthProvider = ({ children }) => {
       })
   }
 
+  const GetUsers = async () => {
+    const url = ENDPOINT.GET_USERS
+
+    await axios
+      .get(url, {
+        headers: {
+          Authorization: 'Bearer ' + authToken.token
+        }
+      })
+      .then(res => {
+        setUsers({ users: res.data.users, pagination: res.data.pagination })
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+  }
+
+  const GetBrands = async () => {
+    const url = ENDPOINT.GET_BRANDS
+
+    await axios
+      .get(url, {
+        headers: {
+          Authorization: 'Bearer ' + authToken.token
+        }
+      })
+      .then(res => {
+        setBrands(res.data)
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -108,12 +144,15 @@ export const AuthProvider = ({ children }) => {
         tokenCheck,
         cafes,
         setCafes,
-        managerDetails,
-        managers,
-        setManagers,
+        users,
+        setUsers,
         currentUser,
         setPageTitle,
-        pageTitle
+        pageTitle,
+        cafeProducts,
+        setCafeProducts,
+        brands,
+        setBrands
       }}
     >
       {children}
