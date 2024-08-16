@@ -57,6 +57,7 @@ model User {
 
   userType  UserType   @relation(fields: [userTypeId], references: [id])
   cafeUsers CafeUser[]
+  CustomerPointsHistory CustomerPointsHistory[]
 
   @@map("users")
 }
@@ -85,6 +86,21 @@ model Customer {
   customerRFID  CustomerRFID[]
   CafeCustomers CafeCustomers[]
   Order         Order[]
+  CustomerPointsHistory CustomerPointsHistory[]
+}
+
+model CustomerPointsHistory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  customerId String   @db.ObjectId
+  userId     String?   @db.ObjectId
+  amount     Int
+  action     String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  Customer Customer @relation(fields: [customerId], references: [id])
+  User     User?     @relation(fields: [userId], references: [id])
 }
 
 model Otp {
