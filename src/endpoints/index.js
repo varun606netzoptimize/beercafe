@@ -26,7 +26,8 @@ export const ENDPOINT = {
   GET_CAFE_PRODUCTS: baseURL + '/api/admin/cafeProducts',
   GET_BRANDS: baseURL + '/api/admin/getBrands',
   CREATE_PRODUCT: baseURL + '/api/admin/createProduct',
-  DELETE_PRODUCT: baseURL + '/api/admin/deleteProduct'
+  DELETE_PRODUCT: baseURL + '/api/admin/deleteProduct',
+  ADD_PRODUCT_VARIATION: baseURL + '/api/admin/addProductVariation'
 }
 
 export const POS_ENDPOINTS = {

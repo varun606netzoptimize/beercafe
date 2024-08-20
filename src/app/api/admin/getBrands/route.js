@@ -13,8 +13,6 @@ export async function GET() {
       }
     })
 
-    console.log('Brands with Products:', brands)
-
     // Send the brands data as JSON response
     return NextResponse.json(brands)
   } catch (error) {

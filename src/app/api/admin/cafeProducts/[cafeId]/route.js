@@ -6,12 +6,15 @@ export async function GET(req, { params }) {
   const { cafeId } = params
 
   try {
-    // Fetch products for the specified cafe
+    // Fetch products for the specified cafe, including variations and their prices
     const products = await prisma.product.findMany({
       where: {
         cafeId: cafeId
       },
-      include: { Brand: true }
+      include: {
+        Brand: true,
+        variations: true
+      }
     })
 
     return new Response(JSON.stringify(products), { status: 200 })
