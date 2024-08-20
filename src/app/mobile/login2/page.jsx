@@ -54,7 +54,7 @@ export default function Page() {
         <p className='text-lg leading-6'>Enter One Time Password</p>
 
         <input
-          className='w-full h-[46px] rounded-[12px] border-[1.8px] border-black bg-transparent mt-3 px-5 text-lg focus-visible:bg-black'
+          className='w-full h-[46px] rounded-[12px] border-[1.8px] border-black bg-transparent mt-3 px-5 text-lg focus-visible:border-black'
           value={otp}
           onChange={event => setOTP(event.target.value)}
         />
