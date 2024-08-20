@@ -11,6 +11,7 @@ import { AuthContext } from '@/context/AuthContext'
 import AddProductDrawer from './AddProductDrawer'
 import { ENDPOINT } from '@/endpoints'
 import DeleteProduct from './DeleteProduct'
+import ViewProductVariation from './ViewProductVariation'
 
 export default function Page() {
   const { cafeProducts, setCafeProducts, authToken, tokenCheck, currentUser, setPageTitle } = useContext(AuthContext)
@@ -21,6 +22,11 @@ export default function Page() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeletePop, setShowDeletePop] = useState(false)
   const [deleteItem, setDeleteItem] = useState(null)
+
+  const [viewPrice, setViewPrice] = useState(false)
+  const [variations, setVariations] = useState([])
+
+  const [addVariationVisible, setAddVariationVisible] = useState(false)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -105,11 +111,52 @@ export default function Page() {
     {
       field: 'name',
       headerName: 'Product Name',
-      flex: 1
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <p>
+            <strong>{params?.row?.name}</strong>
+          </p>
+        </Box>
+      )
     },
     { field: 'SKU', headerName: 'SKU', flex: 1 },
     { field: 'quantity', headerName: 'Quantity', flex: 1 },
     { field: 'description', headerName: 'Description', flex: 1 },
+    {
+      field: 'price',
+      headerName: 'Price',
+      flex: 1,
+      renderCell: params => (
+        <>
+          {params?.row?.variations?.length ? (
+            <Button
+              variant='outlined'
+              color='info'
+              size='small'
+              onClick={() => {
+                setViewPrice(true)
+                setVariations(params?.row?.variations)
+              }}
+            >
+              View
+            </Button>
+          ) : (
+            <Button
+              variant='contained'
+              color='primary'
+              startIcon={<i className='tabler-cash-register' />}
+              size='small'
+              onClick={() => {
+                setAddVariationVisible(true)
+              }}
+            >
+              Add
+            </Button>
+          )}
+        </>
+      )
+    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -176,6 +223,8 @@ export default function Page() {
         DeleteFunction={DeleteCafeProducts}
         isLoading={isDeleting}
       />
+
+      <ViewProductVariation open={viewPrice} setOpen={setViewPrice} ProductData={variations} />
     </div>
   )
 }
