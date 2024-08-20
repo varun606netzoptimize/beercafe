@@ -47,74 +47,36 @@ export default function Page() {
   }
 
   return (
-    <div style={container}>
-      <div style={{ height: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src={appLogo.src} alt='App Logo' width={197} height={224} />
+    <div>
+      <h4 className='text-2xl md:text-[30px] text-left w-full'>Please enter the OTP</h4>
+
+      <div className='w-full mt-10'>
+        <p className='text-lg leading-6'>Enter One Time Password</p>
+
+        <input
+          className='w-full h-[46px] rounded-[12px] border-[1.8px] border-black bg-transparent mt-3 px-5 text-lg focus-visible:bg-black'
+          value={otp}
+          onChange={event => setOTP(event.target.value)}
+        />
       </div>
-      <div style={bottomBox}>
-        <h4 style={{ fontSize: '30px' }}>Please enter the OTP</h4>
 
-        <div style={{ width: '100%', marginTop: '36px' }}>
-          <p style={{ fontSize: '18px', lineHeight: '26px' }}>Enter One Time Password</p>
-
-          <input
-            style={{
-              width: '100%',
-              height: '46px',
-              borderRadius: '10px',
-              border: '1.8px solid black',
-              backgroundColor: 'transparent',
-              marginTop: '12px',
-              paddingLeft: '20px',
-              paddingRight: '20px',
-              fontSize: '18px'
-            }}
-            value={otp}
-            onChange={event => setOTP(event.target.value)}
-          />
-        </div>
-
-        <div
-          style={{
-            width: '100%',
-            marginTop: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'black',
-            borderRadius: '15px',
-            height: '50px',
-            cursor: 'pointer'
-          }}
-          onClick={GetOTP}
-        >
-          {isLoading ? (
-            <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
-          ) : (
-            <p style={{ color: '#FFCA5C', fontSize: '22px' }}>Login</p>
-          )}
-        </div>
-
-        <p style={{ fontSize: '18px', lineHeight: '26px', marginTop: '30px', textAlign: 'center' }}>
-          We sent One Time Password to {phone}{' '}
-          <strong style={{ cursor: 'pointer' }} onClick={() => router.back()}>
-            change number
-          </strong>
-        </p>
+      <div
+        className='w-full mt-10 flex items-center justify-center bg-black rounded-[12px] h-[50px] cursor-pointer'
+        onClick={GetOTP}
+      >
+        {isLoading ? (
+          <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
+        ) : (
+          <p className='text-[#FFCA5C] text-xl'>Login</p>
+        )}
       </div>
+
+      <p className='text-lg leading-6 mt-8'>
+        We sent One Time Password to {phone} <br />
+        <strong className='cursor-pointer underline' onClick={() => router.back()}>
+          change number
+        </strong>
+      </p>
     </div>
   )
-}
-
-const container = { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }
-
-const bottomBox = {
-  borderTopLeftRadius: '40px',
-  borderTopRightRadius: '40px',
-  backgroundColor: '#FFCA5C',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '32px',
-  width: '100%' // Ensure it takes full width
 }

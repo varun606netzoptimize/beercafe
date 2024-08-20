@@ -36,110 +36,48 @@ export default function Page() {
   }
 
   return (
-    <div style={container}>
-      <div style={{ height: '46%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src='/appLogo.png' alt='App Logo' width={197} height={224} />
-      </div>
-      <div style={bottomBox}>
-        <h4 style={{ fontSize: '30px' }}>Welcome to the BeerCafe</h4>
+    <div>
+      <h4 className='text-2xl md:text-[30px] text-left w-full'>Welcome to the BeerCafe</h4>
 
-        <p
-          style={{
-            fontSize: '20px',
-            lineHeight: '29px',
-            marginTop: '12px',
-            textAlign: 'center' // Added to center-align text
-          }}
-        >
-          Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
-        </p>
+      <p className='text-lg md:text-[20px] mt-3'>
+        Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
+      </p>
 
-        <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+      {/* <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
           <Typography variant='body2' color='primary'>
             Phone: <span className='font-medium'>9876543210</span>
           </Typography>
-        </Alert>
+        </Alert> */}
 
-        <div style={{ width: '100%', marginTop: '36px' }}>
-          <p
-            style={{
-              fontSize: '18px',
-              lineHeight: '26px'
-            }}
-          >
-            Enter your mobile number
-          </p>
+      <div className='w-full mt-10'>
+        <p className='text-base md:text-[18px]'>Enter your mobile number</p>
 
-          <input
-            style={{
-              width: '100%',
-              height: '46px',
-              borderRadius: '10px',
-              border: '1.8px solid black',
-              backgroundColor: 'transparent',
-              marginTop: '12px',
-              paddingLeft: '20px',
-              paddingRight: '20px',
-              fontSize: '18px'
-            }}
-            onChange={event => setPhone(event.target.value)}
-          />
+        <input
+          className='w-full rounded-[12px] border bg-[#FFCA5C] border-black my-3 py-3 px-3 text-lg max-h-12 focus-visible:border-black'
+          onChange={event => setPhone(event.target.value)}
+        />
 
-          <p
-            style={{
-              fontSize: '16px',
-              lineHeight: '23px',
-              marginTop: '14px'
-            }}
-          >
-            We will send an OTP for verification.
-          </p>
-        </div>
-
-        <div
-          style={{
-            width: '100%',
-            marginTop: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'black',
-            borderRadius: '15px',
-            height: '50px',
-            cursor: 'pointer'
-          }}
-          onClick={GetOTP}
-        >
-          {isLoading ? (
-            <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
-          ) : (
-            <p style={{ color: '#FFCA5C', fontSize: '22px' }}>Login</p>
-          )}
-        </div>
-
-        <p
-          style={{
-            fontSize: '18px',
-            lineHeight: '26px',
-            marginTop: '30px',
-            textAlign: 'center' // Added to center-align text
-          }}
-        >
-          By logging in, you agree to Beercafe <strong>terms and conditions</strong> & <strong>privacy policy.</strong>
-        </p>
+        <p className='text-[16px] leading-6'>We will send an OTP for verification.</p>
       </div>
+
+      <div
+        className='w-full mt-10 max-h-12 h-[50px] flex items-center text-left justify-center border border-black bg-black rounded-[12px] cursor-pointer'
+        onClick={GetOTP}
+      >
+        {isLoading ? (
+          <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
+        ) : (
+          <p className='text-[#FFCA5C] text-xl'>Login</p>
+        )}
+      </div>
+
+      <p className='text-lg leading-6 mt-8 w-full'>
+        By logging in, you agree to Beercafe <br />{' '}
+        <span>
+          <strong className='underline'>terms and conditions</strong> &{' '}
+          <strong className='underline'>privacy policy.</strong>
+        </span>
+      </p>
     </div>
   )
-}
-
-const container = { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }
-
-const bottomBox = {
-  borderTopLeftRadius: '40px',
-  borderTopRightRadius: '40px',
-  backgroundColor: '#FFCA5C',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '32px'
 }
