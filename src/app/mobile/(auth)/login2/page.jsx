@@ -9,7 +9,6 @@ import { toast } from 'react-toastify'
 import { CircularProgress } from '@mui/material'
 
 import { ENDPOINT } from '@/endpoints'
-import appLogo from '../../../../public/appLogo.png'
 
 export default function Page() {
   const router = useRouter()
