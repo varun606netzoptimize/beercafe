@@ -21,7 +21,7 @@ export default function DeleteProduct({ open, handleClose, DeleteFunction, delet
         <DialogContentText id='alert-dialog-description'>{`Are you sure you want to delete product ${deleteData?.name}`}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} autoFocus variant='outlined' color='info'>
+        <Button onClick={handleClose} autoFocus variant='contained' color='info'>
           Cancel
         </Button>
         <Button onClick={DeleteFunction} sx={{ width: 80 }} color='error'>

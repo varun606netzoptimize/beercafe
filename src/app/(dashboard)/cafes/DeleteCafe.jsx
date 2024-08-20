@@ -53,7 +53,7 @@ export default function DeleteCafe({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} autoFocus variant='outlined' color='info'>
+          <Button onClick={handleClose} autoFocus variant='contained' color='info'>
             Cancel
           </Button>
 
@@ -78,7 +78,7 @@ export default function DeleteCafe({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} variant='outlined' color='info'>
+          <Button onClick={handleClose} variant='contained' color='info'>
             Cancel
           </Button>
           <Button onClick={handleConfirmDelete} color='error' sx={{ width: '90px' }}>

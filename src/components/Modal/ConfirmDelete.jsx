@@ -36,7 +36,7 @@ export default function ConfirmDelete({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} autoFocus variant='outlined' color='info'>
+          <Button onClick={handleClose} autoFocus variant='contained' color='info'>
             Cancel
           </Button>
           <Button onClick={DeleteFunction} sx={{ width: 80 }} color='error'>

@@ -12,6 +12,7 @@ import AddProductDrawer from './AddProductDrawer'
 import { ENDPOINT } from '@/endpoints'
 import DeleteProduct from './DeleteProduct'
 import ViewProductVariation from './ViewProductVariation'
+import AddVariationDrawer from './AddVairationDrawer'
 
 export default function Page() {
   const { cafeProducts, setCafeProducts, authToken, tokenCheck, currentUser, setPageTitle } = useContext(AuthContext)
@@ -26,6 +27,7 @@ export default function Page() {
   const [viewPrice, setViewPrice] = useState(false)
   const [variations, setVariations] = useState([])
 
+  const [productData, setProductData] = useState(null)
   const [addVariationVisible, setAddVariationVisible] = useState(false)
 
   useEffect(() => {
@@ -54,8 +56,6 @@ export default function Page() {
     axios
       .get(url)
       .then(res => {
-        console.log(res.data)
-
         setCafeProducts({ cafe: cafeProducts.cafe, products: res.data })
       })
       .catch(err => {
@@ -137,6 +137,7 @@ export default function Page() {
               onClick={() => {
                 setViewPrice(true)
                 setVariations(params?.row?.variations)
+                setProductData(params?.row)
               }}
             >
               View
@@ -149,6 +150,7 @@ export default function Page() {
               size='small'
               onClick={() => {
                 setAddVariationVisible(true)
+                setProductData(params?.row)
               }}
             >
               Add
@@ -224,7 +226,20 @@ export default function Page() {
         isLoading={isDeleting}
       />
 
-      <ViewProductVariation open={viewPrice} setOpen={setViewPrice} ProductData={variations} />
+      <ViewProductVariation
+        open={viewPrice}
+        setOpen={setViewPrice}
+        ProductVariationData={variations}
+        productData={productData}
+        GetCafeProducts={GetCafeProducts}
+      />
+
+      <AddVariationDrawer
+        open={addVariationVisible}
+        onClose={() => setAddVariationVisible(false)}
+        productData={productData}
+        GetCafeProducts={GetCafeProducts}
+      />
     </div>
   )
 }

@@ -9,15 +9,19 @@ import Slide from '@mui/material/Slide'
 import { Box, Button } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
+import AddVariationDrawer from './AddVairationDrawer'
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
-export default function ViewProductVariation({ open, setOpen, ProductData }) {
+export default function ViewProductVariation({ open, setOpen, ProductVariationData, productData, GetCafeProducts }) {
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10
   })
+
+  let myProductVariationData = ProductVariationData
 
   const [addVariationVisible, setAddVariationVisible] = React.useState(false)
 
@@ -27,21 +31,56 @@ export default function ViewProductVariation({ open, setOpen, ProductData }) {
 
   const columns = [
     { field: 'value', headerName: 'Value', flex: 1 },
-    { field: 'salePrice', headerName: 'Sale Price', flex: 1 },
-    { field: 'regularPrice', headerName: 'Regular Price', flex: 1 },
-    { field: 'points', headerName: 'Points', flex: 1 }
+    {
+      field: 'salePrice',
+      headerName: 'Sale Price',
+      flex: 1,
+      renderCell: params => <Box>${params?.row?.salePrice}</Box>
+    },
+    {
+      field: 'regularPrice',
+      headerName: 'Regular Price',
+      flex: 1,
+      renderCell: params => <Box>${params?.row?.regularPrice}</Box>
+    },
+    { field: 'points', headerName: 'Points', flex: 1 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              setAddVariationVisible(true)
+              setOpen(false)
+            }}
+          >
+            Edit
+          </Button>
+          <Button variant='outlined' color='error' size='small' sx={{ marginLeft: 2 }}>
+            Delete
+          </Button>
+        </Box>
+      ),
+      sortable: false
+    }
   ]
 
-  // Slice the data for pagination
   const { page, pageSize } = paginationModel
   const startIndex = page * pageSize
-  const paginatedData = ProductData?.slice(startIndex, startIndex + pageSize)
+  const paginatedData = myProductVariationData?.slice(startIndex, startIndex + pageSize)
 
   return (
     <>
       <Dialog
         open={open}
-        fullWidth={'lg'}
+        fullWidth={'true'}
+        maxWidth={'lg'}
         TransitionComponent={Transition}
         keepMounted
         onClose={handleClose}
@@ -59,6 +98,7 @@ export default function ViewProductVariation({ open, setOpen, ProductData }) {
             size='small'
             onClick={() => {
               setAddVariationVisible(true)
+              setOpen(false)
             }}
           >
             Add
@@ -74,7 +114,7 @@ export default function ViewProductVariation({ open, setOpen, ProductData }) {
             onPaginationModelChange={newPaginationModel => {
               setPaginationModel(newPaginationModel)
             }}
-            rowCount={ProductData.length}
+            rowCount={myProductVariationData.length}
           />
         </DialogContent>
         <DialogActions>
@@ -83,6 +123,18 @@ export default function ViewProductVariation({ open, setOpen, ProductData }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <AddVariationDrawer
+        open={addVariationVisible}
+        onClose={() => {
+          setAddVariationVisible(false)
+          setOpen(false)
+        }}
+        setDialogOpen={setOpen}
+        productData={productData}
+        GetCafeProducts={GetCafeProducts}
+        myProductVariationData={myProductVariationData}
+      />
     </>
   )
 }

@@ -48,8 +48,6 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
     mode: 'onBlur'
   })
 
-  console.log('cafeProducts:', cafeProducts)
-
   const onSubmit = async data => {
     setIsLoading(true)
 
