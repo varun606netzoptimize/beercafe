@@ -37,7 +37,7 @@ export default function Page() {
 
   return (
     <div>
-      <h4 className='text-2xl md:text-[30px] text-left w-full'>Welcome to the BeerCafe</h4>
+      <h2 className='text-2xl md:text-[30px] text-left w-full'>Welcome to the BeerCafe</h2>
 
       <p className='text-lg md:text-[20px] mt-3'>
         Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.

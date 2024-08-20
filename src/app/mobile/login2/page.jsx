@@ -48,7 +48,7 @@ export default function Page() {
 
   return (
     <div>
-      <h4 className='text-2xl md:text-[30px] text-left w-full'>Please enter the OTP</h4>
+      <h2 className='text-2xl md:text-[30px] text-left w-full'>Please enter the OTP</h2>
 
       <div className='w-full mt-10'>
         <p className='text-lg leading-6'>Enter One Time Password</p>
@@ -60,7 +60,7 @@ export default function Page() {
         />
       </div>
 
-      <div
+      <button
         className='w-full mt-10 flex items-center justify-center bg-black rounded-[12px] h-[50px] cursor-pointer'
         onClick={GetOTP}
       >
@@ -69,7 +69,7 @@ export default function Page() {
         ) : (
           <p className='text-[#FFCA5C] text-xl'>Login</p>
         )}
-      </div>
+      </button>
 
       <p className='text-lg leading-6 mt-8'>
         We sent One Time Password to {phone} <br />
