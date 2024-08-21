@@ -16,7 +16,9 @@ const Page = () => {
 
       <div className='flex flex-col justify-center gap-8'>
         <MobileButton onClick={() => router.push('/mobile/complete-profile')}>Complete your profile</MobileButton>
-        <button className='underline bg-transparent text-lg cursor-pointer'>Skip</button>
+        <button className='underline bg-transparent text-lg cursor-pointer' onClick={() => router.push('/mobile/home')}>
+          Skip
+        </button>
       </div>
     </div>
   )

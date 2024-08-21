@@ -12,7 +12,8 @@ const config = {
         secondary: '#FFFFFF',
         baseColor: '#232323',
         textColor: '#FFFFFF',
-        titleColor: '#1F1F1F'
+        titleColor: '#1F1F1F',
+        error: '#E57373'
       }
     }
   }

@@ -73,7 +73,7 @@ export default function Page() {
                 <input
                   className={`w-full rounded-[12px] border bg-primary  my-3 py-3 px-3 text-lg max-h-12 placeholder:text-[#666666] placeholder:text-base  ${
                     errors.phoneNumber
-                      ? 'border-[#E57373] !focus-visible:!border-[#E57373] border-2 outline-[#E57373]'
+                      ? 'border-error !focus-visible:!border-error border-2 outline-error'
                       : 'border-black focus-visible:border-black'
                   }`}
                   placeholder='Enter your phone number'
