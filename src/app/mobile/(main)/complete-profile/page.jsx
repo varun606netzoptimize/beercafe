@@ -6,7 +6,7 @@ const Page = () => {
       <div>
         <div className='mb-8'>
           <img
-            src='/images/left-arrow.png'
+            src='/images/mobile/left-arrow.png'
             alt='App Logo'
             width={33}
             height={33}
@@ -44,7 +44,7 @@ const Page = () => {
 
         <div className='mt-10 flex flex-col'>
           <p>Food Preference(s)</p>
-          <div className='mt-5 grid grid-cols-3 gap-8'>
+          <div className='mt-5 grid grid-cols-3 gap-7'>
             <button className='bg-[#FFCA5C] text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
               Lager beer
             </button>
