@@ -1,10 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Link from 'next/link'
-
-import { useSearchParams } from 'next/navigation'
 
 import * as yup from 'yup'
 
@@ -38,11 +36,17 @@ const CatergoryButtons = [
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const searchParams = useSearchParams()
 
-  const id = searchParams.get('id')
+  const [userId, setUserId] = useState(null)
 
-  console.log(id, 'searchPar')
+  useEffect(() => {
+    // Extract id number from query parameters
+    const queryId = new URLSearchParams(window.location.search).get('id')
+
+    if (queryId) {
+      setUserId(queryId)
+    }
+  }, [])
 
   const {
     control,
@@ -60,13 +64,13 @@ const Page = () => {
 
     try {
       const response = await axios.put(url, {
-        id: id,
+        id: userId,
         firstname: data.firstName,
         lastname: data.lastName,
         email: data.email
       })
 
-      toast.success('Profile updated successfully')
+      toast.success('Profile Complete')
     } catch (e) {
       console.error('Error updating user:', e)
     } finally {

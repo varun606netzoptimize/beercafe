@@ -10,7 +10,7 @@ import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 
 import { toast } from 'react-toastify'
-import { CircularProgress } from '@mui/material'
+import { CircularProgress, Alert, Typography } from '@mui/material'
 
 import { ENDPOINT } from '@/endpoints'
 import MobileButton from '@/components/MobileButton/MobileButton'
@@ -62,11 +62,11 @@ export default function Page() {
         Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
       </p>
 
-      {/* <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
-          <Typography variant='body2' color='primary'>
-            Phone: <span className='font-medium'>9876543210</span>
-          </Typography>
-        </Alert> */}
+      <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+        <Typography variant='body2' color='primary'>
+          Phone: <span className='font-medium'>9876543210</span>
+        </Typography>
+      </Alert>
 
       <form onSubmit={handleSubmit(GetOTP)}>
         <div className='w-full mt-10'>
