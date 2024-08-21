@@ -37,7 +37,7 @@ export default function Page() {
 
   return (
     <div>
-      <h2 className='text-2xl md:text-[30px] text-left w-full'>Welcome to the BeerCafe</h2>
+      <h2 className='text-2xl md:text-[30px] text-left w-full text-titleColor'>Welcome to the BeerCafe</h2>
 
       <p className='text-lg md:text-[20px] mt-3'>
         Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
@@ -53,7 +53,7 @@ export default function Page() {
         <p className='text-base md:text-[18px]'>Enter your mobile number</p>
 
         <input
-          className='w-full rounded-[12px] border bg-[#FFCA5C] border-black my-3 py-3 px-3 text-lg max-h-12 focus-visible:border-black'
+          className='w-full rounded-[12px] border bg-primary border-black my-3 py-3 px-3 text-lg max-h-12 focus-visible:border-black'
           onChange={event => setPhone(event.target.value)}
         />
 
@@ -65,9 +65,9 @@ export default function Page() {
         onClick={GetOTP}
       >
         {isLoading ? (
-          <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
+          <CircularProgress size={28} sx={{ color: '#F8C459' }} />
         ) : (
-          <p className='text-[#FFCA5C] text-xl'>Login</p>
+          <p className='text-primary text-xl'>Login</p>
         )}
       </div>
 

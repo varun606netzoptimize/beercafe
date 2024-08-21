@@ -13,7 +13,7 @@ const Page = () => {
             className='object-contain cursor-pointer'
           />
         </div>
-        <h2>Complete your profile</h2>
+        <h2 className='text-titleColor'>Complete your profile</h2>
 
         <div className='flex flex-col gap-10 mt-8'>
           <div>
@@ -45,13 +45,13 @@ const Page = () => {
         <div className='mt-10 flex flex-col'>
           <p>Food Preference(s)</p>
           <div className='mt-5 grid grid-cols-3 gap-7'>
-            <button className='bg-[#FFCA5C] text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
+            <button className='bg-primary text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
               Lager beer
             </button>
-            <button className='bg-[#FFCA5C] text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
+            <button className='bg-primary text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
               Lager beer
             </button>
-            <button className='bg-[#FFCA5C] text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
+            <button className='bg-primary text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
               Lager beer
             </button>
           </div>

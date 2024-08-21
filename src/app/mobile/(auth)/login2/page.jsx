@@ -47,7 +47,7 @@ export default function Page() {
 
   return (
     <div>
-      <h2 className='text-2xl md:text-[30px] text-left w-full'>Please enter the OTP</h2>
+      <h2 className='text-2xl md:text-[30px] text-left w-full text-titleColor'>Please enter the OTP</h2>
 
       <div className='w-full mt-10'>
         <p className='text-lg leading-6'>Enter One Time Password</p>
@@ -64,9 +64,9 @@ export default function Page() {
         onClick={GetOTP}
       >
         {isLoading ? (
-          <CircularProgress size={28} sx={{ color: '#FFCA5C' }} />
+          <CircularProgress size={28} sx={{ color: '#F8C459' }} />
         ) : (
-          <p className='text-[#FFCA5C] text-xl'>Login</p>
+          <p className='text-primary text-xl'>Login</p>
         )}
       </button>
 
