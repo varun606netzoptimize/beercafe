@@ -124,8 +124,8 @@ export default function Page() {
     { field: 'quantity', headerName: 'Quantity', flex: 1 },
     { field: 'description', headerName: 'Description', flex: 1 },
     {
-      field: 'price',
-      headerName: 'Price',
+      field: 'productVariation',
+      headerName: 'Product Variation',
       flex: 1,
       renderCell: params => (
         <>
