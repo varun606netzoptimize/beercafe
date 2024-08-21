@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import { CircularProgress } from '@mui/material'
 
 import { ENDPOINT } from '@/endpoints'
+import MobileButton from '@/components/MobileButton/MobileButton'
 
 export default function Page() {
   const router = useRouter()
@@ -46,7 +47,7 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <div className='w-full'>
       <h2 className='text-2xl md:text-[30px] text-left w-full text-titleColor'>Please enter the OTP</h2>
 
       <div className='w-full mt-10'>
@@ -59,16 +60,9 @@ export default function Page() {
         />
       </div>
 
-      <button
-        className='w-full mt-10 flex items-center justify-center bg-black rounded-[12px] h-[50px] cursor-pointer'
-        onClick={GetOTP}
-      >
-        {isLoading ? (
-          <CircularProgress size={28} sx={{ color: '#F8C459' }} />
-        ) : (
-          <p className='text-primary text-xl'>Login</p>
-        )}
-      </button>
+      <MobileButton onClick={GetOTP}>
+        {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : 'Login'}
+      </MobileButton>
 
       <p className='text-lg leading-6 mt-8'>
         We sent One Time Password to {phone} <br />

@@ -1,3 +1,5 @@
+import MobileButton from '@/components/MobileButton/MobileButton'
+
 const Page = () => {
   return (
     <div className='w-full'>
@@ -7,9 +9,10 @@ const Page = () => {
       </p>
 
       <div className='flex flex-col justify-center gap-8'>
-        <button className='w-full mt-10 flex items-center justify-center bg-black rounded-[12px] h-[50px] cursor-pointer'>
+        <MobileButton>Complete your profile</MobileButton>
+        {/* <button className='w-full mt-10 flex items-center justify-center bg-black rounded-[12px] h-[50px] cursor-pointer'>
           <p className='text-primary text-xl'>Complete your profile</p>
-        </button>
+        </button> */}
         <button className='underline bg-transparent text-lg cursor-pointer'>Skip</button>
       </div>
     </div>

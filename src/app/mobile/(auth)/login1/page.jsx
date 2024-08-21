@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import { Alert, CircularProgress, Typography } from '@mui/material'
 
 import { ENDPOINT } from '@/endpoints'
+import MobileButton from '@/components/MobileButton/MobileButton'
 
 export default function Page() {
   const router = useRouter()
@@ -60,16 +61,9 @@ export default function Page() {
         <p className='text-[16px] leading-6'>We will send an OTP for verification.</p>
       </div>
 
-      <div
-        className='w-full mt-10 max-h-12 h-[50px] flex items-center text-left justify-center border border-black bg-black rounded-[12px] cursor-pointer'
-        onClick={GetOTP}
-      >
-        {isLoading ? (
-          <CircularProgress size={28} sx={{ color: '#F8C459' }} />
-        ) : (
-          <p className='text-primary text-xl'>Login</p>
-        )}
-      </div>
+      <MobileButton onClick={GetOTP}>
+        {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : 'Login'}
+      </MobileButton>
 
       <p className='text-lg leading-6 mt-8 w-full'>
         By logging in, you agree to Beercafe <br />{' '}

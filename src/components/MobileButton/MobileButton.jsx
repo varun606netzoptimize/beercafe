@@ -5,7 +5,9 @@ const MobileButton = ({ children, type = '', ...rest }) => {
     <>
       {type !== 'secondary' ? (
         <button
-          className={clsx('w-full mt-10 flex items-center justify-center bg-black rounded-2xl h-[50px] cursor-pointer')}
+          className={clsx(
+            'w-full mt-10 flex items-center justify-center bg-black rounded-2xl h-[50px] cursor-pointer drop-shadow-md'
+          )}
           {...rest}
         >
           <p className='text-primary text-xl'>{children}</p>
