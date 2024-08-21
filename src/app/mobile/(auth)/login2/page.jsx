@@ -7,15 +7,31 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { CircularProgress } from '@mui/material'
+import { Controller, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 
 import { ENDPOINT } from '@/endpoints'
 import MobileButton from '@/components/MobileButton/MobileButton'
 
+// Yup schema validation
+const otpSchema = yup.object().shape({
+  otp: yup.string().required('OTP is required')
+})
+
 export default function Page() {
   const router = useRouter()
   const [phone, setPhone] = useState('')
-  const [otp, setOTP] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(otpSchema),
+    mode: 'onSubmit'
+  })
 
   useEffect(() => {
     // Extract phone number from query parameters
@@ -26,9 +42,10 @@ export default function Page() {
     }
   }, [])
 
-  const GetOTP = async () => {
+  const handleOTPSubmit = async data => {
+    console.log(data)
     const url = ENDPOINT.VERIFY_OTP
-    const userData = { phoneNumber: phone, otp: otp }
+    const userData = { phoneNumber: phone, otp: data.otp }
 
     setIsLoading(true)
 
@@ -39,7 +56,7 @@ export default function Page() {
 
       // Add a redirect after successful login if necessary
     } catch (error) {
-      console.log(error)
+      console.error(error)
       toast.error('Failed to verify OTP')
     } finally {
       setIsLoading(false)
@@ -50,19 +67,35 @@ export default function Page() {
     <div className='w-full'>
       <h2 className='text-2xl md:text-[30px] text-left w-full text-titleColor'>Please enter the OTP</h2>
 
-      <div className='w-full mt-10'>
-        <p className='text-lg leading-6'>Enter One Time Password</p>
+      <form onSubmit={handleSubmit(handleOTPSubmit)}>
+        <div className='w-full mt-10'>
+          <p className='text-lg leading-6'>Enter One Time Password</p>
 
-        <input
-          className='w-full h-[46px] rounded-[12px] border-[1.8px] border-black bg-transparent mt-3 px-5 text-lg focus-visible:border-black'
-          value={otp}
-          onChange={event => setOTP(event.target.value)}
-        />
-      </div>
+          <Controller
+            name='otp'
+            control={control}
+            render={({ field }) => (
+              <div>
+                <input
+                  className={`w-full rounded-[12px] border bg-primary my-3 py-3 px-3 text-lg max-h-12 placeholder:text-[#666666] placeholder:text-base ${
+                    errors.otp
+                      ? 'border-[#E57373] !focus-visible:border-[#E57373] border-2'
+                      : 'border-black focus-visible:border-black'
+                  }`}
+                  placeholder='Enter OTP'
+                  autoComplete='off'
+                  {...field}
+                />
+                {/* {errors.otp && <p className='text-red-500 text-sm'>{errors.otp.message}</p>} */}
+              </div>
+            )}
+          />
+        </div>
 
-      <MobileButton onClick={GetOTP}>
-        {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : 'Login'}
-      </MobileButton>
+        <MobileButton type='submit'>
+          {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : 'Login'}
+        </MobileButton>
+      </form>
 
       <p className='text-lg leading-6 mt-8'>
         We sent One Time Password to {phone} <br />

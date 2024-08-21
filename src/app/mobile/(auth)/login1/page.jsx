@@ -5,32 +5,50 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import axios from 'axios'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
+import { useForm, Controller } from 'react-hook-form'
+
 import { toast } from 'react-toastify'
-import { Alert, CircularProgress, Typography } from '@mui/material'
+import { CircularProgress } from '@mui/material'
 
 import { ENDPOINT } from '@/endpoints'
 import MobileButton from '@/components/MobileButton/MobileButton'
 
+// Yup schema validation
+const numberSchema = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+    .required('Phone number is required')
+})
+
 export default function Page() {
   const router = useRouter()
-
-  const [phone, setPhone] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const GetOTP = async () => {
-    const url = ENDPOINT.GENERATE_OTP
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(numberSchema), // Pass yup schema for validation
+    mode: 'onSubmit'
+  })
 
-    const userData = { phoneNumber: phone }
+  const GetOTP = async data => {
+    const url = ENDPOINT.GENERATE_OTP
 
     setIsLoading(true)
 
     try {
-      const response = await axios.post(url, userData)
+      const response = await axios.post(url, { phoneNumber: data.phoneNumber })
 
       toast.success('Your OTP is: ' + response.data.otp)
-      router.push(`/mobile/login2?phone=${encodeURIComponent(phone)}`)
+      router.push(`/mobile/login2?phone=${encodeURIComponent(data.phoneNumber)}`)
     } catch (error) {
       console.log(error)
+      toast.error('Failed to generate OTP')
     } finally {
       setIsLoading(false)
     }
@@ -44,26 +62,36 @@ export default function Page() {
         Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
       </p>
 
-      {/* <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
-          <Typography variant='body2' color='primary'>
-            Phone: <span className='font-medium'>9876543210</span>
-          </Typography>
-        </Alert> */}
+      <form onSubmit={handleSubmit(GetOTP)}>
+        <div className='w-full mt-10'>
+          <p className='text-base md:text-[18px]'>Enter your mobile number</p>
+          <Controller
+            name='phoneNumber'
+            control={control}
+            render={({ field }) => (
+              <div className='relative'>
+                <input
+                  className={`w-full rounded-[12px] border bg-primary  my-3 py-3 px-3 text-lg max-h-12 placeholder:text-[#666666] placeholder:text-base  ${
+                    errors.phoneNumber
+                      ? 'border-[#E57373] !focus-visible:border-[#E57373] border-2'
+                      : 'border-black focus-visible:border-black'
+                  }`}
+                  placeholder='Enter your phone number'
+                  maxLength={10}
+                  {...field}
+                />
+                {/* {errors.phoneNumber && <p className='text-red-500 text-sm absolute'>{errors.phoneNumber.message}</p>} */}
+              </div>
+            )}
+          />
 
-      <div className='w-full mt-10'>
-        <p className='text-base md:text-[18px]'>Enter your mobile number</p>
+          <p className='text-[16px] leading-6'>We will send an OTP for verification.</p>
+        </div>
 
-        <input
-          className='w-full rounded-[12px] border bg-primary border-black my-3 py-3 px-3 text-lg max-h-12 focus-visible:border-black'
-          onChange={event => setPhone(event.target.value)}
-        />
-
-        <p className='text-[16px] leading-6'>We will send an OTP for verification.</p>
-      </div>
-
-      <MobileButton onClick={GetOTP}>
-        {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : 'Login'}
-      </MobileButton>
+        <MobileButton type='submit'>
+          {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : 'Login'}
+        </MobileButton>
+      </form>
 
       <p className='text-lg leading-6 mt-8 w-full'>
         By logging in, you agree to Beercafe <br />{' '}
