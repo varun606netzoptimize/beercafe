@@ -54,7 +54,7 @@ export default function Page() {
 
       toast.success('Logged in successfully')
 
-      console.log(response.status === 200)
+      console.log(response.data.customer.id)
 
       if (response.status === 200) {
         router.push('/mobile/login3')

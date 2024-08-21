@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import Link from 'next/link'
 
 import * as yup from 'yup'
@@ -7,7 +9,12 @@ import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
+import axios from 'axios'
+
+import { CircularProgress } from '@mui/material'
+
 import MobileButton from '@/components/MobileButton/MobileButton'
+import { ENDPOINT } from '@/endpoints'
 
 // Yup schema for form validation
 const profileSchema = yup.object().shape({
@@ -26,6 +33,8 @@ const CatergoryButtons = [
 ]
 
 const Page = () => {
+  const [isLoading, setIsLoading] = useState(false)
+
   const {
     control,
     handleSubmit,
@@ -35,8 +44,22 @@ const Page = () => {
     mode: 'onSubmit'
   })
 
-  const onSubmit = data => {
-    console.log('Form Data:', data)
+  const onSubmit = async data => {
+    const url = ENDPOINT.UPDATE_CUSTOMER
+
+    setIsLoading(true)
+
+    let name = `${data.firstName} ${data.lastName}`
+
+    try {
+      const response = await axios.put(url, { id: '', name: name, email: data.email })
+
+      console.log(response)
+    } catch (e) {
+      console.error('Error updating user:', e)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -134,7 +157,7 @@ const Page = () => {
           </div>
 
           <MobileButton style='secondary' type='submit'>
-            Save profile info
+            {isLoading ? <CircularProgress size={28} sx={{ color: '#F8C459' }} /> : '  Save profile info'}
           </MobileButton>
         </form>
       </div>
