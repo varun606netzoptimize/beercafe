@@ -57,7 +57,7 @@ export default function Page() {
       console.log(response.data.customer.id)
 
       if (response.status === 200) {
-        router.push('/mobile/login3')
+        router.push(`/mobile/login3?id=${response.data.customer.id}`)
       }
 
       // Add a redirect after successful login if necessary

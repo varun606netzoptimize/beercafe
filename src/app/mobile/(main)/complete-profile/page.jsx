@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 import Link from 'next/link'
 
+import { useSearchParams } from 'next/navigation'
+
 import * as yup from 'yup'
 
 import { useForm, Controller } from 'react-hook-form'
@@ -34,6 +36,11 @@ const CatergoryButtons = [
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const searchParams = useSearchParams()
+
+  const id = searchParams.get('id')
+
+  console.log(id, 'searchPar')
 
   const {
     control,
@@ -49,10 +56,13 @@ const Page = () => {
 
     setIsLoading(true)
 
-    let name = `${data.firstName} ${data.lastName}`
-
     try {
-      const response = await axios.put(url, { id: '', name: name, email: data.email })
+      const response = await axios.put(url, {
+        id: id,
+        firstname: data.firstName,
+        lastname: data.lastName,
+        email: data.email
+      })
 
       console.log(response)
     } catch (e) {
@@ -147,8 +157,10 @@ const Page = () => {
             <div className='mt-5 grid grid-cols-3 gap-7'>
               {CatergoryButtons.map((item, index) => (
                 <button
+                  type='button'
                   key={index}
                   className='hover:bg-primary bg-transparent min-w-[112px] border hover:border-transparent text-black text-base py-2 px-4 text-center rounded-2xl cursor-pointer w-fit hover:drop-shadow-md font-medium'
+                  onClick={() => {}}
                 >
                   {item.label}
                 </button>

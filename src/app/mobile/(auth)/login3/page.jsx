@@ -1,11 +1,16 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import MobileButton from '@/components/MobileButton/MobileButton'
 
 const Page = () => {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const id = searchParams.get('id')
+
+  console.log(id, 'searchPar')
 
   return (
     <div className='w-full'>
@@ -15,7 +20,9 @@ const Page = () => {
       </p>
 
       <div className='flex flex-col justify-center gap-8'>
-        <MobileButton onClick={() => router.push('/mobile/complete-profile')}>Complete your profile</MobileButton>
+        <MobileButton onClick={() => router.push(`/mobile/complete-profile?id=${id}`)}>
+          Complete your profile
+        </MobileButton>
         <button className='underline bg-transparent text-lg cursor-pointer' onClick={() => router.push('/mobile/home')}>
           Skip
         </button>
