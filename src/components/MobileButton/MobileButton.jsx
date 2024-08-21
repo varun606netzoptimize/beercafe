@@ -1,9 +1,9 @@
 import { clsx } from 'clsx'
 
-const MobileButton = ({ children, type = '', ...rest }) => {
+const MobileButton = ({ children, style = '', ...rest }) => {
   return (
     <>
-      {type !== 'secondary' ? (
+      {style !== 'secondary' ? (
         <button
           className={clsx(
             'w-full mt-10 flex items-center justify-center bg-black rounded-2xl h-[50px] cursor-pointer drop-shadow-md'
