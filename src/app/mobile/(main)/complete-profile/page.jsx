@@ -1,17 +1,49 @@
+import Link from 'next/link'
+
 import MobileButton from '@/components/MobileButton/MobileButton'
+
+const CatergoryButtons = [
+  {
+    label: 'Lager beer'
+  },
+  {
+    label: 'Bottel beer'
+  },
+  {
+    label: 'Itallian'
+  },
+  {
+    label: 'Lager beer'
+  },
+  {
+    label: 'Bottel beer'
+  },
+  {
+    label: 'Itallian'
+  }
+
+  // {
+  //   label: 'Lager beer'
+  // },
+  // {
+  //   label: 'Bottel beer'
+  // }
+]
 
 const Page = () => {
   return (
     <>
       <div>
         <div className='mb-8'>
-          <img
-            src='/images/mobile/left-arrow.png'
-            alt='App Logo'
-            width={33}
-            height={33}
-            className='object-contain cursor-pointer'
-          />
+          <Link href='#'>
+            <img
+              src='/images/mobile/left-arrow.png'
+              alt='App Logo'
+              width={33}
+              height={33}
+              className='object-contain cursor-pointer'
+            />
+          </Link>
         </div>
         <h2 className='text-titleColor'>Complete your profile</h2>
 
@@ -45,15 +77,14 @@ const Page = () => {
         <div className='mt-10 flex flex-col'>
           <p>Food Preference(s)</p>
           <div className='mt-5 grid grid-cols-3 gap-7'>
-            <button className='bg-primary text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
-              Lager beer
-            </button>
-            <button className='bg-primary text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
-              Lager beer
-            </button>
-            <button className='bg-primary text-black  text-base py-3 px-4 text-center rounded-2xl cursor-pointer w-fit drop-shadow-md font-medium'>
-              Lager beer
-            </button>
+            {CatergoryButtons.map((item, index) => (
+              <button
+                key={index}
+                className='hover:bg-primary bg-transparent min-w-[112px] border hover:border-transparent text-black  text-base py-2 px-4 text-center rounded-2xl cursor-pointer w-fit hover:drop-shadow-md font-medium'
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
         </div>
         <MobileButton type='secondary'>Save profile info</MobileButton>
