@@ -67,12 +67,14 @@ const Page = () => {
                     {...field}
                     type='text'
                     className={`w-full h-[46px] rounded-2xl border-2 border-black bg-transparent mt-3 px-5 text-lg ${
-                      errors.firstName ? 'border-red-500' : 'focus-visible:border-black'
+                      errors.firstName
+                        ? 'border-[#E57373] focus-visible:border-[#E57373] outline-[#E57373]'
+                        : 'focus-visible:border-black'
                     }`}
                   />
                 )}
               />
-              {/* {errors.firstName && <p className='text-red-500 text-sm'>{errors.firstName.message}</p>} */}
+              {/* {errors.firstName && <p className='text-[#E57373] text-sm'>{errors.firstName.message}</p>} */}
             </div>
 
             <div>
@@ -85,12 +87,14 @@ const Page = () => {
                     {...field}
                     type='text'
                     className={`w-full h-[46px] rounded-2xl border-2 border-black bg-transparent mt-3 px-5 text-lg ${
-                      errors.lastName ? 'border-red-500' : 'focus-visible:border-black'
+                      errors.lastName
+                        ? 'border-[#E57373] focus-visible:border-[#E57373] outline-[#E57373]'
+                        : 'focus-visible:border-black'
                     }`}
                   />
                 )}
               />
-              {/* {errors.lastName && <p className='text-red-500 text-sm'>{errors.lastName.message}</p>} */}
+              {/* {errors.lastName && <p className='text-[#E57373] text-sm'>{errors.lastName.message}</p>} */}
             </div>
 
             <div>
@@ -103,13 +107,15 @@ const Page = () => {
                     {...field}
                     type='email'
                     className={`w-full h-[46px] rounded-2xl border-2 border-black bg-transparent mt-3 px-5 text-lg ${
-                      errors.email ? 'border-red-500' : 'focus-visible:border-black'
+                      errors.email
+                        ? 'border-[#E57373] focus-visible:border-[#E57373] outline-[#E57373]'
+                        : 'focus-visible:border-black'
                     }`}
                     placeholder='abc@gmail.com'
                   />
                 )}
               />
-              {/* {errors.email && <p className='text-red-500 text-sm'>{errors.email.message}</p>} */}
+              {/* {errors.email && <p className='text-[#E57373] text-sm'>{errors.email.message}</p>} */}
             </div>
           </div>
 
