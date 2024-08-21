@@ -133,6 +133,10 @@ export default function AddVariationDrawer({
       open={open}
       onClose={() => {
         onClose()
+
+        if (setDialogOpen) {
+          setDialogOpen(true)
+        }
       }}
     >
       {DrawerList}
