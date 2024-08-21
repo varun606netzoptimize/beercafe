@@ -10,7 +10,7 @@ const footerItems = [
     icon: '/images/mobile/home.png',
     hoverIcon: '/images/mobile/home-yellow.png',
     title: 'Home',
-    link: '#'
+    link: '/mobile/home'
   },
   {
     icon: '/images/mobile/beer.png',
