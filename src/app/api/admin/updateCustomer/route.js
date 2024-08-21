@@ -7,22 +7,21 @@ const prisma = new PrismaClient()
 
 export async function PUT(req) {
   try {
-    const { id, firstname, lastname, phoneNumber, points } = await req.json()
+    const { id, firstname, lastname, phoneNumber, email, points } = await req.json()
 
     // Validate input
-    if (!id || !firstname || !lastname || !phoneNumber) {
-      return new NextResponse(JSON.stringify({ message: 'ID, firstname, lastname, and phoneNumber are required' }), {
-        status: 400
-      })
+    if (!id || !firstname || !lastname) {
+      return new NextResponse(JSON.stringify({ message: 'ID, firstname, and lastname are required' }), { status: 400 })
     }
 
-    // Update the customer
+    // Update the customer with optional email and phone number
     const updatedCustomer = await prisma.customer.update({
       where: { id },
       data: {
         firstname,
         lastname,
-        phoneNumber,
+        phoneNumber: phoneNumber || undefined, // Only update if provided
+        email: email || undefined, // Only update if provided
         points
       }
     })

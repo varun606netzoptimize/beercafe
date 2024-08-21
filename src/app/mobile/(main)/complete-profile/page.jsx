@@ -15,6 +15,8 @@ import axios from 'axios'
 
 import { CircularProgress } from '@mui/material'
 
+import { toast } from 'react-toastify'
+
 import MobileButton from '@/components/MobileButton/MobileButton'
 import { ENDPOINT } from '@/endpoints'
 
@@ -64,7 +66,7 @@ const Page = () => {
         email: data.email
       })
 
-      console.log(response)
+      toast.success('Profile updated successfully')
     } catch (e) {
       console.error('Error updating user:', e)
     } finally {
