@@ -62,6 +62,12 @@ export default function Page() {
         Enjoying your favourite beer is just a step away. Simply enter your mobile number to get started.
       </p>
 
+      {/* <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
+          <Typography variant='body2' color='primary'>
+            Phone: <span className='font-medium'>9876543210</span>
+          </Typography>
+        </Alert> */}
+
       <form onSubmit={handleSubmit(GetOTP)}>
         <div className='w-full mt-10'>
           <p className='text-base md:text-[18px]'>Enter your mobile number</p>

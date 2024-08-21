@@ -54,6 +54,12 @@ export default function Page() {
 
       toast.success('Logged in successfully')
 
+      console.log(response.status === 200)
+
+      if (response.status === 200) {
+        router.push('/mobile/login3')
+      }
+
       // Add a redirect after successful login if necessary
     } catch (error) {
       console.error(error)
