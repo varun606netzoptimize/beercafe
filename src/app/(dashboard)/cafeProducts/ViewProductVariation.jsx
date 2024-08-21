@@ -15,7 +15,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
-export default function ViewProductVariation({ open, setOpen, ProductVariationData, productData, GetCafeProducts }) {
+export default function ViewProductVariation({
+  open,
+  setOpen,
+  ProductVariationData,
+  productData,
+  GetCafeProducts,
+  drawerType,
+  setDrawerType
+}) {
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10
@@ -24,6 +32,8 @@ export default function ViewProductVariation({ open, setOpen, ProductVariationDa
   let myProductVariationData = ProductVariationData
 
   const [addVariationVisible, setAddVariationVisible] = React.useState(false)
+
+  const [updateData, setUpdateData] = React.useState(null)
 
   const handleClose = () => {
     setOpen(false)
@@ -56,6 +66,8 @@ export default function ViewProductVariation({ open, setOpen, ProductVariationDa
             size='small'
             sx={{ marginRight: 2 }}
             onClick={() => {
+              setUpdateData(params?.row)
+              setDrawerType('update')
               setAddVariationVisible(true)
               setOpen(false)
             }}
@@ -99,6 +111,7 @@ export default function ViewProductVariation({ open, setOpen, ProductVariationDa
             onClick={() => {
               setAddVariationVisible(true)
               setOpen(false)
+              setDrawerType('add')
             }}
           >
             Add
@@ -134,6 +147,8 @@ export default function ViewProductVariation({ open, setOpen, ProductVariationDa
         productData={productData}
         GetCafeProducts={GetCafeProducts}
         myProductVariationData={myProductVariationData}
+        updateData={updateData}
+        type={drawerType}
       />
     </>
   )

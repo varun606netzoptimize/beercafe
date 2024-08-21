@@ -29,6 +29,7 @@ export default function Page() {
 
   const [productData, setProductData] = useState(null)
   const [addVariationVisible, setAddVariationVisible] = useState(false)
+  const [drawerType, setDrawerType] = useState('add')
 
   useEffect(() => {
     if (tokenCheck) {
@@ -232,6 +233,8 @@ export default function Page() {
         ProductVariationData={variations}
         productData={productData}
         GetCafeProducts={GetCafeProducts}
+        drawerType={drawerType}
+        setDrawerType={setDrawerType}
       />
 
       <AddVariationDrawer
@@ -239,6 +242,7 @@ export default function Page() {
         onClose={() => setAddVariationVisible(false)}
         productData={productData}
         GetCafeProducts={GetCafeProducts}
+        type={drawerType}
       />
     </div>
   )

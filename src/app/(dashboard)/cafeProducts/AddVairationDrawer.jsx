@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 
 import { Box, Button, Drawer, Typography, CircularProgress } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
@@ -17,6 +17,7 @@ import { ENDPOINT } from '@/endpoints'
 // Validation schema
 const schema = yup.object().shape({
   value: yup.string().required('Value is required'),
+  key: yup.string().required('Value is required'),
   salePrice: yup.number().required('Sale price is required').positive(),
   regularPrice: yup.number().required('Regular price is required').positive(),
   points: yup.number().required('Points are required').positive().integer()
@@ -28,19 +29,40 @@ export default function AddVariationDrawer({
   setDialogOpen = null,
   productData,
   GetCafeProducts,
-  myProductVariationData = null
+  myProductVariationData = null,
+  updateData = null,
+  type
 }) {
-  const { authToken, brands, cafeProducts } = useContext(AuthContext)
+  const { authToken } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
 
-  // React Hook Form setup
   const {
     control,
     handleSubmit,
+    reset,
+    setValue,
     formState: { errors }
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
+    defaultValues: {
+      key: '',
+      value: '',
+      salePrice: '',
+      regularPrice: '',
+      points: ''
+    }
   })
+
+  useEffect(() => {
+    if (type === 'update' && updateData) {
+      // Pre-fill the form with updateData values
+      setValue('key', updateData.key)
+      setValue('value', updateData.value)
+      setValue('salePrice', updateData.salePrice)
+      setValue('regularPrice', updateData.regularPrice)
+      setValue('points', updateData.points)
+    }
+  }, [type, updateData, setValue])
 
   // Form submit handler
   const onSubmit = async data => {
@@ -50,7 +72,6 @@ export default function AddVariationDrawer({
 
     const productVariationData = {
       productId: productData.id,
-      key: 'Quantity',
       ...data
     }
 
@@ -61,13 +82,50 @@ export default function AddVariationDrawer({
         }
       })
 
-      console.log('added product variation', response.data)
-
       GetCafeProducts()
       onClose()
 
       if (myProductVariationData) {
         myProductVariationData.push(response.data)
+        setDialogOpen(true)
+      }
+    } catch (err) {
+      toast.error('Failed to add product variation')
+      console.error('Error adding product:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  console.log('type:', type)
+
+  const onUpdate = async data => {
+    setIsLoading(true)
+
+    const url = ENDPOINT.UPDATE_PRODUCT_VARIATION
+
+    const productVariationData = {
+      variationId: updateData.id,
+      ...data
+    }
+
+    try {
+      const response = await axios.put(url, productVariationData, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+
+      GetCafeProducts()
+      onClose()
+
+      if (myProductVariationData) {
+        const index = myProductVariationData.findIndex(item => item.id === updateData.id)
+
+        if (index !== -1) {
+          myProductVariationData[index] = response.data
+        }
+
         setDialogOpen(true)
       }
     } catch (err) {
@@ -90,8 +148,20 @@ export default function AddVariationDrawer({
         autoComplete='off'
         style={{ marginTop: 16 }}
         className='flex flex-col gap-6'
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(type == 'add' ? onSubmit : onUpdate)}
       >
+        <Controller
+          name='key'
+          control={control}
+          render={({ field }) => <CustomTextField {...field} label='Key' error={!!errors.key} />}
+        />
+
+        <Controller
+          name='value'
+          control={control}
+          render={({ field }) => <CustomTextField {...field} label='Value' error={!!errors.value} />}
+        />
+
         <Controller
           name='salePrice'
           control={control}
@@ -109,19 +179,13 @@ export default function AddVariationDrawer({
         />
 
         <Controller
-          name='value'
-          control={control}
-          render={({ field }) => <CustomTextField {...field} label='Value' error={!!errors.value} />}
-        />
-
-        <Controller
           name='points'
           control={control}
           render={({ field }) => <CustomTextField {...field} label='Points' type='number' error={!!errors.points} />}
         />
 
         <Button fullWidth variant='contained' type='submit'>
-          {isLoading ? <CircularProgress color='inherit' size={20} /> : 'Submit'}
+          {isLoading ? <CircularProgress color='inherit' size={20} /> : type == 'add' ? 'Submit' : 'Update'}
         </Button>
       </form>
     </Box>
@@ -133,6 +197,7 @@ export default function AddVariationDrawer({
       open={open}
       onClose={() => {
         onClose()
+        reset() // Reset the form when the drawer closes
 
         if (setDialogOpen) {
           setDialogOpen(true)
