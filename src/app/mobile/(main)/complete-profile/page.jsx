@@ -74,7 +74,7 @@ const Page = () => {
 
   return (
     <>
-      <div>
+      <div className='px-4 pb-10 pt-6'>
         <div className='mb-8'>
           <Link href='#'>
             <img
