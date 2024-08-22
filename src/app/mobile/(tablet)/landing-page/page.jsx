@@ -1,5 +1,7 @@
 import Image from 'next/image'
 
+import Link from 'next/link'
+
 import Logo from '@/@core/svg/Logo'
 
 const Page = () => {
@@ -18,6 +20,17 @@ const Page = () => {
       <div className='text-center'>
         {/* Beer Icon */}
         <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={250} height={260} />
+      </div>
+      <div className='absolute bottom-5 right-10 rounded-full bg-white p-3 cursor-pointer drop-shadow-sm hover:drop-shadow-lg'>
+        <Link href='/mobile/slider-page'>
+          <img
+            src='/images/mobile/left-arrow.png'
+            alt='App Logo'
+            width={33}
+            height={33}
+            className='object-contain cursor-pointer rotate-180'
+          />
+        </Link>
       </div>
     </div>
   )
