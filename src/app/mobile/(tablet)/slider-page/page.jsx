@@ -34,10 +34,11 @@ const Page = () => {
   return (
     <div className='h-screen'>
       <Carousel
+        opts={{
+          loop: true
+        }}
         plugins={[plugin.current]}
         className='w-full max-w-full'
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
       >
         <CarouselContent>
           {sliderImages.map((image, index) => (
