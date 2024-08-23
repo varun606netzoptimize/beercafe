@@ -5,7 +5,7 @@ import { clsx } from 'clsx'
 // Font files can be colocated inside of `pages`
 
 const MobileLayout = ({ children }) => {
-  return <div className={clsx('h-screen')}>{children}</div>
+  return <>{children}</>
 }
 
 export default MobileLayout
