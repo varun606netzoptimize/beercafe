@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react"
+
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
@@ -34,6 +35,7 @@ const Carousel = React.forwardRef((
     ...opts,
     axis: orientation === "horizontal" ? "x" : "y",
   }, plugins)
+
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
   const [canScrollNext, setCanScrollNext] = React.useState(false)
 
@@ -111,6 +113,7 @@ const Carousel = React.forwardRef((
     </CarouselContext.Provider>)
   );
 })
+
 Carousel.displayName = "Carousel"
 
 const CarouselContent = React.forwardRef(({ className, ...props }, ref) => {
@@ -129,6 +132,7 @@ const CarouselContent = React.forwardRef(({ className, ...props }, ref) => {
     </div>)
   );
 })
+
 CarouselContent.displayName = "CarouselContent"
 
 const CarouselItem = React.forwardRef(({ className, ...props }, ref) => {
@@ -147,6 +151,7 @@ const CarouselItem = React.forwardRef(({ className, ...props }, ref) => {
       {...props} />)
   );
 })
+
 CarouselItem.displayName = "CarouselItem"
 
 const CarouselPrevious = React.forwardRef(({ className, variant = "outline", size = "icon", ...props }, ref) => {
@@ -168,6 +173,7 @@ const CarouselPrevious = React.forwardRef(({ className, variant = "outline", siz
     </Button>)
   );
 })
+
 CarouselPrevious.displayName = "CarouselPrevious"
 
 const CarouselNext = React.forwardRef(({ className, variant = "outline", size = "icon", ...props }, ref) => {
@@ -189,6 +195,7 @@ const CarouselNext = React.forwardRef(({ className, variant = "outline", size = 
     </Button>)
   );
 })
+
 CarouselNext.displayName = "CarouselNext"
 
 export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
