@@ -33,7 +33,8 @@ const Page = () => {
 
   return (
     <div className='h-screen'>
-      <Card>
+      <Card className="border-0">
+
         <CardContent className='flex aspect-square items-center p-0 justify-center relative h-screen w-full'>
           <div className='absolute top-5 left-4 z-20 rounded-full bg-white py-5 px-6 cursor-pointer drop-shadow-lg'>
             <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={70} height={80} />
