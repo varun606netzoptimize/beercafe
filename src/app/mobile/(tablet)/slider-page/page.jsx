@@ -41,7 +41,7 @@ const Page = () => {
 
   return (
     <div className='h-full'>
-      <Card className="border-0">
+      <Card className="border-0 h-full">
 
         <CardContent className='flex aspect-square items-center p-0 justify-center relative h-full w-full'>
           <div className='absolute top-5 left-4 z-20 rounded-full bg-white py-5 px-6 cursor-pointer drop-shadow-lg'>
