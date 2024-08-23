@@ -33,38 +33,40 @@ const Page = () => {
 
   return (
     <div className='h-screen'>
-      <Carousel
-        opts={{
-          loop: true
-        }}
-        plugins={[plugin.current]}
-        className='w-full max-w-full'
-      >
-        <CarouselContent>
-          {sliderImages.map((image, index) => (
-            <CarouselItem key={index}>
-              <div className='p-1'>
-                <Card>
-                  <CardContent className='flex aspect-square items-center rounded-sm justify-center p-0 relative'>
-                    <div className='absolute top-5 left-4 z-20 rounded-full bg-white py-5 px-6 cursor-pointer drop-shadow-lg'>
-                      <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={70} height={80} />
+      <Card>
+        <CardContent className='flex aspect-square items-center p-0 justify-center relative h-screen w-full'>
+          <div className='absolute top-5 left-4 z-20 rounded-full bg-white py-5 px-6 cursor-pointer drop-shadow-lg'>
+            <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={70} height={80} />
+          </div>
+          <div className=''>
+            <Carousel
+              opts={{
+                loop: true
+              }}
+              plugins={[plugin.current]}
+              className='w-full max-w-full'
+            >
+              <CarouselContent>
+                {sliderImages.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className='w-full h-screen'>
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        className='object-cover w-full h-full'
+                        width={1024}
+                        height={1024}
+                      />
                     </div>
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      className='object-cover w-full h-full rounded-sm'
-                      width={1024}
-                      height={1024}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        {/* <CarouselPrevious /> */}
-        {/* <CarouselNext /> */}
-      </Carousel>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {/* <CarouselPrevious /> */}
+              {/* <CarouselNext /> */}
+            </Carousel>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
