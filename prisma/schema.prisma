@@ -55,8 +55,14 @@ model User {
   updatedAt   DateTime  @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
 
+<<<<<<< Updated upstream
   userType  UserType   @relation(fields: [userTypeId], references: [id])
   cafeUsers CafeUser[]
+=======
+  userType              UserType                @relation(fields: [userTypeId], references: [id])
+  cafeUsers             CafeUser[]
+  CustomerPointsHistory CustomerPointsHistory[]
+>>>>>>> Stashed changes
 
   @@map("users")
 }
@@ -74,6 +80,7 @@ model UserType {
 }
 
 model Customer {
+<<<<<<< Updated upstream
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
   firstname     String
   lastname      String
@@ -86,6 +93,35 @@ model Customer {
   customerRFID  CustomerRFID[]
   CafeCustomers CafeCustomers[]
   Order         Order[]
+=======
+  id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
+  firstname             String
+  lastname              String
+  phoneNumber           String?                 @map("phone_number")
+  email                 String?
+  points                Int
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  deletedAt             DateTime?               @map("deleted_at")
+  customerRFID          CustomerRFID[]
+  CafeCustomers         CafeCustomers[]
+  Order                 Order[]
+  CustomerPointsHistory CustomerPointsHistory[]
+}
+
+model CustomerPointsHistory {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  customerId String    @db.ObjectId
+  userId     String?   @db.ObjectId
+  amount     Int
+  action     String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  Customer Customer @relation(fields: [customerId], references: [id])
+  User     User?    @relation(fields: [userId], references: [id])
+>>>>>>> Stashed changes
 }
 
 model Otp {
@@ -153,7 +189,7 @@ model CafeBrands {
 model Product {
   id          String             @id @default(auto()) @map("_id") @db.ObjectId
   brandId     String             @db.ObjectId
-  cafeId      String
+  cafeId      String?
   name        String
   SKU         String             @unique
   description String?
