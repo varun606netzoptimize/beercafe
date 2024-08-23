@@ -8,7 +8,7 @@ const Page = () => {
   return (
     <div
       className='flex items-center justify-center h-full bg-white relative overflow-hidden'
-      style={{ background: 'linear-gradient(138deg, #fff 50%, #ffd580ad 50%)' }}
+      style={{ background: 'linear-gradient(135deg, #fff 50%, #ffd580ad 50%)' }}
     >
       {/* Top Yellow Semi-circle */}
       <div className='absolute top-0 right-0 h-[300px] w-[300px] bg-[#FFC85D] rounded-full translate-x-[50%] translate-y-[-50%] hidden' />
