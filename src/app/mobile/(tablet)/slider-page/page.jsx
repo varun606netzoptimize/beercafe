@@ -28,6 +28,14 @@ const Page = () => {
     {
       src: '/images/mobile/jpeg/beer4.jpg',
       alt: 'Beer 4'
+    },
+    {
+      src: '/images/mobile/jpeg/beer5.jpg',
+      alt: 'Beer 5'
+    },
+    {
+      src: '/images/mobile/jpeg/beer6.jpg',
+      alt: 'Beer 6'
     }
   ]
 
