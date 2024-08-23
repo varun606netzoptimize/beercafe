@@ -7,7 +7,7 @@ import Logo from '@/@core/svg/Logo'
 const Page = () => {
   return (
     <div
-      className='flex items-center justify-center h-screen bg-white relative overflow-hidden'
+      className='flex items-center justify-center h-full bg-white relative overflow-hidden'
       style={{ background: 'linear-gradient(138deg, #fff 50%, #ffd580ad 50%)' }}
     >
       {/* Top Yellow Semi-circle */}
@@ -21,7 +21,7 @@ const Page = () => {
         {/* Beer Icon */}
         <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={250} height={261} />
       </div>
-      <div className='absolute bottom-5 right-10 rounded-full bg-white p-3 cursor-pointer drop-shadow-sm hover:drop-shadow-lg'>
+      <div className='absolute bottom-5 right-10 rounded-full bg-white px-3 pt-3 pb-2 cursor-pointer drop-shadow-sm hover:drop-shadow-lg'>
         <Link href='/mobile/slider-page'>
           <img
             src='/images/mobile/left-arrow.png'
