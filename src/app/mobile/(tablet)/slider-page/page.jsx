@@ -32,25 +32,25 @@ const Page = () => {
   ]
 
   return (
-    <div className='h-screen'>
+    <div className='h-full'>
       <Card className="border-0">
 
-        <CardContent className='flex aspect-square items-center p-0 justify-center relative h-screen w-full'>
+        <CardContent className='flex aspect-square items-center p-0 justify-center relative h-full w-full'>
           <div className='absolute top-5 left-4 z-20 rounded-full bg-white py-5 px-6 cursor-pointer drop-shadow-lg'>
             <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={70} height={80} />
           </div>
-          <div className=''>
             <Carousel
               opts={{
                 loop: true
               }}
               plugins={[plugin.current]}
-              className='w-full max-w-full'
+              className='w-full max-w-full h-full'
             >
-              <CarouselContent>
+              <CarouselContent
+              className="h-full">
                 {sliderImages.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div className='w-full h-screen'>
+                    <div className='w-full h-full'>
                       <Image
                         src={image.src}
                         alt={image.alt}
@@ -65,7 +65,6 @@ const Page = () => {
               {/* <CarouselPrevious /> */}
               {/* <CarouselNext /> */}
             </Carousel>
-          </div>
         </CardContent>
       </Card>
     </div>
