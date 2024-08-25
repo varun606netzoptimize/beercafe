@@ -1,7 +1,7 @@
 'use client'
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
-import { useRef, useState } from 'react'
+import { Carousel, CarouselContent, CarouselDots, CarouselItem } from '@/components/ui/carousel'
+import { useRef } from 'react'
 
 const CoffeeCard = ({ name = 'beer', price = '100', color = 'white' }) => (
   <div className='p-4 bg-white rounded-lg shadow-md'>
@@ -35,22 +35,18 @@ const Page = () => {
     { name: 'Cafe Bombon', price: 2.22, color: 'bg-blue-200' },
     { name: 'Cafe au lait', price: 5.45, color: 'bg-yellow-200' },
     { name: 'Cafe Bombon', price: 2.22, color: 'bg-blue-200' },
+    { name: 'Cafe au lait', price: 5.45, color: 'bg-yellow-200' },
+    { name: 'Cafe au lait', price: 5.45, color: 'bg-yellow-200' },
+    { name: 'Cafe Bombon', price: 2.22, color: 'bg-blue-200' },
+    { name: 'Cafe au lait', price: 5.45, color: 'bg-yellow-200' },
+    { name: 'Cafe Bombon', price: 2.22, color: 'bg-blue-200' },
     { name: 'Cafe au lait', price: 5.45, color: 'bg-yellow-200' }
-    // ... add all coffee items
   ]
 
   const itemsPerSlide = 8
   const totalSlides = Math.ceil(coffees.length / itemsPerSlide)
 
   const carouselRef = useRef(null)
-  const [activeSlide, setActiveSlide] = useState(0)
-
-  const handleSlideClick = index => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollTo(index)
-      setActiveSlide(index)
-    }
-  }
 
   return (
     <Carousel
@@ -69,16 +65,8 @@ const Page = () => {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className='flex justify-center w-full py-2 gap-2'>
-        {[...Array(totalSlides)].map((_, index) => (
-          <div
-            key={index}
-            className={`h-1 w-16 rounded-full cursor-pointer transition-colors ${
-              activeSlide === index ? 'bg-blue-500' : 'bg-gray-200'
-            }`}
-            onClick={() => handleSlideClick(index)}
-          />
-        ))}
+      <div className='mt-5'>
+        <CarouselDots />
       </div>
     </Carousel>
   )

@@ -1,18 +1,26 @@
 import Link from 'next/link'
 
 const menuItems = [
-  { name: 'Drinks', href: '/menu/drinks' },
-  { name: 'Food', href: '/menu/food' },
-  { name: 'Bills', href: '/menu/bills' },
-  { name: 'Settings', href: '/menu/settings' }
+  { name: 'Drinks', href: '/mobile/drinks' },
+  { name: 'Food', href: '/mobile/food' },
+  { name: 'Bills', href: '/mobile/bills' },
+  { name: 'Settings', href: '/mobile/settings' }
 ]
 
 const TabletSideBar = () => {
   return (
-    <div className='w-28 bg-blue-900 text-white p-4 sticky top-0 h-full'>
+    <div className='w-28 bg-baseColor text-textColor p-4 sticky top-0 h-full'>
       {menuItems.map(item => (
         <Link href={item.href}>
-          <p className='block p-2 hover:bg-blue-700 rounded-md transition-colors'>{item.name}</p>
+          <p
+            className={`block p-2 rounded-md transition-colors ${
+              item.name === 'Beer'
+                ? 'bg-secondary text-titleColor hover:bg-primary hover:text-baseColor'
+                : 'hover:bg-primary hover:text-baseColor'
+            }`}
+          >
+            {item.name}
+          </p>
         </Link>
       ))}
     </div>
