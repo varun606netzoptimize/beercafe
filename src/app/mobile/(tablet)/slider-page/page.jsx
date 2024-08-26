@@ -72,7 +72,7 @@ const Page = () => {
             {/* <CarouselPrevious /> */}
             {/* <CarouselNext /> */}
           </Carousel>
-          <div className='absolute bottom-5 right-4 z-20 rounded-full bg-white py-3 px-3 cursor-pointer drop-shadow-lg'>
+          <div className='absolute bottom-5 right-4 z-20 rounded-full bg-white py-3 px-3 cursor-pointer drop-shadow-lg hover:drop-shadow-2xl'>
             <Link href='/mobile/drinks'>
               <div className='flex items-center gap-2'>
                 <p>Order Now</p>
