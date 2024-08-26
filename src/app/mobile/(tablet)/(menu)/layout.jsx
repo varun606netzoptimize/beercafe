@@ -1,9 +1,11 @@
+import { Inter } from 'next/font/google'
+
+import clsx from 'clsx'
+
 import BeerCategoryIcon from '@/@menu/svg/BeerCategoryIcon'
 import TabletCheckout from '@/components/TabletCheckout/TabletCheckout'
 import TabletSideBar from '@/components/TabletSideBar/TabletSideBar'
 import TabletTopBar from '@/components/TabletTopBar/TabletTopBar'
-import clsx from 'clsx'
-import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 

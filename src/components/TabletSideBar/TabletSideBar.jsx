@@ -1,11 +1,13 @@
 'use client'
 
+import Link from 'next/link'
+
+import { usePathname } from 'next/navigation'
+
 import BillIcon from '@/@menu/svg/BillIcon'
 import DrinksIcon from '@/@menu/svg/DrinksIcon'
 import FoodIcon from '@/@menu/svg/FoodIcon'
 import SettingsIcon from '@/@menu/svg/SettingsIcon'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 const menuItems = [
   { name: 'Drinks', href: '/mobile/drinks', icon: <DrinksIcon /> },

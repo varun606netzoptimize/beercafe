@@ -1,7 +1,8 @@
 'use client'
 
-import { AuthContext } from '@/context/AuthContext'
 import { useContext } from 'react'
+
+import { AuthContext } from '@/context/AuthContext'
 
 const TabletCheckout = () => {
   const { cartItems } = useContext(AuthContext)
