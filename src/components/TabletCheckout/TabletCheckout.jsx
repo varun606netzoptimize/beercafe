@@ -31,7 +31,7 @@ const TabletCheckout = () => {
       </div>
 
       <div className='px-5 mt-8'>
-        <button className='w-full  bg-green-500 cursor-pointer text-white p-3 rounded-full hover:bg-green-700'>
+        <button className='w-full transition-all duration-300  bg-green-500 cursor-pointer text-white p-3 rounded-full hover:bg-green-700'>
           Checkout
         </button>
       </div>
