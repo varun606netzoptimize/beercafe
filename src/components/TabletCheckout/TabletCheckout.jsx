@@ -24,7 +24,9 @@ const TabletCheckout = () => {
           <div className='space-y-4 mb-10 px-5'>
             {cartItems.map((item, index) => (
               <div key={index} className='flex justify-between'>
-                <span>{item.name}</span>
+                <span>
+                  {item.name} <small>({item.quantity})</small>
+                </span>
                 <span>${item.price.toFixed(2)}</span>
               </div>
             ))}
