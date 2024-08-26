@@ -12,7 +12,7 @@ const CoffeeCard = ({ name = '', price = '', quantity = '', icon = '', onClick =
     onClick={onClick}
   >
     <div className={`w-16 h-16 rounded-full mx-auto mb-2`}>
-      <Image src={icon} width={12} height={12} alt={icon} />
+      <Image src={icon} width={64} height={64} alt={icon} />
     </div>
     <p className='text-center text-sm font-semibold'>
       {name}
@@ -25,36 +25,36 @@ const CoffeeCard = ({ name = '', price = '', quantity = '', icon = '', onClick =
 
 const Page = () => {
   const beers = [
-    { name: 'Heineken', price: 3.5, quantity: '330ml', icon: '' },
-    { name: 'Heineken', price: 4.5, quantity: '500ml', icon: '' },
-    { name: 'Heineken', price: 6.0, quantity: '750ml', icon: '' },
-    { name: 'Budweiser', price: 3.0, quantity: '330ml', icon: '' },
-    { name: 'Budweiser', price: 4.0, quantity: '500ml', icon: '' },
-    { name: 'Budweiser', price: 5.5, quantity: '750ml', icon: '' },
-    { name: 'Corona', price: 3.2, quantity: '330ml', icon: '' },
-    { name: 'Corona', price: 4.2, quantity: '500ml', icon: '' },
-    { name: 'Corona', price: 5.8, quantity: '750ml', icon: '' },
-    { name: 'Guinness', price: 3.8, quantity: '330ml', icon: '' },
-    { name: 'Guinness', price: 4.8, quantity: '500ml', icon: '' },
-    { name: 'Guinness', price: 6.5, quantity: '750ml', icon: '' },
-    { name: 'Stella Artois', price: 3.6, quantity: '330ml', icon: '' },
-    { name: 'Stella Artois', price: 4.6, quantity: '500ml', icon: '' },
-    { name: 'Stella Artois', price: 6.2, quantity: '750ml', icon: '' },
-    { name: 'Carlsberg', price: 3.1, quantity: '330ml', icon: '' },
-    { name: 'Carlsberg', price: 4.1, quantity: '500ml', icon: '' },
-    { name: 'Carlsberg', price: 5.7, quantity: '750ml', icon: '' },
-    { name: 'Beck’s', price: 3.3, quantity: '330ml', icon: '' },
-    { name: 'Beck’s', price: 4.3, quantity: '500ml', icon: '' },
-    { name: 'Beck’s', price: 5.9, quantity: '750ml', icon: '' },
-    { name: 'Coors Light', price: 3.4, quantity: '330ml', icon: '' },
-    { name: 'Coors Light', price: 4.4, quantity: '500ml', icon: '' },
-    { name: 'Coors Light', price: 6.0, quantity: '750ml', icon: '' },
-    { name: 'Miller', price: 3.2, quantity: '330ml', icon: '' },
-    { name: 'Miller', price: 4.2, quantity: '500ml', icon: '' },
-    { name: 'Miller', price: 5.8, quantity: '750ml', icon: '' },
-    { name: 'Pilsner Urquell', price: 3.7, quantity: '330ml', icon: '' },
-    { name: 'Pilsner Urquell', price: 4.7, quantity: '500ml', icon: '' },
-    { name: 'Pilsner Urquell', price: 6.3, quantity: '750ml', icon: '' }
+    { name: 'Heineken', price: 3.5, quantity: '330ml', icon: '/images/mobile/beers/heineken.jpg' },
+    { name: 'Heineken', price: 4.5, quantity: '500ml', icon: '/images/mobile/beers/heineken.jpg' },
+    { name: 'Heineken', price: 6.0, quantity: '750ml', icon: '/images/mobile/beers/heineken.jpg' },
+    { name: 'Budweiser', price: 3.0, quantity: '330ml', icon: '/images/mobile/beers/budweiser.jpg' },
+    { name: 'Budweiser', price: 4.0, quantity: '500ml', icon: '/images/mobile/beers/budweiser.jpg' },
+    { name: 'Budweiser', price: 5.5, quantity: '750ml', icon: '/images/mobile/beers/budweiser.jpg' },
+    { name: 'Corona', price: 3.2, quantity: '330ml', icon: '/images/mobile/beers/corona.jpg' },
+    { name: 'Corona', price: 4.2, quantity: '500ml', icon: '/images/mobile/beers/corona.jpg' },
+    { name: 'Corona', price: 5.8, quantity: '750ml', icon: '/images/mobile/beers/corona.jpg' },
+    { name: 'Guinness', price: 3.8, quantity: '330ml', icon: '/images/mobile/beers/guinness.jpg' },
+    { name: 'Guinness', price: 4.8, quantity: '500ml', icon: '/images/mobile/beers/guinness.jpg' },
+    { name: 'Guinness', price: 6.5, quantity: '750ml', icon: '/images/mobile/beers/guinness.jpg' },
+    { name: 'Stella Artois', price: 3.6, quantity: '330ml', icon: '/images/mobile/beers/stella-artois.jpg' },
+    { name: 'Stella Artois', price: 4.6, quantity: '500ml', icon: '/images/mobile/beers/stella-artois.jpg' },
+    { name: 'Stella Artois', price: 6.2, quantity: '750ml', icon: '/images/mobile/beers/stella-artois.jpg' },
+    { name: 'Carlsberg', price: 3.1, quantity: '330ml', icon: '/images/mobile/beers/carlsberg.jpg' },
+    { name: 'Carlsberg', price: 4.1, quantity: '500ml', icon: '/images/mobile/beers/carlsberg.jpg' },
+    { name: 'Carlsberg', price: 5.7, quantity: '750ml', icon: '/images/mobile/beers/carlsberg.jpg' },
+    { name: 'Beck’s', price: 3.3, quantity: '330ml', icon: '/images/mobile/beers/becks.jpg' },
+    { name: 'Beck’s', price: 4.3, quantity: '500ml', icon: '/images/mobile/beers/becks.jpg' },
+    { name: 'Beck’s', price: 5.9, quantity: '750ml', icon: '/images/mobile/beers/becks.jpg' },
+    { name: 'Coors Light', price: 3.4, quantity: '330ml', icon: '/images/mobile/beers/cors-light.jpg' },
+    { name: 'Coors Light', price: 4.4, quantity: '500ml', icon: '/images/mobile/beers/cors-light.jpg' },
+    { name: 'Coors Light', price: 6.0, quantity: '750ml', icon: '/images/mobile/beers/cors-light.jpg' },
+    { name: 'Miller', price: 3.2, quantity: '330ml', icon: '/images/mobile/beers/miller.jpg' },
+    { name: 'Miller', price: 4.2, quantity: '500ml', icon: '/images/mobile/beers/miller.jpg' },
+    { name: 'Miller', price: 5.8, quantity: '750ml', icon: '/images/mobile/beers/miller.jpg' },
+    { name: 'Pilsner Urquell', price: 3.7, quantity: '330ml', icon: '/images/mobile/beers/pilsner.jpg' },
+    { name: 'Pilsner Urquell', price: 4.7, quantity: '500ml', icon: '/images/mobile/beers/pilsner.jpg' },
+    { name: 'Pilsner Urquell', price: 6.3, quantity: '750ml', icon: '/images/mobile/beers/pilsner.jpg' }
   ]
 
   const itemsPerSlide = 8
