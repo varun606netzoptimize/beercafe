@@ -13,7 +13,7 @@ const TabletCheckout = () => {
   const total = subtotal
 
   return (
-    <div className='w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom py-5 sticky top-0 max-h-[450px] h-full'>
+    <div className='w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom py-5 pb-8 sticky top-0 h-fit'>
       <h2 className='text-xl font-semibold px-5'>Table 1</h2>
 
       {cartItems.length > 0 ? (
