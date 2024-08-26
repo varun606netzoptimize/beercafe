@@ -1,10 +1,12 @@
 'use client'
 
 import { Carousel, CarouselContent, CarouselDots, CarouselItem } from '@/components/ui/carousel'
+import { AuthContext } from '@/context/AuthContext'
+import { useContext } from 'react'
 import { useRef } from 'react'
 
-const CoffeeCard = ({ name = 'beer', price = '100', color = 'white' }) => (
-  <div className='py-4 px-2 bg-white rounded-2xl drop-shadow-xl cursor-pointer'>
+const CoffeeCard = ({ name = 'beer', price = '100', color = 'white', onClick = () => {} }) => (
+  <div className='py-4 px-2 bg-white rounded-2xl drop-shadow-xl cursor-pointer' onClick={onClick}>
     <div className={`w-16 h-16 rounded-full ${color} mx-auto mb-2`}>{/* Heart icon here */}</div>
     <p className='text-center font-semibold'>{name}</p>
     <p className='text-center text-gray-600'>${price}</p>
@@ -47,6 +49,13 @@ const Page = () => {
   const totalSlides = Math.ceil(coffees.length / itemsPerSlide)
 
   const carouselRef = useRef(null)
+  const { setCartItems, cartItems } = useContext(AuthContext)
+
+  const handleAddToCart = coffee => {
+    setCartItems(prevCartItems => [...prevCartItems, coffee])
+    setCartItems([coffee])
+    console.log(cartItems)
+  }
 
   return (
     <div className='w-full'>
@@ -60,7 +69,7 @@ const Page = () => {
             <CarouselItem key={slideIndex}>
               <div className='grid grid-cols-4 gap-4 pb-5'>
                 {coffees.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((coffee, index) => (
-                  <CoffeeCard key={index} {...coffee} />
+                  <CoffeeCard key={index} {...coffee} onClick={() => handleAddToCart(coffee)} />
                 ))}
               </div>
             </CarouselItem>
