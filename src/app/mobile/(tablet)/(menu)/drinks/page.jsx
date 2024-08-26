@@ -57,7 +57,7 @@ const Page = () => {
       <CarouselContent>
         {[...Array(totalSlides)].map((_, slideIndex) => (
           <CarouselItem key={slideIndex}>
-            <div className='grid grid-cols-4 gap-4 py-5'>
+            <div className='grid grid-cols-4 gap-4 pb-5'>
               {coffees.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((coffee, index) => (
                 <CoffeeCard key={index} {...coffee} />
               ))}
