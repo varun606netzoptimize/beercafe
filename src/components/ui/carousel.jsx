@@ -231,9 +231,9 @@ const CarouselDots = React.forwardRef((props, ref) => {
         {Array.from({ length: numberOfSlides }, (_, i) => (
           <Button
             key={i}
-            className={`mx-2 h-1 p-1 w-12 rounded-full cursor-pointer transition-all duration-500 ${
+            className={`mx-2 h-1 p-1 w-12 rounded-full cursor-pointer transition-all duration-[400ms] ${
               i === currentSlide
-                ? 'scale-125 w-28 transform mx-4 bg-slate-100 hover:bg-slate-100'
+                ? 'scale-125 w-28 transform mx-4 bg-baseColor hover:bg-baseColor'
                 : 'bg-gray-400 hover:bg-gray-400'
             }`}
             aria-label={`Go to slide ${i + 1}`}

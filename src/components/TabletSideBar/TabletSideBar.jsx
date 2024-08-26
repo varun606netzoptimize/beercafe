@@ -20,7 +20,7 @@ const TabletSideBar = () => {
   console.log(pathname)
 
   return (
-    <div className='w-fit pt-[82px] bg-baseColor text-textColor p-0 sticky top-0 h-full'>
+    <div className='w-fit pt-[82px] bg-baseColor drop-shadow-2xl text-textColor p-0 sticky top-0 h-full'>
       {menuItems.map((item, index) => (
         <Link key={index} href={item.href} className='group transition-all duration-300'>
           <div

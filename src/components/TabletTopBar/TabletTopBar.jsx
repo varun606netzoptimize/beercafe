@@ -2,7 +2,7 @@ import clsx from 'clsx'
 
 const TabletTopBar = () => {
   return (
-    <div className='flex justify-between pr-8 items-center bg-baseColor text-white'>
+    <div className='flex justify-between pr-8 items-center drop-shadow-xl bg-baseColor text-white'>
       <div className='flex'>
         {[...Array(8)].map((_, index) => (
           <div
