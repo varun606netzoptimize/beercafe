@@ -1,9 +1,11 @@
 'use client'
 
+import { useContext, useState, useRef } from 'react'
+
+import Image from 'next/image'
+
 import { Carousel, CarouselContent, CarouselDots, CarouselItem } from '@/components/ui/carousel'
 import { AuthContext } from '@/context/AuthContext'
-import Image from 'next/image'
-import { useContext, useState, useRef } from 'react'
 
 const CoffeeCard = ({
   id = '',
@@ -46,6 +48,7 @@ const Page = () => {
     { id: 10, name: 'Guinness', price: 3.8, quantity: '330ml', icon: '/images/mobile/beers/guinness.jpg' },
     { id: 11, name: 'Guinness', price: 4.8, quantity: '500ml', icon: '/images/mobile/beers/guinness.jpg' },
     { id: 12, name: 'Guinness', price: 6.5, quantity: '750ml', icon: '/images/mobile/beers/guinness.jpg' },
+
     // { id: 13, name: 'Stella Artois', price: 3.6, quantity: '330ml', icon: '/images/mobile/beers/stella-artois.jpg' },
     // { id: 14, name: 'Stella Artois', price: 4.6, quantity: '500ml', icon: '/images/mobile/beers/stella-artois.jpg' },
     // { id: 15, name: 'Stella Artois', price: 6.2, quantity: '750ml', icon: '/images/mobile/beers/stella-artois.jpg' },

@@ -4,11 +4,12 @@ import * as React from 'react'
 
 import Image from 'next/image'
 
+import Link from 'next/link'
+
 import Autoplay from 'embla-carousel-autoplay'
 
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
-import Link from 'next/link'
 
 const Page = () => {
   const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: false }))
