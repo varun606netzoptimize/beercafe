@@ -3,16 +3,25 @@
 import { Carousel, CarouselContent, CarouselDots, CarouselItem } from '@/components/ui/carousel'
 import { AuthContext } from '@/context/AuthContext'
 import Image from 'next/image'
-import { useContext } from 'react'
-import { useRef } from 'react'
+import { useContext, useState, useRef } from 'react'
 
-const CoffeeCard = ({ name = '', price = '', quantity = '', icon = '', onClick = () => {} }) => (
+const CoffeeCard = ({
+  id = '',
+  name = '',
+  price = '',
+  quantity = '',
+  icon = '',
+  onClick = () => {},
+  isSelected = false
+}) => (
   <div
-    className='py-4 px-2 max-w-[180px] bg-white rounded-2xl shadow-itemsShadowCustom cursor-pointer'
+    className={`py-4 px-2 max-w-[180px] bg-white border-2 rounded-2xl shadow-itemsShadowCustom cursor-pointer ${
+      isSelected ? 'border-2 border-yellow-500' : 'border-transparent'
+    }`}
     onClick={onClick}
   >
     <div className={`w-16 h-16 rounded-full mx-auto mb-2`}>
-      <Image src={icon} width={64} height={64} alt={icon} />
+      <Image src={icon} className='object-contain' width={64} height={64} alt={icon} />
     </div>
     <p className='text-center text-sm font-semibold'>
       {name}
@@ -25,36 +34,36 @@ const CoffeeCard = ({ name = '', price = '', quantity = '', icon = '', onClick =
 
 const Page = () => {
   const beers = [
-    { name: 'Heineken', price: 3.5, quantity: '330ml', icon: '/images/mobile/beers/heineken.jpg' },
-    { name: 'Heineken', price: 4.5, quantity: '500ml', icon: '/images/mobile/beers/heineken.jpg' },
-    { name: 'Heineken', price: 6.0, quantity: '750ml', icon: '/images/mobile/beers/heineken.jpg' },
-    { name: 'Budweiser', price: 3.0, quantity: '330ml', icon: '/images/mobile/beers/budweiser.jpg' },
-    { name: 'Budweiser', price: 4.0, quantity: '500ml', icon: '/images/mobile/beers/budweiser.jpg' },
-    { name: 'Budweiser', price: 5.5, quantity: '750ml', icon: '/images/mobile/beers/budweiser.jpg' },
-    { name: 'Corona', price: 3.2, quantity: '330ml', icon: '/images/mobile/beers/corona.jpg' },
-    { name: 'Corona', price: 4.2, quantity: '500ml', icon: '/images/mobile/beers/corona.jpg' },
-    { name: 'Corona', price: 5.8, quantity: '750ml', icon: '/images/mobile/beers/corona.jpg' },
-    { name: 'Guinness', price: 3.8, quantity: '330ml', icon: '/images/mobile/beers/guinness.jpg' },
-    { name: 'Guinness', price: 4.8, quantity: '500ml', icon: '/images/mobile/beers/guinness.jpg' },
-    { name: 'Guinness', price: 6.5, quantity: '750ml', icon: '/images/mobile/beers/guinness.jpg' },
-    { name: 'Stella Artois', price: 3.6, quantity: '330ml', icon: '/images/mobile/beers/stella-artois.jpg' },
-    { name: 'Stella Artois', price: 4.6, quantity: '500ml', icon: '/images/mobile/beers/stella-artois.jpg' },
-    { name: 'Stella Artois', price: 6.2, quantity: '750ml', icon: '/images/mobile/beers/stella-artois.jpg' },
-    { name: 'Carlsberg', price: 3.1, quantity: '330ml', icon: '/images/mobile/beers/carlsberg.jpg' },
-    { name: 'Carlsberg', price: 4.1, quantity: '500ml', icon: '/images/mobile/beers/carlsberg.jpg' },
-    { name: 'Carlsberg', price: 5.7, quantity: '750ml', icon: '/images/mobile/beers/carlsberg.jpg' },
-    { name: 'Beck’s', price: 3.3, quantity: '330ml', icon: '/images/mobile/beers/becks.jpg' },
-    { name: 'Beck’s', price: 4.3, quantity: '500ml', icon: '/images/mobile/beers/becks.jpg' },
-    { name: 'Beck’s', price: 5.9, quantity: '750ml', icon: '/images/mobile/beers/becks.jpg' },
-    { name: 'Coors Light', price: 3.4, quantity: '330ml', icon: '/images/mobile/beers/cors-light.jpg' },
-    { name: 'Coors Light', price: 4.4, quantity: '500ml', icon: '/images/mobile/beers/cors-light.jpg' },
-    { name: 'Coors Light', price: 6.0, quantity: '750ml', icon: '/images/mobile/beers/cors-light.jpg' },
-    { name: 'Miller', price: 3.2, quantity: '330ml', icon: '/images/mobile/beers/miller.jpg' },
-    { name: 'Miller', price: 4.2, quantity: '500ml', icon: '/images/mobile/beers/miller.jpg' },
-    { name: 'Miller', price: 5.8, quantity: '750ml', icon: '/images/mobile/beers/miller.jpg' },
-    { name: 'Pilsner Urquell', price: 3.7, quantity: '330ml', icon: '/images/mobile/beers/pilsner.jpg' },
-    { name: 'Pilsner Urquell', price: 4.7, quantity: '500ml', icon: '/images/mobile/beers/pilsner.jpg' },
-    { name: 'Pilsner Urquell', price: 6.3, quantity: '750ml', icon: '/images/mobile/beers/pilsner.jpg' }
+    // { id: 1, name: 'Heineken', price: 3.5, quantity: '330ml', icon: '/images/mobile/beers/heineken.jpg' },
+    // { id: 2, name: 'Heineken', price: 4.5, quantity: '500ml', icon: '/images/mobile/beers/heineken.jpg' },
+    // { id: 3, name: 'Heineken', price: 6.0, quantity: '750ml', icon: '/images/mobile/beers/heineken.jpg' },
+    // { id: 4, name: 'Budweiser', price: 3.0, quantity: '330ml', icon: '/images/mobile/beers/budweiser.jpg' },
+    // { id: 5, name: 'Budweiser', price: 4.0, quantity: '500ml', icon: '/images/mobile/beers/budweiser.jpg' },
+    // { id: 6, name: 'Budweiser', price: 5.5, quantity: '750ml', icon: '/images/mobile/beers/budweiser.jpg' },
+    // { id: 7, name: 'Corona', price: 3.2, quantity: '330ml', icon: '/images/mobile/beers/corona.jpg' },
+    // { id: 8, name: 'Corona', price: 4.2, quantity: '500ml', icon: '/images/mobile/beers/corona.jpg' },
+    // { id: 9, name: 'Corona', price: 5.8, quantity: '750ml', icon: '/images/mobile/beers/corona.jpg' },
+    { id: 10, name: 'Guinness', price: 3.8, quantity: '330ml', icon: '/images/mobile/beers/guinness.jpg' },
+    { id: 11, name: 'Guinness', price: 4.8, quantity: '500ml', icon: '/images/mobile/beers/guinness.jpg' },
+    { id: 12, name: 'Guinness', price: 6.5, quantity: '750ml', icon: '/images/mobile/beers/guinness.jpg' },
+    // { id: 13, name: 'Stella Artois', price: 3.6, quantity: '330ml', icon: '/images/mobile/beers/stella-artois.jpg' },
+    // { id: 14, name: 'Stella Artois', price: 4.6, quantity: '500ml', icon: '/images/mobile/beers/stella-artois.jpg' },
+    // { id: 15, name: 'Stella Artois', price: 6.2, quantity: '750ml', icon: '/images/mobile/beers/stella-artois.jpg' },
+    { id: 16, name: 'Carlsberg', price: 3.1, quantity: '330ml', icon: '/images/mobile/beers/carlsberg.jpg' },
+    { id: 17, name: 'Carlsberg', price: 4.1, quantity: '500ml', icon: '/images/mobile/beers/carlsberg.jpg' },
+    { id: 18, name: 'Carlsberg', price: 5.7, quantity: '750ml', icon: '/images/mobile/beers/carlsberg.jpg' },
+    { id: 19, name: 'Beck’s', price: 3.3, quantity: '330ml', icon: '/images/mobile/beers/becks.jpg' },
+    { id: 20, name: 'Beck’s', price: 4.3, quantity: '500ml', icon: '/images/mobile/beers/becks.jpg' },
+    { id: 21, name: 'Beck’s', price: 5.9, quantity: '750ml', icon: '/images/mobile/beers/becks.jpg' },
+    { id: 22, name: 'Coors Light', price: 3.4, quantity: '330ml', icon: '/images/mobile/beers/cors-light.jpg' },
+    { id: 23, name: 'Coors Light', price: 4.4, quantity: '500ml', icon: '/images/mobile/beers/cors-light.jpg' },
+    { id: 24, name: 'Coors Light', price: 6.0, quantity: '750ml', icon: '/images/mobile/beers/cors-light.jpg' },
+    { id: 25, name: 'Miller', price: 3.2, quantity: '330ml', icon: '/images/mobile/beers/miller.jpg' },
+    { id: 26, name: 'Miller', price: 4.2, quantity: '500ml', icon: '/images/mobile/beers/miller.jpg' },
+    { id: 27, name: 'Miller', price: 5.8, quantity: '750ml', icon: '/images/mobile/beers/miller.jpg' },
+    { id: 28, name: 'Pilsner Urquell', price: 3.7, quantity: '330ml', icon: '/images/mobile/beers/pilsner.jpg' },
+    { id: 29, name: 'Pilsner Urquell', price: 4.7, quantity: '500ml', icon: '/images/mobile/beers/pilsner.jpg' },
+    { id: 30, name: 'Pilsner Urquell', price: 6.3, quantity: '750ml', icon: '/images/mobile/beers/pilsner.jpg' }
   ]
 
   const itemsPerSlide = 8
@@ -62,8 +71,10 @@ const Page = () => {
 
   const carouselRef = useRef(null)
   const { setCartItems, cartItems } = useContext(AuthContext)
+  const [selectedBeerId, setSelectedBeerId] = useState(null) // State to keep track of the selected card by ID
 
   const handleAddToCart = beer => {
+    setSelectedBeerId(beer.id) // Set the selected card by ID
     setCartItems(prevCartItems => [...prevCartItems, beer])
     setCartItems([beer])
     console.log(cartItems)
@@ -81,7 +92,12 @@ const Page = () => {
             <CarouselItem key={slideIndex}>
               <div className='grid grid-cols-4 gap-4 px-1 pb-5'>
                 {beers.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((beer, index) => (
-                  <CoffeeCard key={index} {...beer} onClick={() => handleAddToCart(beer)} />
+                  <CoffeeCard
+                    key={beer.id}
+                    {...beer}
+                    onClick={() => handleAddToCart(beer)}
+                    isSelected={selectedBeerId === beer.id} // Apply selected style based on ID
+                  />
                 ))}
               </div>
             </CarouselItem>

@@ -33,7 +33,7 @@ const TabletCheckout = () => {
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Subtotal */}
-          <div className='space-y-4 mb-4 px-5'>
+          <div className='space-y-4 px-5'>
             <div className='flex justify-between font-semibold'>
               <span>SubTotal</span>
               <span>${subtotal}</span>
