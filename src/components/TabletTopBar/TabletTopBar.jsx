@@ -6,7 +6,7 @@ const TabletTopBar = () => {
           <div key={index} className='hover:bg-gray-700 group transition-all duration-300 cursor-pointer'>
             <div className='flex flex-col items-center px-8 py-4 transition-all duration-300 border-transparent border-b-2 group-hover:border-primary'>
               <p className='text-sm'>Table</p>
-              <h2 className='font-'>0{index + 1}</h2>
+              <h2 className='font-medium'>0{index + 1}</h2>
             </div>
           </div>
         ))}
