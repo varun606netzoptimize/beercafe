@@ -16,17 +16,17 @@ const TabletCheckout = () => {
           <span>SubTotal</span>
           <span>$3.20</span>
         </div>
-        <div className='flex justify-between'>
+        {/* <div className='flex justify-between'>
           <span>Tax</span>
           <span>$1.20</span>
-        </div>
+        </div> */}
       </div>
       <div className='border-b my-4 w-full border-gray-400'></div>
 
       <div className='space-y-4 mb-4 px-5'>
         <div className='flex justify-between font-semibold'>
           <span>Total</span>
-          <span>$4.40</span>
+          <span>$3.20</span>
         </div>
       </div>
 

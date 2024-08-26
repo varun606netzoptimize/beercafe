@@ -1,3 +1,4 @@
+import BeerCategoryIcon from '@/@menu/svg/BeerCategoryIcon'
 import TabletCheckout from '@/components/TabletCheckout/TabletCheckout'
 import TabletSideBar from '@/components/TabletSideBar/TabletSideBar'
 import TabletTopBar from '@/components/TabletTopBar/TabletTopBar'
@@ -15,8 +16,9 @@ const MenuLayout = ({ children }) => {
           <TabletTopBar />
           <div className='flex flex-col  px-5'>
             <div className='bg-[#333333] mt-5'>
-              <button className='rounded-3xl cursor-pointer py-2 px-6 flex items-center justify-center bg-primary'>
-                Beer
+              <button className='rounded-3xl text-white gap-2 cursor-pointer py-2 px-5 flex items-center justify-center bg-primary'>
+                <BeerCategoryIcon className='w-4 h-4' />
+                <p className='font-medium'> Beer </p>
               </button>
             </div>
             <div className='flex bg-[#333333] w-full h-full py-5 gap-5'>

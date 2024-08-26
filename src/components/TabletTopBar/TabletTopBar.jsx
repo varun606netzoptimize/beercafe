@@ -1,10 +1,23 @@
+import clsx from 'clsx'
+
 const TabletTopBar = () => {
   return (
     <div className='flex justify-between pr-8 items-center bg-baseColor text-white'>
       <div className='flex'>
         {[...Array(8)].map((_, index) => (
-          <div key={index} className='hover:bg-gray-700 group transition-all duration-300 cursor-pointer'>
-            <div className='flex flex-col items-center px-8 py-4 transition-all duration-300 border-transparent border-b-2 group-hover:border-primary'>
+          <div
+            key={index}
+            className={clsx(
+              'hover:bg-gray-700 group transition-all duration-300 cursor-pointer',
+              index == 0 ? 'bg-gray-700 ' : ''
+            )}
+          >
+            <div
+              className={clsx(
+                'flex flex-col items-center px-8 py-4 transition-all duration-300  ',
+                index === 0 ? 'border-b-2 border-primary' : 'border-transparent'
+              )}
+            >
               <p className='text-sm'>Table</p>
               <h2 className='font-medium'>0{index + 1}</h2>
             </div>
