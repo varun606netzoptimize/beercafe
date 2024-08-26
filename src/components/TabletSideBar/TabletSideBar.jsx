@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 
 const menuItems = [
   { name: 'Drinks', href: '/mobile/drinks' },
-  { name: 'Food', href: '/mobile/food' },
-  { name: 'Bills', href: '/mobile/bills' },
-  { name: 'Settings', href: '/mobile/settings' }
+  { name: 'Food', href: '#' },
+  { name: 'Bills', href: '#' },
+  { name: 'Settings', href: '#' }
 ]
 
 const TabletSideBar = () => {

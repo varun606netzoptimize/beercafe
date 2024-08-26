@@ -49,26 +49,28 @@ const Page = () => {
   const carouselRef = useRef(null)
 
   return (
-    <Carousel
-      ref={carouselRef}
-      className='w-full'
-      onSelect={index => setActiveSlide(index)} // Update active slide on carousel change
-    >
-      <CarouselContent>
-        {[...Array(totalSlides)].map((_, slideIndex) => (
-          <CarouselItem key={slideIndex}>
-            <div className='grid grid-cols-4 gap-4 pb-5'>
-              {coffees.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((coffee, index) => (
-                <CoffeeCard key={index} {...coffee} />
-              ))}
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <div className='mt-10'>
-        <CarouselDots />
-      </div>
-    </Carousel>
+    <div className='w-full'>
+      <Carousel
+        ref={carouselRef}
+        className='w-full'
+        onSelect={index => setActiveSlide(index)} // Update active slide on carousel change
+      >
+        <CarouselContent>
+          {[...Array(totalSlides)].map((_, slideIndex) => (
+            <CarouselItem key={slideIndex}>
+              <div className='grid grid-cols-4 gap-4 pb-5'>
+                {coffees.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((coffee, index) => (
+                  <CoffeeCard key={index} {...coffee} />
+                ))}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className='mt-10'>
+          <CarouselDots />
+        </div>
+      </Carousel>
+    </div>
   )
 }
 
