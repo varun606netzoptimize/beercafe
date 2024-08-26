@@ -4,7 +4,7 @@ import { Carousel, CarouselContent, CarouselDots, CarouselItem } from '@/compone
 import { useRef } from 'react'
 
 const CoffeeCard = ({ name = 'beer', price = '100', color = 'white' }) => (
-  <div className='p-4 bg-white rounded-lg shadow-md'>
+  <div className='p-4 bg-white rounded-2xl shadow-xl'>
     <div className={`w-16 h-16 rounded-full ${color} mx-auto mb-2`}>{/* Heart icon here */}</div>
     <p className='text-center font-semibold'>{name}</p>
     <p className='text-center text-gray-600'>${price}</p>
@@ -65,7 +65,7 @@ const Page = () => {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className='mt-5'>
+      <div className='mt-10'>
         <CarouselDots />
       </div>
     </Carousel>

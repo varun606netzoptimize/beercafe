@@ -9,8 +9,8 @@ const MenuLayout = ({ children }) => {
         <TabletSideBar />
         <div className='flex-1 flex flex-col'>
           <TabletTopBar />
-          <div className='flex'>
-            <main> {children}</main>
+          <div className='flex bg-[#333333] w-full h-full py-10 px-6 gap-6'>
+            <main>{children}</main>
             <TabletCheckout />
           </div>
         </div>

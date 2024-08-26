@@ -9,18 +9,12 @@ const menuItems = [
 
 const TabletSideBar = () => {
   return (
-    <div className='w-28 bg-baseColor text-textColor p-4 sticky top-0 h-full'>
+    <div className='w-fit pt-24 bg-baseColor text-textColor p-0 sticky top-0 h-full'>
       {menuItems.map((item, index) => (
-        <Link key={index} href={item.href}>
-          <p
-            className={`block p-2 rounded-md transition-colors ${
-              item.name === 'Beer'
-                ? 'bg-secondary text-titleColor hover:bg-primary hover:text-baseColor'
-                : 'hover:bg-primary hover:text-baseColor'
-            }`}
-          >
-            {item.name}
-          </p>
+        <Link key={index} href={item.href} className='group transition-all duration-300'>
+          <div className='flex flex-col items-center transition-all duration-300 px-4 py-6 hover:bg-gray-800 border-transparent border-l-2 rounded-xs group-hover:border-primary'>
+            <p>{item.name}</p>
+          </div>
         </Link>
       ))}
     </div>
