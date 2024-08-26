@@ -4,7 +4,7 @@ import { Carousel, CarouselContent, CarouselDots, CarouselItem } from '@/compone
 import { useRef } from 'react'
 
 const CoffeeCard = ({ name = 'beer', price = '100', color = 'white' }) => (
-  <div className='p-4 bg-white rounded-2xl shadow-xl cursor-pointer'>
+  <div className='p-4 bg-white rounded-2xl drop-shadow-xl cursor-pointer'>
     <div className={`w-16 h-16 rounded-full ${color} mx-auto mb-2`}>{/* Heart icon here */}</div>
     <p className='text-center font-semibold'>{name}</p>
     <p className='text-center text-gray-600'>${price}</p>
@@ -57,7 +57,7 @@ const Page = () => {
       <CarouselContent>
         {[...Array(totalSlides)].map((_, slideIndex) => (
           <CarouselItem key={slideIndex}>
-            <div className='grid grid-cols-4 gap-4'>
+            <div className='grid grid-cols-4 gap-4 py-5'>
               {coffees.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((coffee, index) => (
                 <CoffeeCard key={index} {...coffee} />
               ))}
