@@ -13,11 +13,11 @@ const TabletCheckout = () => {
   const total = subtotal
 
   return (
-    <div className='w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom py-4 sticky top-0 max-h-[400px] h-full'>
-      <h2 className='text-xl font-semibold px-5 mb-4'>Table 1</h2>
+    <div className='w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom py-5 sticky top-0 max-h-[450px] h-full'>
+      <h2 className='text-xl font-semibold px-5'>Table 1</h2>
 
       {cartItems.length > 0 ? (
-        <>
+        <div className='flex flex-col relative'>
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Display Cart Items */}
@@ -51,12 +51,12 @@ const TabletCheckout = () => {
           </div>
 
           {/* Checkout Button */}
-          <div className='px-5 mt-8'>
+          <div className='px-5 mt-8 h-full'>
             <button className='w-full transition-all duration-300 bg-green-500 cursor-pointer text-white p-3 rounded-full hover:bg-green-700'>
               Checkout
             </button>
           </div>
-        </>
+        </div>
       ) : (
         <div className='px-5 mt-8'>
           <p className='text-center text-gray-500'>Please add items to the cart.</p>
