@@ -4,7 +4,7 @@ const RightSliderModal = ({ isOpen = false, onClose = () => {}, children }) => {
   return (
     <div
       className={clsx(
-        'fixed inset-y-0 right-0 w-[80%] drop-shadow-2xl  max-w-md bg-white shadow-lg transform transition-transform duration-300 ease-in-out',
+        'fixed inset-y-0 right-0 w-[80%] rounded-[12px] rounded-r-md drop-shadow-2xl  max-w-md bg-white shadow-lg transform transition-transform duration-300 ease-in-out',
         {
           'translate-x-0': isOpen,
           'translate-x-full': !isOpen
