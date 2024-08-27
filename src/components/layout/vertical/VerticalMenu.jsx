@@ -73,6 +73,9 @@ const VerticalMenu = ({ scrollMenu }) => {
             <MenuItem href='/customers' icon={<i className='tabler-user-heart' />}>
               Manage Customers
             </MenuItem>
+            <MenuItem href='/AllCafeProducts' icon={<i className='tabler-beer' />}>
+              Manage Products
+            </MenuItem>
           </>
         ) : authToken.role == 'owner' ? (
           <>

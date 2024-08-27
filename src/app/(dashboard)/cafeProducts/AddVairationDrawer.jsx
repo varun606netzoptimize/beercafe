@@ -97,8 +97,6 @@ export default function AddVariationDrawer({
     }
   }
 
-  console.log('type:', type)
-
   const onUpdate = async data => {
     setIsLoading(true)
 

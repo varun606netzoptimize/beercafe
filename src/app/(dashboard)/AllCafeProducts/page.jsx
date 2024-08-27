@@ -10,28 +10,30 @@ import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
-import AddProductDrawer from './AddProductDrawer'
 import { ENDPOINT } from '@/endpoints'
-import DeleteProduct from './DeleteProduct'
-import ViewProductVariation from './ViewProductVariation'
-import AddVariationDrawer from './AddVairationDrawer'
+import ViewProductVariation from '../cafeProducts/ViewProductVariation'
+import DeleteProduct from '../cafeProducts/DeleteProduct'
+import AddVariationDrawer from '../cafeProducts/AddVairationDrawer'
+import AddAllProductDrawer from './AddAllProductDrawer'
 
 export default function Page() {
-  const { cafeProducts, setCafeProducts, authToken, tokenCheck, currentUser, setPageTitle } = useContext(AuthContext)
+  const { authToken, tokenCheck, currentUser, setPageTitle } = useContext(AuthContext)
 
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
+  const [cafeProducts, setCafeProducts] = useState([])
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeletePop, setShowDeletePop] = useState(false)
   const [deleteItem, setDeleteItem] = useState(null)
 
   const [viewPrice, setViewPrice] = useState(false)
   const [variations, setVariations] = useState([])
-
   const [productData, setProductData] = useState(null)
+
   const [addVariationVisible, setAddVariationVisible] = useState(false)
   const [drawerType, setDrawerType] = useState('add')
+  const [updateProductData, setUpdateProductData] = useState(null)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -39,20 +41,124 @@ export default function Page() {
         redirect('/login')
       }
 
-      setPageTitle(cafeProducts?.cafe?.name + ' Products')
+      setPageTitle('Manage My Products')
+      GetCafeProducts()
     }
   }, [authToken])
 
-  useEffect(() => {
-    if (authToken.token) {
-      if (currentUser) {
-        GetCafeProducts()
-      }
+  const columns = [
+    {
+      field: 'brand',
+      headerName: 'Brand Name',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <p>
+            <strong>{params?.row?.Brand?.name}</strong>
+          </p>
+        </Box>
+      )
+    },
+    {
+      field: 'name',
+      headerName: 'Product Name',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <p>
+            <strong>{params?.row?.name}</strong>
+          </p>
+        </Box>
+      )
+    },
+    {
+      field: 'cafe',
+      headerName: 'Cafe',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <p>{params?.row?.cafe?.name ? params?.row?.cafe?.name : 'no cafe assigned'}</p>
+        </Box>
+      )
+    },
+    { field: 'SKU', headerName: 'SKU', flex: 0.5 },
+    { field: 'quantity', headerName: 'Quantity', flex: 0.5 },
+    { field: 'description', headerName: 'Description', flex: 1 },
+    {
+      field: 'productVariation',
+      headerName: 'Product Variation',
+      flex: 1,
+      renderCell: params => (
+        <>
+          {params?.row?.variations?.length ? (
+            <Button
+              variant='outlined'
+              color='info'
+              size='small'
+              onClick={() => {
+                setViewPrice(true)
+                setVariations(params?.row?.variations)
+                setProductData(params?.row)
+              }}
+            >
+              View
+            </Button>
+          ) : (
+            <Button
+              variant='contained'
+              color='primary'
+              startIcon={<i className='tabler-cash-register' />}
+              size='small'
+              onClick={() => {
+                setAddVariationVisible(true)
+                setProductData(params?.row)
+              }}
+            >
+              Add
+            </Button>
+          )}
+        </>
+      )
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: params => (
+        <Box>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              setOpen(true)
+              setDrawerType('update')
+              setUpdateProductData(params?.row)
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant='outlined'
+            color='error'
+            size='small'
+            sx={{ marginLeft: 2 }}
+            onClick={() => {
+              setDeleteItem(params?.row)
+              setShowDeletePop(true)
+            }}
+          >
+            Delete
+          </Button>
+        </Box>
+      ),
+      sortable: false
     }
-  }, [authToken])
+  ]
 
   const GetCafeProducts = () => {
-    const url = `${ENDPOINT.GET_CAFE_PRODUCTS}/${cafeProducts.cafe.id}`
+    const url = `${ENDPOINT.GET_ALL_PRODUCTS}`
 
     setIsLoading(true)
 
@@ -98,97 +204,6 @@ export default function Page() {
       })
   }
 
-  const columns = [
-    {
-      field: 'brand',
-      headerName: 'Brand Name',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          <p>
-            <strong>{params?.row?.Brand?.name}</strong>
-          </p>
-        </Box>
-      )
-    },
-    {
-      field: 'name',
-      headerName: 'Product Name',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          <p>
-            <strong>{params?.row?.name}</strong>
-          </p>
-        </Box>
-      )
-    },
-    { field: 'SKU', headerName: 'SKU', flex: 1 },
-    { field: 'quantity', headerName: 'Quantity', flex: 1 },
-    { field: 'description', headerName: 'Description', flex: 1 },
-    {
-      field: 'productVariation',
-      headerName: 'Product Variation',
-      flex: 1,
-      renderCell: params => (
-        <>
-          {params?.row?.variations?.length ? (
-            <Button
-              variant='outlined'
-              color='info'
-              size='small'
-              onClick={() => {
-                setViewPrice(true)
-                setVariations(params?.row?.variations)
-                setProductData(params?.row)
-              }}
-            >
-              View
-            </Button>
-          ) : (
-            <Button
-              variant='contained'
-              color='primary'
-              startIcon={<i className='tabler-cash-register' />}
-              size='small'
-              onClick={() => {
-                setAddVariationVisible(true)
-                setProductData(params?.row)
-              }}
-            >
-              Add
-            </Button>
-          )}
-        </>
-      )
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          <Button variant='outlined' color='info' size='small' sx={{ marginRight: 2 }} onClick={() => {}}>
-            Edit
-          </Button>
-          <Button
-            variant='outlined'
-            color='error'
-            size='small'
-            sx={{ marginLeft: 2 }}
-            onClick={() => {
-              setDeleteItem(params?.row)
-              setShowDeletePop(true)
-            }}
-          >
-            Delete
-          </Button>
-        </Box>
-      ),
-      sortable: false
-    }
-  ]
-
   return (
     <div className='flex flex-col gap-6'>
       <Card>
@@ -219,16 +234,6 @@ export default function Page() {
         />
       )}
 
-      <AddProductDrawer open={open} onClose={() => setOpen(false)} getProducts={GetCafeProducts} />
-
-      <DeleteProduct
-        open={showDeletePop}
-        handleClose={() => setShowDeletePop(false)}
-        deleteData={deleteItem}
-        DeleteFunction={DeleteCafeProducts}
-        isLoading={isDeleting}
-      />
-
       <ViewProductVariation
         open={viewPrice}
         setOpen={setViewPrice}
@@ -239,12 +244,31 @@ export default function Page() {
         setDrawerType={setDrawerType}
       />
 
+      <DeleteProduct
+        open={showDeletePop}
+        handleClose={() => setShowDeletePop(false)}
+        deleteData={deleteItem}
+        DeleteFunction={DeleteCafeProducts}
+        isLoading={isDeleting}
+      />
+
       <AddVariationDrawer
         open={addVariationVisible}
         onClose={() => setAddVariationVisible(false)}
         productData={productData}
         GetCafeProducts={GetCafeProducts}
         type={drawerType}
+      />
+
+      <AddAllProductDrawer
+        open={open}
+        onClose={() => {
+          setOpen(false)
+          setDrawerType('add')
+        }}
+        getProducts={GetCafeProducts}
+        drawerType={drawerType}
+        updateProductData={updateProductData}
       />
     </div>
   )
