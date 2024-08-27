@@ -12,6 +12,7 @@ import TabletSideBar from '@/components/TabletSideBar/TabletSideBar'
 import TabletTopBar from '@/components/TabletTopBar/TabletTopBar'
 import CheckoutIcon from '@/@menu/svg/CheckoutIcon'
 import RightSliderModal from '@/components/Modal/RightSliderModal'
+import CoffeeCategoryIcon from '@/@menu/svg/CoffeeCategoryIcon'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,10 +31,16 @@ const MenuLayout = ({ children }) => {
           <TabletTopBar />
           <div className='flex flex-col px-5'>
             <div className='bg-[#F8F7FA] mt-5 flex items-center w-full justify-between'>
+              <div className='flex gap-3 items-center'>
               <button className='rounded-3xl text-black gap-2 cursor-pointer py-2 px-5 flex items-center justify-center bg-posPrimaryColor'>
                 <BeerCategoryIcon className='w-4 h-4' />
                 <p className='font-medium'> Beer </p>
               </button>
+              <button className='rounded-3xl text-black gap-2 cursor-pointer py-2 px-5 flex items-center justify-center bg-[#e5e5e5]'>
+                <CoffeeCategoryIcon className='w-4 h-4' />
+                <p className='font-medium'> Coffee </p>
+              </button>
+              </div>
               <div className='block md:hidden'>
               <button  onClick={toggleCheckout} className='text-black rounded-full drop-shadow-2xl pl-5 py-6 pr-12 -mr-16 bg-posPrimaryColor'>
                 <CheckoutIcon />
