@@ -18,7 +18,7 @@ const CoffeeCard = ({
 }) => (
   <div
     className={`py-4 px-2 max-w-[180px] bg-white border-2 rounded-2xl shadow-itemsShadowCustom cursor-pointer ${
-      isSelected ? 'border-2 border-yellow-500' : 'border-transparent'
+      isSelected ? 'border-2 border-posPrimaryColor' : 'border-transparent'
     }`}
     onClick={onClick}
   >
@@ -78,22 +78,21 @@ const Page = () => {
 
   const handleAddToCart = beer => {
     setSelectedBeerId(beer.id) // Set the selected card by ID
-    setCartItems(prevCartItems => [...prevCartItems, beer])
+    // setCartItems(prevCartItems => [...prevCartItems, beer])
     setCartItems([beer])
-    console.log(cartItems)
   }
 
   return (
     <div className='w-full'>
       <Carousel
         ref={carouselRef}
-        className='w-full'
+        className='w-fit'
         onSelect={index => setActiveSlide(index)} // Update active slide on carousel change
       >
         <CarouselContent>
           {[...Array(totalSlides)].map((_, slideIndex) => (
             <CarouselItem key={slideIndex}>
-              <div className='grid grid-cols-4 gap-4 px-1 pb-5'>
+              <div className='grid grid-cols-3 lg:grid-cols-4 gap-4 px-1 pb-5'>
                 {beers.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((beer, index) => (
                   <CoffeeCard
                     key={beer.id}

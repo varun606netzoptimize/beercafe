@@ -15,7 +15,7 @@ const TabletTopBar = () => {
             <div
               className={clsx(
                 'flex flex-col items-center px-8 py-4 transition-all duration-300  ',
-                index === 0 ? 'border-b-2 border-primary' : 'border-transparent'
+                index === 0 ? 'border-b-2 border-posPrimaryColor' : 'border-transparent'
               )}
             >
               <p className='text-sm'>Table</p>
@@ -24,8 +24,8 @@ const TabletTopBar = () => {
           </div>
         ))}
       </div>
-      <button className='bg-primary cursor-pointer px-4 py-2 rounded-full transition-all duration-300 border-2 hover:border-primary hover:bg-white'>
-        New Table
+      <button className='bg-posPrimaryColor cursor-pointer px-3 py-2 rounded-full transition-all duration-300 border-2 hover:border-posPrimaryColor hover:bg-white flex items-center gap-1'>
+        <span className='text-[24px] leading-3'>+</span> New Table
       </button>
     </div>
   )

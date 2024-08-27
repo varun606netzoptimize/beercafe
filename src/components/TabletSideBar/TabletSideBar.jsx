@@ -26,10 +26,12 @@ const TabletSideBar = () => {
       {menuItems.map((item, index) => (
         <Link key={index} href={item.href} className='group transition-all duration-300'>
           <div
-            className={`flex flex-col transition-all gap-1 duration-300 bg-baseColor text-sm items-center px-3 py-5  border-l-2 rounded-xs group-hover:bg-gray-800 ${pathname === item.href ? 'bg-gray-800 border-l-2 !border-primary text-primary ' : 'border-transparent'}`}
+            className={`flex flex-col transition-all gap-1 duration-300 bg-baseColor text-sm items-center px-3 py-5  border-l-2 rounded-xs group-hover:bg-gray-800 ${pathname === item.href ? 'bg-gray-800 border-l-2 !border-posPrimaryColor text-posPrimaryColor ' : 'border-transparent'}`}
           >
             {item.icon}
-            <p className={`transition-all duration-300 ${pathname === item.href ? 'text-primary' : ''}`}>{item.name}</p>
+            <p className={`transition-all duration-300 ${pathname === item.href ? 'text-posPrimaryColor' : ''}`}>
+              {item.name}
+            </p>
           </div>
         </Link>
       ))}

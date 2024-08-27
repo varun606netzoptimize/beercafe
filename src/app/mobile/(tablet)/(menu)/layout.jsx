@@ -18,7 +18,7 @@ const MenuLayout = ({ children }) => {
           <TabletTopBar />
           <div className='flex flex-col px-5'>
             <div className='bg-[#F8F7FA] mt-5'>
-              <button className='rounded-3xl text-white gap-2 cursor-pointer py-2 px-5 flex items-center justify-center bg-primary'>
+              <button className='rounded-3xl text-black gap-2 cursor-pointer py-2 px-5 flex items-center justify-center bg-posPrimaryColor'>
                 <BeerCategoryIcon className='w-4 h-4' />
                 <p className='font-medium'> Beer </p>
               </button>
