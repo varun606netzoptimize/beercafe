@@ -2,9 +2,11 @@
 
 import { useContext } from 'react'
 
+import clsx from 'clsx'
+
 import { AuthContext } from '@/context/AuthContext'
 
-const TabletCheckout = () => {
+const TabletCheckout = ({isModal= false}) => {
   const { cartItems } = useContext(AuthContext)
 
   // Calculate the subtotal by summing the prices of all items in the cart
@@ -14,11 +16,11 @@ const TabletCheckout = () => {
   const total = subtotal
 
   return (
-    <div className='w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom py-5 pb-8 sticky top-0 h-fit'>
-      <h2 className='text-xl font-semibold px-5'>Table 1</h2>
+    <div className={clsx('w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom px-5 py-5 pb-8 sticky top-0 h-fit', isModal ? "shadow-none h-full" : "")}>
+      <h2 className='text-xl font-semibold'>Table 1</h2>
 
       {cartItems.length > 0 ? (
-        <div className='flex flex-col relative px-5'>
+        <div className='flex flex-col relative'>
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Display Cart Items */}

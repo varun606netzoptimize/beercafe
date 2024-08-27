@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+
 import { Inter } from 'next/font/google'
 
 import clsx from 'clsx'
@@ -7,10 +11,17 @@ import TabletCheckout from '@/components/TabletCheckout/TabletCheckout'
 import TabletSideBar from '@/components/TabletSideBar/TabletSideBar'
 import TabletTopBar from '@/components/TabletTopBar/TabletTopBar'
 import CheckoutIcon from '@/@menu/svg/CheckoutIcon'
+import RightSliderModal from '@/components/Modal/RightSliderModal'
 
 const inter = Inter({ subsets: ['latin'] })
 
 const MenuLayout = ({ children }) => {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+
+  const toggleCheckout = () => {
+    setIsCheckoutOpen(!isCheckoutOpen)
+  }
+
   return (
     <>
       <div className={clsx('h-full flex bg-[#F8F7FA]', inter.className)}>
@@ -23,14 +34,21 @@ const MenuLayout = ({ children }) => {
                 <BeerCategoryIcon className='w-4 h-4' />
                 <p className='font-medium'> Beer </p>
               </button>
-              <button className='rounded-full drop-shadow-2xl pl-5 py-6 pr-12 -mr-16 bg-posPrimaryColor'>
+              <div className='block md:hidden'>
+              <button  onClick={toggleCheckout} className='rounded-full drop-shadow-2xl pl-5 py-6 pr-12 -mr-16 bg-posPrimaryColor'>
                 <CheckoutIcon />
               </button>
+              </div>
             </div>
             <div className='flex bg-[#F8F7FA] w-full h-full py-5 gap-5'>
               <main>{children}</main>
-              <div className='hidden md:block w-full '>
-                <TabletCheckout />
+              <div className={clsx('w-full hidden md:block')}>
+              <TabletCheckout />
+              </div>
+              <div>
+                <RightSliderModal isOpen={isCheckoutOpen} onClose={toggleCheckout}>
+                  <TabletCheckout isModal={true} />
+                </RightSliderModal>
               </div>
             </div>
           </div>
