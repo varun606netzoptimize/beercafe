@@ -80,7 +80,7 @@ const Page = () => {
         <CarouselContent>
           {[...Array(totalSlides)].map((_, slideIndex) => (
             <CarouselItem key={slideIndex}>
-              <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 px-1 pb-5'>
+              <div className='grid grid-cols-2 min-[550px]:grid-cols-3 min-[700px]:grid-cols-4 gap-4 px-1 pb-5'>
                 {beers.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((beer, index) => (
                   <CoffeeCard
                     key={beer.id}

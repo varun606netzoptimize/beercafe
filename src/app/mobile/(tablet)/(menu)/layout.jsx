@@ -40,7 +40,7 @@ const MenuLayout = ({ children }) => {
               </button>
               </div>
             </div>
-            <div className='flex justify-between bg-[#F8F7FA] w-full h-full py-5 gap-5'>
+            <div className='flex justify-between bg-[#F8F7FA] w-full h-full py-5 md:gap-5'>
               <main>{children}</main>
               <div className={clsx('w-full hidden md:block')}>
               <TabletCheckout />
