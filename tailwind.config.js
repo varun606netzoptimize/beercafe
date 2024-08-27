@@ -13,11 +13,15 @@ const config = {
         baseColor: '#232323',
         textColor: '#FFFFFF',
         titleColor: '#1F1F1F',
-        error: '#E57373'
+        error: '#E57373',
+        posPrimaryColor: '#ebbb40'
       },
       boxShadow: {
         itemsShadowCustom: '0 .125rem .5rem 0 rgba(47, 43, 61, .12)',
       },
+      borderRadius: {
+        posButtonRadius: '10px'
+      }
     }
   }
 }

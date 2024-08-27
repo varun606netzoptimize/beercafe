@@ -2,9 +2,11 @@
 
 import { useContext } from 'react'
 
+import clsx from 'clsx'
+
 import { AuthContext } from '@/context/AuthContext'
 
-const TabletCheckout = () => {
+const TabletCheckout = ({isModal= false}) => {
   const { cartItems } = useContext(AuthContext)
 
   // Calculate the subtotal by summing the prices of all items in the cart
@@ -14,15 +16,15 @@ const TabletCheckout = () => {
   const total = subtotal
 
   return (
-    <div className='w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom py-5 pb-8 sticky top-0 h-fit'>
-      <h2 className='text-xl font-semibold px-5'>Table 1</h2>
+    <div className={clsx('w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom px-5 py-5 pb-8 sticky top-0 h-fit', isModal ? "shadow-none h-full" : "")}>
+      <h2 className='text-xl font-semibold'>Table 1</h2>
 
       {cartItems.length > 0 ? (
         <div className='flex flex-col relative'>
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Display Cart Items */}
-          <div className='space-y-4 mb-10 px-5'>
+          <div className='space-y-4 mb-10'>
             {cartItems.map((item, index) => (
               <div key={index} className='flex justify-between'>
                 <span>
@@ -36,7 +38,7 @@ const TabletCheckout = () => {
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Subtotal */}
-          <div className='space-y-4 px-5'>
+          <div className='space-y-4 '>
             <div className='flex justify-between font-semibold'>
               <span>SubTotal</span>
               <span>${subtotal}</span>
@@ -46,22 +48,22 @@ const TabletCheckout = () => {
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Total */}
-          <div className='space-y-4 mb-4 px-5'>
+          <div className='space-y-4 mb-4 '>
             <div className='flex justify-between font-semibold'>
               <span>Total</span>
-              <span>${total}</span>
+              <span className='text-[#169745]'>${total}</span>
             </div>
           </div>
 
           {/* Checkout Button */}
-          <div className='px-5 mt-8 h-full'>
-            <button className='w-full transition-all duration-300 bg-green-500 cursor-pointer text-white p-3 rounded-full hover:bg-green-700'>
+          <div className=' mt-8 h-full'>
+            <button className='w-full transition-all duration-300 bg-green-500 cursor-pointer text-white p-3 rounded-posButtonRadius hover:bg-posPrimaryColor'>
               Checkout
             </button>
           </div>
         </div>
       ) : (
-        <div className='px-5 mt-8'>
+        <div className=' mt-8'>
           <p className='text-center text-gray-500'>Please add items to the cart.</p>
         </div>
       )}
