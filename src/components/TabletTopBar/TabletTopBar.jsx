@@ -4,7 +4,7 @@ const TabletTopBar = () => {
   return (
     <div className='flex justify-between pr-8 flex-wrap items-center drop-shadow-xl bg-baseColor text-white'>
       <div className='flex flex-wrap'>
-        {[...Array(8)].map((_, index) => (
+        {[...Array(4)].map((_, index) => (
           <div
             key={index}
             className={clsx(

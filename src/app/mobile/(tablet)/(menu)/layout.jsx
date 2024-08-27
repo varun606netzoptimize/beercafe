@@ -40,12 +40,12 @@ const MenuLayout = ({ children }) => {
               </button>
               </div>
             </div>
-            <div className='flex bg-[#F8F7FA] w-full h-full py-5 gap-5'>
+            <div className='flex justify-between bg-[#F8F7FA] w-full h-full py-5 gap-5'>
               <main>{children}</main>
               <div className={clsx('w-full hidden md:block')}>
               <TabletCheckout />
               </div>
-              <div>
+              <div className={clsx('md:hidden')}>
                 <RightSliderModal isOpen={isCheckoutOpen} onClose={toggleCheckout}>
                   <TabletCheckout isModal={true} />
                 </RightSliderModal>
