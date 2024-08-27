@@ -102,7 +102,7 @@ export default function ViewProductVariation({
           className='flex flex-row items-center justify-between'
           sx={{ padding: 4, paddingLeft: 6, paddingRight: 6, marginBottom: -4 }}
         >
-          <h3>{'Product Variation'}</h3>
+          <h3>{productData?.name} Price Variation</h3>
           <Button
             variant='contained'
             color='primary'
