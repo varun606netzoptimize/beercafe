@@ -71,7 +71,7 @@ const Page = () => {
   }
 
   return (
-    <div className='w-full max-w-[650px] md:max-w-full'>
+    <div className='w-full'>
       <Carousel
         ref={carouselRef}
         className='w-fit'
