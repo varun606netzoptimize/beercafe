@@ -17,7 +17,7 @@ const CoffeeCard = ({
   isSelected = false
 }) => (
   <div
-    className={`py-4 px-2 max-w-[180px] bg-white border-2 rounded-2xl shadow-itemsShadowCustom cursor-pointer ${
+    className={`py-4 px-2 max-w-[160px] bg-white border-2 rounded-2xl shadow-itemsShadowCustom cursor-pointer ${
       isSelected ? 'border-2 border-posPrimaryColor' : 'border-transparent'
     }`}
     onClick={onClick}
@@ -73,7 +73,7 @@ const Page = () => {
   const totalSlides = Math.ceil(beers.length / itemsPerSlide)
 
   const carouselRef = useRef(null)
-  const { setCartItems, cartItems } = useContext(AuthContext)
+  const { setCartItems } = useContext(AuthContext)
   const [selectedBeerId, setSelectedBeerId] = useState(null) // State to keep track of the selected card by ID
 
   const handleAddToCart = beer => {
@@ -83,7 +83,7 @@ const Page = () => {
   }
 
   return (
-    <div className='w-full'>
+    <div className='w-full max-w-[650px] md:max-w-full'>
       <Carousel
         ref={carouselRef}
         className='w-fit'
@@ -92,7 +92,7 @@ const Page = () => {
         <CarouselContent>
           {[...Array(totalSlides)].map((_, slideIndex) => (
             <CarouselItem key={slideIndex}>
-              <div className='grid grid-cols-3 lg:grid-cols-4 gap-4 px-1 pb-5'>
+              <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-4 px-1 pb-5'>
                 {beers.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((beer, index) => (
                   <CoffeeCard
                     key={beer.id}

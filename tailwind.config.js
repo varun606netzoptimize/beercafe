@@ -19,6 +19,9 @@ const config = {
       boxShadow: {
         itemsShadowCustom: '0 .125rem .5rem 0 rgba(47, 43, 61, .12)',
       },
+      borderRadius: {
+        posButtonRadius: '10px'
+      }
     }
   }
 }

@@ -25,7 +25,9 @@ const MenuLayout = ({ children }) => {
             </div>
             <div className='flex bg-[#F8F7FA] w-full h-full py-5 gap-5'>
               <main>{children}</main>
-              <TabletCheckout />
+              <div className='hidden md:block w-full '>
+                <TabletCheckout />
+              </div>
             </div>
           </div>
         </div>
