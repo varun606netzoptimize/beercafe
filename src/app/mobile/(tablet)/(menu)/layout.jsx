@@ -23,9 +23,9 @@ const MenuLayout = ({ children }) => {
                 <BeerCategoryIcon className='w-4 h-4' />
                 <p className='font-medium'> Beer </p>
               </button>
-              <div className='rounded-full drop-shadow-2xl p-5 pr-10 -mr-14 bg-posPrimaryColor'>
+              <button className='rounded-full drop-shadow-2xl pl-5 py-6 pr-12 -mr-16 bg-posPrimaryColor'>
                 <CheckoutIcon />
-              </div>
+              </button>
             </div>
             <div className='flex bg-[#F8F7FA] w-full h-full py-5 gap-5'>
               <main>{children}</main>
