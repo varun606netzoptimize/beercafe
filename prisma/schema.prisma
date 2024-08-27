@@ -45,24 +45,18 @@ model CafeUser {
 }
 
 model User {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String?   @unique
-  phoneNumber String?   @map("phone_number")
-  password    String?
-  userTypeId  String    @db.ObjectId
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-<<<<<<< Updated upstream
-  userType  UserType   @relation(fields: [userTypeId], references: [id])
-  cafeUsers CafeUser[]
-=======
+  id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  email                 String?                 @unique
+  phoneNumber           String?                 @map("phone_number")
+  password              String?
+  userTypeId            String                  @db.ObjectId
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  deletedAt             DateTime?               @map("deleted_at")
   userType              UserType                @relation(fields: [userTypeId], references: [id])
   cafeUsers             CafeUser[]
   CustomerPointsHistory CustomerPointsHistory[]
->>>>>>> Stashed changes
 
   @@map("users")
 }
@@ -80,20 +74,6 @@ model UserType {
 }
 
 model Customer {
-<<<<<<< Updated upstream
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  firstname     String
-  lastname      String
-  phoneNumber   String?         @map("phone_number")
-  email         String?
-  points        Int
-  createdAt     DateTime        @default(now()) @map("created_at")
-  updatedAt     DateTime        @updatedAt @map("updated_at")
-  deletedAt     DateTime?       @map("deleted_at")
-  customerRFID  CustomerRFID[]
-  CafeCustomers CafeCustomers[]
-  Order         Order[]
-=======
   id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
   firstname             String
   lastname              String
@@ -118,10 +98,8 @@ model CustomerPointsHistory {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
-
-  Customer Customer @relation(fields: [customerId], references: [id])
-  User     User?    @relation(fields: [userId], references: [id])
->>>>>>> Stashed changes
+  Customer   Customer  @relation(fields: [customerId], references: [id])
+  User       User?     @relation(fields: [userId], references: [id])
 }
 
 model Otp {

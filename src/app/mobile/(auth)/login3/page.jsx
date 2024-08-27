@@ -1,16 +1,24 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
+import { useRouter } from 'next/navigation'
 
 import MobileButton from '@/components/MobileButton/MobileButton'
 
 const Page = () => {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  const id = searchParams.get('id')
+  const [userId, setUserId] = useState(null)
 
-  console.log(id, 'searchPar')
+  useEffect(() => {
+    // Extract id number from query parameters
+    const queryId = new URLSearchParams(window.location.search).get('id')
+
+    if (queryId) {
+      setUserId(queryId)
+    }
+  }, [])
 
   return (
     <div className='w-full'>
@@ -20,7 +28,7 @@ const Page = () => {
       </p>
 
       <div className='flex flex-col justify-center gap-8'>
-        <MobileButton onClick={() => router.push(`/mobile/complete-profile?id=${id}`)}>
+        <MobileButton onClick={() => router.push(`/mobile/complete-profile?id=${userId}`)}>
           Complete your profile
         </MobileButton>
         <button className='underline bg-transparent text-lg cursor-pointer' onClick={() => router.push('/mobile/home')}>
