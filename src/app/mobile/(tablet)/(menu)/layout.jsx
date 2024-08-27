@@ -35,7 +35,7 @@ const MenuLayout = ({ children }) => {
                 <p className='font-medium'> Beer </p>
               </button>
               <div className='block md:hidden'>
-              <button  onClick={toggleCheckout} className='rounded-full drop-shadow-2xl pl-5 py-6 pr-12 -mr-16 bg-posPrimaryColor'>
+              <button  onClick={toggleCheckout} className='text-black rounded-full drop-shadow-2xl pl-5 py-6 pr-12 -mr-16 bg-posPrimaryColor'>
                 <CheckoutIcon />
               </button>
               </div>

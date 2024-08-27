@@ -24,7 +24,7 @@ const TabletTopBar = () => {
           </div>
         ))}
       </div>
-      <button className='bg-posPrimaryColor cursor-pointer px-3 py-3 rounded-posButtonRadius transition-all duration-300 border-2 hover:border-posPrimaryColor hover:bg-white flex items-center gap-1'>
+      <button className='bg-posPrimaryColor text-black cursor-pointer px-3 py-3 rounded-posButtonRadius transition-all duration-300 border-2 hover:border-posPrimaryColor hover:bg-white flex items-center gap-1'>
         <span className='text-[24px] leading-3'>+</span> New Table
       </button>
     </div>
