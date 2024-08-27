@@ -6,20 +6,21 @@ export async function POST(req) {
   try {
     const { brandId, cafeId, name, SKU, description, quantity, image } = await req.json()
 
-    // Validate input
-    if (!brandId || !cafeId || !name || !SKU || !quantity) {
+    // Validate input: 'brandId', 'name', 'SKU', and 'quantity' are required, 'cafeId' is optional
+    if (!brandId || !name || !SKU || !quantity) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 })
     }
 
+    // Create a new product in the database
     const newProduct = await prisma.product.create({
       data: {
         brandId,
-        cafeId,
         name,
         SKU,
-        description,
         quantity,
-        image
+        description: description || null,
+        image: image || null,
+        cafeId: cafeId || null // Only include cafeId if provided
       }
     })
 

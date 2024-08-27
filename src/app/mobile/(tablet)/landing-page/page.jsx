@@ -19,7 +19,7 @@ const Page = () => {
       {/* Center Content */}
       <div className='text-center'>
         {/* Beer Icon */}
-        <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={250} height={260} />
+        <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={250} height={261} />
       </div>
       <div className='absolute bottom-5 right-10 rounded-full bg-white px-3 pt-3 pb-2 cursor-pointer drop-shadow-sm hover:drop-shadow-lg'>
         <Link href='/mobile/slider-page'>
