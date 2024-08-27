@@ -84,7 +84,7 @@ const Page = () => {
           <div>
             {/* <div className='absolute bottom-0 right-0 h-[300px] w-[300px] bg-[#FFC85D] rounded-full translate-x-[50%] translate-y-[50%] z-20'></div> */}
             <Link href='/mobile/drinks'>
-              <div className='absolute bottom-5 right-4 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
+              <div className='absolute bottom-5 right-5 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
                 <div className='flex items-center gap-2'>
                   <p>Order Now</p>
                   <LeftArrow className='w-6 h-6' />
