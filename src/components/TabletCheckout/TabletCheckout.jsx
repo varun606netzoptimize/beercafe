@@ -57,7 +57,7 @@ const TabletCheckout = ({isModal= false}) => {
 
           {/* Checkout Button */}
           <div className=' mt-8 h-full'>
-            <button className='w-full transition-all duration-300 bg-green-500 cursor-pointer text-white p-3 rounded-posButtonRadius hover:bg-posPrimaryColor'>
+            <button className='w-full transition-all duration-300 bg-posPrimaryColor cursor-pointer text-white p-3 rounded-posButtonRadius hover:bg-[#374151]'>
               Checkout
             </button>
           </div>

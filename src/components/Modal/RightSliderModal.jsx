@@ -13,7 +13,7 @@ const RightSliderModal = ({ isOpen = false, onClose = () => {}, children }) => {
 
       <div
         className={clsx(
-          'fixed inset-y-0 right-0 w-[80%] max-w-md bg-white shadow-lg z-30 rounded-[12px] drop-shadow-2xl transform transition-transform duration-300 ease-in-out',
+          'fixed inset-y-0 right-0 w-[80%] max-w-md bg-white shadow-lg z-30 rounded-l-[12px] drop-shadow-2xl transform transition-transform duration-300 ease-in-out',
           {
             'translate-x-0': isOpen,
             'translate-x-full': !isOpen
@@ -21,7 +21,7 @@ const RightSliderModal = ({ isOpen = false, onClose = () => {}, children }) => {
         )}
       >
         <button
-          className='absolute text-black text-lg z-40 bg-transparent top-4 right-4'
+          className='absolute text-black text-xl z-40 bg-transparent top-4 right-4'
           onClick={onClose}
         >
           ✕
