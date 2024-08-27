@@ -10,6 +10,7 @@ import Autoplay from 'embla-carousel-autoplay'
 
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
+import LeftArrow from '@/@menu/svg/LeftArrow'
 
 const Page = () => {
   const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: false }))
@@ -45,8 +46,15 @@ const Page = () => {
     <div className='h-full min-[800px]:h-screen'>
       <Card className='border-0 h-full'>
         <CardContent className='flex aspect-square items-center p-0 justify-center relative h-full w-full'>
-          <div className='absolute top-5 left-4 z-20 rounded-full bg-white py-5 px-6 cursor-pointer drop-shadow-lg'>
-            <Image src='/images/mobile/appLogo.png' alt='Beer Icon' width={70} height={80} />
+          <div>
+            <div className='absolute top-0 left-0 h-[500px] w-[500px] bg-[#fff] rounded-full translate-x-[-50%] translate-y-[-50%] z-20 drop-shadow-2xl'></div>
+            <Image
+              src='/images/mobile/appLogo.png'
+              className='absolute z-30 top-8 left-10'
+              alt='Beer Icon'
+              width={120}
+              height={130}
+            />
           </div>
           <Carousel
             opts={{
@@ -73,17 +81,14 @@ const Page = () => {
             {/* <CarouselPrevious /> */}
             {/* <CarouselNext /> */}
           </Carousel>
-          <div className='absolute bottom-5 right-4 z-20 rounded-full bg-white py-3 px-3 cursor-pointer drop-shadow-lg hover:drop-shadow-2xl'>
+          <div>
+            {/* <div className='absolute bottom-0 right-0 h-[300px] w-[300px] bg-[#FFC85D] rounded-full translate-x-[50%] translate-y-[50%] z-20'></div> */}
             <Link href='/mobile/drinks'>
-              <div className='flex items-center gap-2'>
-                <p>Order Now</p>
-                <img
-                  src='/images/mobile/left-arrow.png'
-                  alt='App Logo'
-                  width={20}
-                  height={20}
-                  className='object-contain cursor-pointer rotate-180'
-                />
+              <div className='absolute bottom-5 right-4 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
+                <div className='flex items-center gap-2'>
+                  <p>Order Now</p>
+                  <LeftArrow className='w-6 h-6' />
+                </div>
               </div>
             </Link>
           </div>
