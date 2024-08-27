@@ -12,35 +12,35 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Card, CardContent } from '@/components/ui/card'
 import LeftArrow from '@/@menu/svg/LeftArrow'
 
-const Page = () => {
-  const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: false }))
+const sliderImages = [
+  {
+    src: '/images/mobile/jpeg/beer1.jpg',
+    alt: 'Beer 1'
+  },
+  {
+    src: '/images/mobile/jpeg/beer2.jpg',
+    alt: 'Beer 2'
+  },
+  {
+    src: '/images/mobile/jpeg/beer3.jpg',
+    alt: 'Beer 3'
+  },
+  {
+    src: '/images/mobile/jpeg/beer4.jpg',
+    alt: 'Beer 4'
+  },
+  {
+    src: '/images/mobile/jpeg/beer5.jpg',
+    alt: 'Beer 5'
+  },
+  {
+    src: '/images/mobile/jpeg/beer6.jpg',
+    alt: 'Beer 6'
+  }
+]
 
-  const sliderImages = [
-    {
-      src: '/images/mobile/jpeg/beer1.jpg',
-      alt: 'Beer 1'
-    },
-    {
-      src: '/images/mobile/jpeg/beer2.jpg',
-      alt: 'Beer 2'
-    },
-    {
-      src: '/images/mobile/jpeg/beer3.jpg',
-      alt: 'Beer 3'
-    },
-    {
-      src: '/images/mobile/jpeg/beer4.jpg',
-      alt: 'Beer 4'
-    },
-    {
-      src: '/images/mobile/jpeg/beer5.jpg',
-      alt: 'Beer 5'
-    },
-    {
-      src: '/images/mobile/jpeg/beer6.jpg',
-      alt: 'Beer 6'
-    }
-  ]
+const Page = () => {
+  const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: false, stopOnLastSnap: false }));
 
   return (
     <div className='h-full min-[800px]:h-screen'>
