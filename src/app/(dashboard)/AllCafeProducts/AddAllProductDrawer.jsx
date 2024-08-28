@@ -146,7 +146,7 @@ export default function AddAllProductDrawer({ open, onClose, getProducts, drawer
                 onChange={e => field.onChange(e.target.value)}
                 value={field.value || ''}
               >
-                {brands.map(data => (
+                {brands?.map(data => (
                   <MenuItem value={data.id} key={data.id}>
                     {data.name}
                   </MenuItem>

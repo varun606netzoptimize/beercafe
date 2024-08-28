@@ -96,7 +96,7 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
                 onChange={e => field.onChange(e.target.value)}
                 value={field.value || ''}
               >
-                {brands.map(data => (
+                {brands?.map(data => (
                   <MenuItem value={data.id} key={data.id}>
                     {data.name}
                   </MenuItem>
