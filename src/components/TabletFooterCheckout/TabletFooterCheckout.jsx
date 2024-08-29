@@ -4,6 +4,7 @@ import Image from 'next/image'
 
 import { AuthContext } from '@/context/AuthContext'
 import LeftArrow from '@/@menu/svg/LeftArrow'
+import BeerIcon from '@/@menu/svg/BeerIcon'
 
 const TabletFooterCheckout = () => {
   const { cartItem } = useContext(AuthContext)
@@ -11,7 +12,7 @@ const TabletFooterCheckout = () => {
   console.log(cartItem, 'cartItem')
 
   return (
-    <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px]'>
+    <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>
       <div className='bg-white border-2 flex border-black'>
         <div className='py-5 flex-grow px-8 flex justify-between items-center'>
           {cartItem.length != 0 ? (
@@ -20,8 +21,11 @@ const TabletFooterCheckout = () => {
                 <h2 className='text-xl'>{cartItem.name}</h2>
                 <Image src={cartItem.image} className='object-contain' width={70} height={40} />
               </div>
-              <div className='flex items-center justify-between w-full max-w-[160px]'>
-                <h3 className='text-lg text-[#8a8a8a]'>{cartItem.size}</h3>
+              <div className='flex items-center justify-between w-full max-w-[170px]'>
+                <div className='flex items-center gap-2 text-posPrimaryColors'>
+                  <BeerIcon />
+                  <h3 className='text-lg text-[#8a8a8a]'>{cartItem.size}</h3>
+                </div>
                 <h2 className='text-xl'>X{cartItem.quantity}</h2>
               </div>
               <div className='max-w-[150px]'>
