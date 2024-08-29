@@ -1,40 +1,82 @@
-import Image from 'next/image'
+'use client'
 
-const page = () => {
+import React, { useContext, useState } from 'react'
+
+import TabletFooterCheckout from '@/components/TabletFooterCheckout/TabletFooterCheckout'
+import TabletHeader from '@/components/TabletHeader/TabletHeader'
+import ProductCardItem from '@/components/ProductCardItem/ProductCardItem'
+import { AuthContext } from '@/context/AuthContext'
+
+// Define the products array with variations and unique IDs
+const products = [
+  {
+    id: 'prod1',
+    name: 'Corona Beer',
+    image: '/images/mobile/corona.png',
+    variations: [
+      { id: 'var1', size: '250ml', price: '1.50' },
+      { id: 'var2', size: '500ml', price: '2.50' }
+    ]
+  },
+  {
+    id: 'prod2',
+    name: 'Heineken Beer',
+    image: '/images/mobile/corona.png',
+    variations: [
+      { id: 'var3', size: '330ml', price: '2.00' },
+      { id: 'var4', size: '750ml', price: '3.00' }
+    ]
+  },
+  {
+    id: 'prod3',
+    name: 'Budweiser Beer',
+    image: '/images/mobile/corona.png',
+    variations: [
+      { id: 'var5', size: '300ml', price: '1.80' },
+      { id: 'var6', size: '600ml', price: '2.80' }
+    ]
+  }
+]
+
+const Page = () => {
+  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [selectedVariation, setSelectedVariation] = useState(null)
+  const { addToCart } = useContext(AuthContext)
+
+  const handleSelect = (productId, variationId) => {
+    setSelectedProduct(productId)
+    setSelectedVariation(variationId)
+
+    const selectedProduct = products.find(product => product.id === productId)
+    const selectedVariation = selectedProduct.variations.find(variation => variation.id === variationId)
+
+    console.log(selectedProduct, selectedVariation)
+
+    addToCart(selectedProduct, selectedVariation) // Add selected product to cart
+  }
+
   return (
     <>
       <div className='flex flex-col relative max-w-[1024px]'>
-        <header className='py-8 mx-auto w-full max-w-[1024px] text-black text-center bg-posPrimaryColor fixed top-0'>
-          <h1 className='text-[50px] font-bold italic uppercase'>Chilled Beer Vending Machine</h1>
-          <p className='text-xl font-medium mt-4'>Please select the beer of your choice from the items listed:</p>
-        </header>
-        <div className='fixed bottom-0 w-full max-w-[1024px]'>
-          <div className='m-5 bg-white border flex border-black'>
-            <div className='py-5 flex-grow  px-8 flex justify-between items-center'>
-              <div className='flex items-center justify-between w-full max-w-[150px]'>
-                <h2 className='text-xl'>Your Cart</h2>
-                <Image />
-              </div>
-              <div className='flex items-center justify-between w-full max-w-[150px]'>
-                <h3 className='text-lg text-[#8a8a8a]'>250 ml</h3>
-                <h2 className='text-xl'>X1</h2>
-              </div>
-              <div className='max-w-[150px]'>
-                <h3 className='text-lg text-[#8a8a8a]'>$1.50</h3>
-              </div>
+        <TabletHeader />
+        <div className='px-10 mt-[140px] mb-[140px]'>
+          {products.map(product => (
+            <div key={product.id}>
+              <ProductCardItem
+                productId={product.id}
+                imageSrc={product.image}
+                variations={product.variations}
+                selectedProduct={selectedProduct}
+                selectedVariation={selectedVariation}
+                onSelect={handleSelect} // Pass handleSelect to add product to cart
+              />
             </div>
-            <div className='bg-posPrimaryColor p-3 flex flex-col'>
-              <h2 className='text-2xl font-bold'>$1.50</h2>
-              <div className='flex w-full gap-8 justify-between items-center'>
-                <p className='text-lg uppercase font-bold'>Checkout</p>
-                <p>-</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
+        <TabletFooterCheckout />
       </div>
     </>
   )
 }
 
-export default page
+export default Page

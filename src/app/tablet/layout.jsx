@@ -8,7 +8,7 @@ const TabletLayout = ({ children }) => {
   return (
     <div
       className={clsx(
-        'max-w-[1024px] relative h-screen w-full mx-auto border-r border-l overflow-hidden border-[#cdcdcd]',
+        'max-w-[1024px] relative h-full w-full mx-auto border-r border-l border-[#cdcdcd]',
         inter.className
       )}
     >
