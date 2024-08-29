@@ -121,6 +121,7 @@ export async function GET(req) {
         id: cafe.id,
         name: cafe.name,
         location: cafe.location,
+        slug: cafe.slug,
         address: cafe.address,
         description: cafe.description,
         priceConversionRate: cafe.priceConversionRate,
