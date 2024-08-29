@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
   const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
   const [brands, setBrands] = useState(null)
-  const [cartItems, setCartItems] = useState([])
+  const [cartItem, setCartItem] = useState([])
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -137,6 +137,10 @@ export const AuthProvider = ({ children }) => {
       })
   }
 
+  const addToCart = (product, variation) => {
+    setCartItem({ ...product, ...variation, quantity: 1 })
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -154,8 +158,9 @@ export const AuthProvider = ({ children }) => {
         setCafeProducts,
         brands,
         setBrands,
-        cartItems,
-        setCartItems
+        cartItem,
+        setCartItem,
+        addToCart
       }}
     >
       {children}

@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import TabletFooterCheckout from '@/components/TabletFooterCheckout/TabletFooterCheckout'
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import ProductCardItem from '@/components/ProductCardItem/ProductCardItem'
+import { AuthContext } from '@/context/AuthContext'
 
 // Define the products array with variations and unique IDs
 const products = [
@@ -40,10 +41,18 @@ const products = [
 const Page = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedVariation, setSelectedVariation] = useState(null)
+  const { addToCart } = useContext(AuthContext)
 
   const handleSelect = (productId, variationId) => {
     setSelectedProduct(productId)
     setSelectedVariation(variationId)
+
+    const selectedProduct = products.find(product => product.id === productId)
+    const selectedVariation = selectedProduct.variations.find(variation => variation.id === variationId)
+
+    console.log(selectedProduct, selectedVariation)
+
+    addToCart(selectedProduct, selectedVariation) // Add selected product to cart
   }
 
   return (
@@ -51,7 +60,6 @@ const Page = () => {
       <div className='flex flex-col relative max-w-[1024px]'>
         <TabletHeader />
         <div className='px-10 mt-[140px] mb-[140px]'>
-          {/* Loop through each product */}
           {products.map(product => (
             <div key={product.id}>
               <ProductCardItem
@@ -60,7 +68,7 @@ const Page = () => {
                 variations={product.variations}
                 selectedProduct={selectedProduct}
                 selectedVariation={selectedVariation}
-                onSelect={handleSelect}
+                onSelect={handleSelect} // Pass handleSelect to add product to cart
               />
             </div>
           ))}
