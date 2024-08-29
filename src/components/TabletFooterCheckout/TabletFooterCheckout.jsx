@@ -2,6 +2,8 @@ import { useContext } from 'react'
 
 import Image from 'next/image'
 
+import Link from 'next/link'
+
 import { AuthContext } from '@/context/AuthContext'
 import LeftArrow from '@/@menu/svg/LeftArrow'
 import BeerIcon from '@/@menu/svg/BeerIcon'
@@ -37,13 +39,15 @@ const TabletFooterCheckout = () => {
           )}
         </div>
         {cartItem.length != 0 && (
-          <div className='bg-posPrimaryColor p-3 flex flex-col cursor-pointer'>
-            <h2 className='text-2xl font-bold'>${(cartItem.price * cartItem.quantity).toFixed(2)}</h2>
-            <div className='flex w-full gap-8 justify-between items-center'>
-              <p className='text-lg uppercase font-bold'>Checkout</p>
-              <LeftArrow className='w-6 h-6' />
+          <Link href='/tablet/membership-card'>
+            <div className='bg-posPrimaryColor p-3 flex flex-col cursor-pointer'>
+              <h2 className='text-2xl font-bold'>${(cartItem.price * cartItem.quantity).toFixed(2)}</h2>
+              <div className='flex w-full gap-8 justify-between items-center'>
+                <p className='text-lg uppercase font-bold'>Checkout</p>
+                <LeftArrow className='w-6 h-6' />
+              </div>
             </div>
-          </div>
+          </Link>
         )}
       </div>
     </div>
