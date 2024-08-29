@@ -5,7 +5,7 @@ import LeftArrow from '@/@menu/svg/LeftArrow'
 const Page = () => {
   return (
     <div className='h-screen w-full'>
-      <video className='w-full h-full object-fill' autoPlay muted controls>
+      <video className='w-full h-full object-fill' autoPlay muted>
         <source src='/videos/beer-video.mp4' type='video/mp4' />
         Your browser does not support the video tag.
       </video>
