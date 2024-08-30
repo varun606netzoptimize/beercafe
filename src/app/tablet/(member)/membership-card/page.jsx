@@ -2,6 +2,8 @@
 
 import { useContext, useEffect, useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import axios from 'axios';
 
 import { AuthContext } from '@/context/AuthContext';
@@ -12,6 +14,7 @@ const Page = () => {
   const [orderStatus, setOrderStatus] = useState(null); // State to store order status
   const [loading, setLoading] = useState(true); // State for loading status
   const [error, setError] = useState(null); // State for error handling
+  const router = useRouter()
 
   useEffect(() => {
     if (orderId) {
@@ -24,6 +27,10 @@ const Page = () => {
           });
 
           setOrderStatus(response.data.paymentStatus); // Set order status data
+
+          if(response.data.paymentStatus == 'PENDING'){
+            router.push("/tablet/waiting")
+          }
         } catch (err) {
           console.error('Failed to fetch order status:', err);
           setError('Failed to fetch order status.'); // Set error message
@@ -50,7 +57,7 @@ const Page = () => {
         {error && <p className='text-red-500'>{error}</p>}
         {orderStatus && (
           <div>
-            <h5 className='text-lg font-bold'>Order Status:</h5>
+            <h5 className='text-lg font-bold'>Payment Status:</h5>
             <p>{orderStatus}</p> {/* Adjust based on your API response */}
           </div>
         )}

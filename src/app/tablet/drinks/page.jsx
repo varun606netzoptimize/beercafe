@@ -28,26 +28,31 @@ const Page = () => {
     <>
       <div className='flex flex-col relative max-w-[1024px]'>
         <TabletHeader />
-        <div className='px-10 mt-[140px] mb-[140px]'>
-        {isProductsLoading ? "Porducts is fetching" : <>
-        {!beerProducts ? 
-        <div className='flex w-full mt-10 justify-center items-center h-full'>
-        There is no products
-        </div> : <>
-          {beerProducts.map(product => (
-            <div key={product.id}>
-              <ProductCardItem
-                productId={product.id}
-                imageSrc={product.image} // Use the image from beerProducts
-                variations={product.variations} // Pass variations
-                selectedProduct={selectedProduct}
-                selectedVariation={selectedVariation}
-                onSelect={handleSelect} // Pass handleSelect to add product to cart
-              />
-            </div>
-          ))}
-          </>}
-        </>}
+        <div className='px-10 w-full mt-[140px] mb-[140px]'>
+          {isProductsLoading ? (
+            <div className='flex w-full mt-10 justify-center items-center h-full'>Porducts is fetching </div>
+          ) : (
+            <>
+              {!beerProducts ? (
+                <div className='flex w-full mt-10 justify-center items-center h-full'>There is no products</div>
+              ) : (
+                <>
+                  {beerProducts.map(product => (
+                    <div key={product.id}>
+                      <ProductCardItem
+                        productId={product.id}
+                        imageSrc={product.image} // Use the image from beerProducts
+                        variations={product.variations} // Pass variations
+                        selectedProduct={selectedProduct}
+                        selectedVariation={selectedVariation}
+                        onSelect={handleSelect} // Pass handleSelect to add product to cart
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          )}
         </div>
         <TabletFooterCheckout />
       </div>
