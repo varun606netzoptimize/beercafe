@@ -1,5 +1,6 @@
 // script.js
 const { PrismaClient } = require('@prisma/client')
+
 const prisma = new PrismaClient()
 
 async function main() {
@@ -8,7 +9,9 @@ async function main() {
       createdAt: 'asc' // Order by creation date ascending; change if needed
     }
   })
+
   console.log(firstCafe[1].id)
+
   const newBrand = await prisma.brands.create({
     data: {
       name: 'Bira 91',
@@ -17,7 +20,10 @@ async function main() {
       logo: ''
     }
   })
+
   console.log('Created Brank:', newBrand)
+
+
   // Create a new Product
   const newProduct = await prisma.product.create({
     data: {
@@ -30,6 +36,7 @@ async function main() {
       image: ''
     }
   })
+
   console.log('Created Product:', newProduct)
 
   // Create a new ProductVariation
@@ -43,6 +50,7 @@ async function main() {
       points: 17
     }
   })
+
   console.log('Created Product Variation:', newProductVariation)
 
   // // Create a new Order
@@ -74,6 +82,7 @@ async function main() {
       machineRefNumber: 'MACHINECC222'
     }
   })
+
   console.log('Created MachineMaster:', newMachineMaster)
 }
 
@@ -98,6 +107,7 @@ async function addCustomers() {
       points: 1500
     }
   })
+
   console.log('Created Customer:', newCustomer)
 
   const newCafeCustomer = await prisma.cafeCustomers.create({
@@ -106,6 +116,7 @@ async function addCustomers() {
       customerID: newCustomer.id
     }
   })
+
   console.log('Created cafe customer:', newCafeCustomer)
 
   //   const newrfid = await prisma.rFIDMaster.create({
@@ -129,6 +140,7 @@ async function addCustomers() {
       paymentStatus: 'PENDING'
     }
   })
+
   console.log('Created Order:', newOrder)
 
   const newOrderDetail = await prisma.orderDetail.create({
@@ -139,6 +151,7 @@ async function addCustomers() {
       productVariationId: productVariationData[2].id
     }
   })
+
   console.log('Created Order:', newOrderDetail)
 }
 
@@ -150,6 +163,7 @@ async function attachRFIDS() {
   })
 
   const allRFIDs = await prisma.rFIDMaster.findMany()
+
   //   console.log(allRFIDs)
 
   //   const newrfid = await prisma.rFIDMaster.create({
@@ -162,6 +176,7 @@ async function attachRFIDS() {
   //   })
 
   const allCustomerRFIDs = await prisma.customerRFID.findMany()
+
   console.log(allCustomerRFIDs)
 
   const newCustomerRFID = await prisma.customerRFID.create({

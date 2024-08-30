@@ -54,6 +54,8 @@ export default function Page() {
   const GetCafeProducts = () => {
     const url = `${ENDPOINT.GET_CAFE_PRODUCTS}/${cafeProducts.cafe.id}`
 
+    console.log(':url', url)
+
     setIsLoading(true)
 
     axios
