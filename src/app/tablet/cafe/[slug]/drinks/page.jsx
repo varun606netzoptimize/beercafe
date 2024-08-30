@@ -25,6 +25,8 @@ const Page = ({params}) => {
     addToCart(selectedProduct, selectedVariation)
   }
 
+  console.log(slug, 'slug')
+
   useEffect(() => {
     fetchCafeProducts("66b38bfd3fa7ba8473235cc1");
   },[slug])
