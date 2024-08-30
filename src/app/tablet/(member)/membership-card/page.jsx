@@ -4,6 +4,8 @@ import { useContext, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import Image from 'next/image';
+
 import axios from 'axios';
 
 import { AuthContext } from '@/context/AuthContext';
@@ -52,15 +54,17 @@ const Page = () => {
         <h4 className='text-xl font-medium text-[#1F1F1F]'>
           Tap your beer membership card on the machine marked with the sign below to start pouring your fresh beer.
         </h4>
-        <div className='shadow-[0_0_10px_#00000029] w-full max-w-[480px] py-[40px] rounded-[10px]'></div>
-        {loading && <p>Loading order status...</p>}
+        <div className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] py-[35px] rounded-[10px]'>
+          <Image src="/images/mobile/rifd.png" alt='rifd' width={250} height={210} />
+        </div>
+        {/* {loading && <p>Loading order status...</p>}
         {error && <p className='text-red-500'>{error}</p>}
         {orderStatus && (
           <div>
             <h5 className='text-lg font-bold'>Payment Status:</h5>
-            <p>{orderStatus}</p> {/* Adjust based on your API response */}
+            <p>{orderStatus}</p> 
           </div>
-        )}
+        )} */}
       </div>
     </>
   );
