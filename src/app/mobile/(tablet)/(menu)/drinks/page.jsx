@@ -66,7 +66,6 @@ const Page = () => {
 
   const handleAddToCart = beer => {
     setSelectedBeerId(beer.id) // Set the selected card by ID
-    // setCartItems(prevCartItems => [...prevCartItems, beer])
     setCartItem([beer])
   }
 
