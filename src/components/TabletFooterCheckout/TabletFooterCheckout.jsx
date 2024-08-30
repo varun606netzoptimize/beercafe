@@ -45,7 +45,15 @@ const TabletFooterCheckout = () => {
     }
   }
 
-  console.log(cartItem, 'cartItem')
+  const productImages = {
+    Tuborg: '/images/mobile/Tuborg-Logo.png',
+    Heinekenn : '/images/mobile/Heineken-Logo.png',
+    Budweiser: '/images/mobile/Budweiser-Logo.png'
+  }
+  
+
+  console.log(cartItem, 'cartItem');
+  const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>
@@ -55,7 +63,7 @@ const TabletFooterCheckout = () => {
             <>
               <div className='flex items-center justify-between w-full max-w-[250px]'>
                 <h2 className='text-xl'>{cartItem.name}</h2>
-                <Image src={cartItem.image} className='object-contain' width={70} height={40} />
+                <Image src={imageSrc} className='object-contain' width={70} height={40} />
               </div>
               <div className='flex items-center justify-between w-full max-w-[170px]'>
                 <div className='flex items-center gap-2 text-posPrimaryColors'>

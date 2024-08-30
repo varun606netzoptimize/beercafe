@@ -25,11 +25,11 @@ const Page = ({ params }) => {
     addToCart(selectedProduct, selectedVariation)
   }
 
-  console.log(slug, 'slug')
-
   useEffect(() => {
     fetchCafeProducts(slug)
   }, [slug])
+
+  console.log(beerProducts, 'beerProducts')
 
   return (
     <>
@@ -52,7 +52,8 @@ const Page = ({ params }) => {
                         variations={product.variations} // Pass variations
                         selectedProduct={selectedProduct}
                         selectedVariation={selectedVariation}
-                        onSelect={handleSelect} // Pass handleSelect to add product to cart
+                        onSelect={handleSelect}
+                        {...product} // Pass handleSelect to add product to cart
                       />
                     </div>
                   ))}
