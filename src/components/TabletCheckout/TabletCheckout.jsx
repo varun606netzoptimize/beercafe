@@ -10,7 +10,7 @@ const TabletCheckout = ({isModal= false}) => {
   const { cartItems } = useContext(AuthContext)
 
   // Calculate the subtotal by summing the prices of all items in the cart
-  const subtotal = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2)
+  const subtotal = cartItems?.reduce((total, item) => total + item.price, 0).toFixed(2)
 
   // You can add any additional charges or taxes if needed
   const total = subtotal
