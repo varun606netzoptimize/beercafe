@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
   const [brands, setBrands] = useState(null)
   const [cartItem, setCartItem] = useState([])
+  const [beerProducts, setBeerProducts] = useState([])
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -160,7 +161,9 @@ export const AuthProvider = ({ children }) => {
         setBrands,
         cartItem,
         setCartItem,
-        addToCart
+        addToCart,
+        beerProducts,
+        setBeerProducts
       }}
     >
       {children}

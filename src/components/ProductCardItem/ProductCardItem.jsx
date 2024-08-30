@@ -5,7 +5,7 @@ import Tick from '@/@menu/svg/Tick'
 const ProductCardItem = ({ productId, imageSrc, variations, selectedProduct, selectedVariation, onSelect }) => {
   return (
     <div className='flex py-8 justify-start w-full items-center gap-14 pb-8 pl-5 border-b border-[#c4c4c4] transition-all duration-300 '>
-      <Image src={imageSrc} className='object-contain' width={150} height={100} />
+      <Image src={imageSrc} className='object-contain' width={150} height={100} alt='Product' /> {/* Added fallback image */}
       <div className='flex gap-6 w-full'>
         {variations.map(variation => (
           <div
@@ -18,8 +18,8 @@ const ProductCardItem = ({ productId, imageSrc, variations, selectedProduct, sel
             } uppercase flex flex-col cursor-pointer`}
           >
             <div className='py-4 pl-5'>
-              <p className='text-2xl font-bold'>${variation.price}</p>
-              <p className='text-lg text-[#b1b1b1] font-medium'>{variation.size}</p>
+              <p className='text-2xl font-bold'>${variation.salePrice}</p> {/* Use salePrice from API */}
+              <p className='text-lg text-[#b1b1b1] font-medium'>{variation.value}</p> {/* Use size/value from API */}
             </div>
             <div className='bg-posPrimaryColor transition-all duration-300 py-1 px-3 pl-5 w-full flex justify-between items-center text-lg font-bold'>
               <p className='transition-all duration-300 '>

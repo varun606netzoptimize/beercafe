@@ -10,7 +10,10 @@ const nextConfig = {
         locale: false
       }
     ]
-  }
+  },
+  images: {
+    domains: ['yavuzceliker.github.io', 'www.freepik.com', 'img.freepik.com'], // Add freepik.com to the domains array
+  },
 }
 
 export default nextConfig
