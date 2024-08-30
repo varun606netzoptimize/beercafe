@@ -61,13 +61,13 @@ const Page = () => {
   const totalSlides = Math.ceil(beers?.length / itemsPerSlide)
 
   const carouselRef = useRef(null)
-  const { setCartItems } = useContext(AuthContext)
+  const { setCartItem } = useContext(AuthContext)
   const [selectedBeerId, setSelectedBeerId] = useState(null) // State to keep track of the selected card by ID
 
   const handleAddToCart = beer => {
     setSelectedBeerId(beer.id) // Set the selected card by ID
     // setCartItems(prevCartItems => [...prevCartItems, beer])
-    setCartItems([beer])
+    setCartItem([beer])
   }
 
   return (
