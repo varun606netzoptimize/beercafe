@@ -3,6 +3,8 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 
+const baseURL = process.env.NEXT_PUBLIC_APP_URL
+
 import {
   Box,
   Button,
@@ -16,7 +18,8 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  FormLabel
+  FormLabel,
+  TextField
 } from '@mui/material'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -31,6 +34,7 @@ import { ENDPOINT } from '@/endpoints'
 // Validation schemas
 const mainCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
+  slug: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
   address: yup.string().required('Address is required'),
   description: yup.string().required('Description is required'),
@@ -39,6 +43,7 @@ const mainCafeSchema = yup.object().shape({
 
 const branchCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
+  slug: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
   address: yup.string().required('Address is required'),
   description: yup.string().required('Description is required'),
@@ -93,6 +98,7 @@ export default function AddMyCafeDrawer({
   useEffect(() => {
     if (drawerType === 'update' && updateCafeData) {
       setValue('name', updateCafeData.name)
+      setValue('slug', updateCafeData.slug ? updateCafeData.slug : '')
       setValue('location', updateCafeData.location)
       setValue('address', updateCafeData.address)
       setValue('description', updateCafeData.description)
@@ -112,12 +118,12 @@ export default function AddMyCafeDrawer({
 
   // Create cafe
   const createCafe = async data => {
-    console.log('createCafe called with data:', data)
     const url = ENDPOINT.CREATE_CAFE
 
     const mainCafeData = {
       name: data.name,
       location: data.location,
+      slug: data.slug,
       address: data.address,
       description: data.description,
       priceConversionRate: data.priceConversionRate
@@ -126,6 +132,7 @@ export default function AddMyCafeDrawer({
     const branchCafeData = {
       name: data.name,
       location: data.location,
+      slug: data.slug,
       address: data.address,
       description: data.description,
       priceConversionRate: data.priceConversionRate,
@@ -133,6 +140,8 @@ export default function AddMyCafeDrawer({
     }
 
     const finalData = radioValue === 'mainCafe' ? mainCafeData : branchCafeData
+
+    console.log(finalData)
 
     setIsLoading(true)
 
@@ -152,11 +161,13 @@ export default function AddMyCafeDrawer({
         onClose()
         GetCafe()
       }
+
+      reset()
     } catch (err) {
       console.error('Error adding cafe:', err)
-      toast.error('Failed to add cafe')
+      toast.error(err.response.data.error ? err.response.data.error : 'failed to update cafe')
     } finally {
-      reset()
+      setIsLoading(false)
     }
   }
 
@@ -188,12 +199,12 @@ export default function AddMyCafeDrawer({
 
   // Update cafe
   const updateCafe = async data => {
-    console.log('createCafe called with data:', data)
     const url = ENDPOINT.UPDATE_CAFE
 
     const mainCafeData = {
       id: updateCafeData.id,
       name: data.name,
+      slug: data.slug,
       location: data.location,
       address: data.address,
       description: data.description,
@@ -203,6 +214,7 @@ export default function AddMyCafeDrawer({
     const branchCafeData = {
       id: updateCafeData.id,
       name: data.name,
+      slug: data.slug,
       location: data.location,
       address: data.address,
       description: data.description,
@@ -224,12 +236,12 @@ export default function AddMyCafeDrawer({
       console.log('cafe added:', response.data)
       toast.success(data.name + ' Cafe Added')
       reset()
+      onClose()
     } catch (err) {
-      console.error('Error adding cafe:', err)
-      toast.error('Failed to add cafe')
+      console.log('Error adding cafe:', err.response.data.error)
+      toast.error(err.response.data.error ? err.response.data.error : 'failed to update cafe')
     } finally {
       setIsLoading(false)
-      onClose()
       GetCafe()
       setDrawerType('create')
     }
@@ -280,6 +292,32 @@ export default function AddMyCafeDrawer({
             />
           )}
         />
+
+        <div style={{ flexDirection: 'row', alignItems: 'center', display: 'flex', gap: '4px', marginTop: '-16px' }}>
+          <Typography
+            variant='p'
+            color={'primary'}
+            sx={{ fontWeight: '600', fontSize: '13px' }}
+          >{`${baseURL}/cafe/`}</Typography>
+          <Controller
+            name='slug'
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                variant='standard'
+                size='small'
+                placeholder='slug name'
+                autoComplete='off'
+                onChange={e => {
+                  field.onChange(e.target.value)
+                }}
+                error={isSubmitted && !!errors.slug}
+              />
+            )}
+          />
+        </div>
 
         <Controller
           name='location'
