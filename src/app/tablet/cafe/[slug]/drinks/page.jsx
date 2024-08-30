@@ -7,7 +7,7 @@ import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import ProductCardItem from '@/components/ProductCardItem/ProductCardItem'
 import { AuthContext } from '@/context/AuthContext'
 
-const Page = ({params}) => {
+const Page = ({ params }) => {
   const { slug } = params
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedVariation, setSelectedVariation] = useState(null)
@@ -28,33 +28,38 @@ const Page = ({params}) => {
   console.log(slug, 'slug')
 
   useEffect(() => {
-    fetchCafeProducts("66b38bfd3fa7ba8473235cc1");
-  },[slug])
+    fetchCafeProducts(slug)
+  }, [slug])
 
   return (
     <>
       <div className='flex flex-col relative max-w-[1024px]'>
         <TabletHeader />
         <div className='px-10 mt-[140px] mb-[140px]'>
-        {isProductsLoading ? "Porducts is fetching" : <>
-        {!beerProducts ? 
-        <div className='flex w-full mt-10 justify-center items-center h-full'>
-        There is no products
-        </div> : <>
-          {beerProducts.map(product => (
-            <div key={product.id}>
-              <ProductCardItem
-                productId={product.id}
-                imageSrc={product.image} // Use the image from beerProducts
-                variations={product.variations} // Pass variations
-                selectedProduct={selectedProduct}
-                selectedVariation={selectedVariation}
-                onSelect={handleSelect} // Pass handleSelect to add product to cart
-              />
-            </div>
-          ))}
-          </>}
-        </>}
+          {isProductsLoading ? (
+            <div className='flex w-full mt-10 justify-center items-center h-full'>Products is fetching</div>
+          ) : (
+            <>
+              {!beerProducts ? (
+                <div className='flex w-full mt-10 justify-center items-center h-full'>There is no products</div>
+              ) : (
+                <>
+                  {beerProducts.map(product => (
+                    <div key={product.id}>
+                      <ProductCardItem
+                        productId={product.id}
+                        imageSrc={product.image} // Use the image from beerProducts
+                        variations={product.variations} // Pass variations
+                        selectedProduct={selectedProduct}
+                        selectedVariation={selectedVariation}
+                        onSelect={handleSelect} // Pass handleSelect to add product to cart
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          )}
         </div>
         <TabletFooterCheckout />
       </div>

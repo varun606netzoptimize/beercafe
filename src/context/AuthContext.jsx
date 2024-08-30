@@ -145,31 +145,54 @@ export const AuthProvider = ({ children }) => {
   }
 
   // Fetch the products for the cafe
-  const fetchCafeProducts = async (cafeId) => {
-    setIsProductsLoading(true); 
+  const fetchCafeProducts = async slug => {
+    setIsProductsLoading(true)
 
     try {
-      const response = await axios.get(`${ENDPOINT.GET_CAFE_PRODUCTS}/${cafeId}`);
+      const response = await axios.get(`${ENDPOINT.GET_CAFE_PRODUCTS}/?slug=${slug}`)
 
       if (response.data) {
-        console.log('Cafe Products:', response.data);
+        console.log('Cafe Products:', response.data)
 
         // Set state with cafe details and product variations
-        setBeerProducts(response.data);
+        setBeerProducts(response.data)
 
-        console.log(beerProducts, 'beerProducts');
+        console.log(beerProducts, 'beerProducts')
 
         // toast.success('Products fetched successfully!');
       } else {
-        toast.error('No products found for this cafe.');
+        toast.error('No products found for this cafe.')
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('Failed to fetch products.');
+      console.error('Error fetching products:', error)
+      toast.error('Failed to fetch products.')
     } finally {
-      setIsProductsLoading(false); 
+      setIsProductsLoading(false)
     }
-  };
+  }
+
+  // Fetch the cafe data based on slug
+  const fetchData = async slug => {
+    setIsLoading(true)
+
+    try {
+      const response = await axios.get(`${ENDPOINT.SLUG_CAFE}/${slug}`)
+
+      if (response.data) {
+        console.log('API Response:', response.data)
+        setData(response.data)
+
+        // toast.success(`Data for ${slug} fetched successfully!`)
+      } else {
+        toast.error('No data found for this URL')
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      toast.error('Failed to fetch data. URL might be incorrect.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <AuthContext.Provider
@@ -196,7 +219,8 @@ export const AuthProvider = ({ children }) => {
         fetchCafeProducts,
         isProductsLoading,
         setOrderId,
-        orderId
+        orderId,
+        fetchData
       }}
     >
       {children}

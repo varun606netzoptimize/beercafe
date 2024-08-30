@@ -27,7 +27,7 @@ const Page = () => {
         <h4 className='text-xl font-medium text-[#1F1F1F]'>
           In seconds, this machine pours your beer and signals when it’s ready.
         </h4>
-        <div className='max-w-[700px] md:max-w-[800px] shadow-[0_0_10px_#00000029] h-full max-h-[300px] md:max-h-[450px] mx-8 z-30 absolute bottom-0 w-full py-[40px] rounded-[10px]'></div>
+        <div className='max-w-[700px] md:max-w-[800px] shadow-[0_0_10px_#00000029] h-full max-h-[300px] md:max-h-[300px] mx-8 z-30 absolute bottom-0 w-full py-[40px] rounded-[10px]'></div>
       </div>
     </>
   );
