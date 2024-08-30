@@ -58,7 +58,7 @@ const CoffeeCard = ({
 
 const Page = () => {
   const itemsPerSlide = 8
-  const totalSlides = Math.ceil(beers.length / itemsPerSlide)
+  const totalSlides = Math.ceil(beers?.length / itemsPerSlide)
 
   const carouselRef = useRef(null)
   const { setCartItems } = useContext(AuthContext)
