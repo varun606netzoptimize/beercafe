@@ -28,7 +28,7 @@ const Page = () => {
 
           setOrderStatus(response.data.paymentStatus); // Set order status data
 
-          if(response.data.paymentStatus == 'PENDING'){
+          if(response.data.paymentStatus == 'PIAD'){
             router.push("/tablet/waiting")
           }
         } catch (err) {
