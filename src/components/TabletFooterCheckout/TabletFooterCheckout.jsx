@@ -11,6 +11,8 @@ import BeerIcon from '@/@menu/svg/BeerIcon'
 const TabletFooterCheckout = () => {
   const { cartItem } = useContext(AuthContext)
 
+  console.log(cartItem, 'cartItem')
+
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>
       <div className='bg-white border-2 flex border-black'>
