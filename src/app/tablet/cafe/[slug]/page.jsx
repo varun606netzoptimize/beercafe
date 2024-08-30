@@ -56,7 +56,7 @@ const Page = ({ params }) => {
 
       {/* Show the video once the cafe data is loaded */}
       {!isLoading && data && (
-        <video className='w-full h-full object-fill' autoPlay muted>
+        <video className='w-full h-full object-cover' autoPlay muted>
           <source src="https://videocdn.cdnpk.net/videos/b66fe15c-3e6c-489f-82a3-2172d0b3092e/horizontal/previews/watermarked/large.mp4" type='video/mp4' />
           Your browser does not support the video tag.
         </video>
