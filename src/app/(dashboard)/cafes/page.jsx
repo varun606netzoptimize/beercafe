@@ -244,7 +244,10 @@ export default function Page() {
             variant='contained'
             size='medium'
             startIcon={<i className='tabler-briefcase' />}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setOpen(true)
+              setUpdateCafeData(null)
+            }}
           >
             Add Cafe
           </Button>
