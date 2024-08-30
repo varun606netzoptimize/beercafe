@@ -10,7 +10,7 @@ import { AuthContext } from '@/context/AuthContext'
 const Page = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedVariation, setSelectedVariation] = useState(null)
-  const { beerProducts, addToCart } = useContext(AuthContext) // Get beerProducts from AuthContext
+  const { beerProducts, addToCart, isProductsLoading } = useContext(AuthContext) // Get beerProducts from AuthContext
 
   const handleSelect = (productId, variationId) => {
     setSelectedProduct(productId)
@@ -24,13 +24,16 @@ const Page = () => {
     addToCart(selectedProduct, selectedVariation)
   }
 
-  console.log(beerProducts, 'beerProducts')
-
   return (
     <>
       <div className='flex flex-col relative max-w-[1024px]'>
         <TabletHeader />
         <div className='px-10 mt-[140px] mb-[140px]'>
+        {isProductsLoading ? "Porducts is fetching" : <>
+        {!beerProducts ? 
+        <div className='flex w-full mt-10 justify-center items-center h-full'>
+        There is no products
+        </div> : <>
           {beerProducts.map(product => (
             <div key={product.id}>
               <ProductCardItem
@@ -43,6 +46,8 @@ const Page = () => {
               />
             </div>
           ))}
+          </>}
+        </>}
         </div>
         <TabletFooterCheckout />
       </div>

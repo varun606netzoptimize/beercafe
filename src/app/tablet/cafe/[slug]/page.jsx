@@ -1,79 +1,51 @@
-'use client';
+'use client'
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react'
 
-import Link from 'next/link';
+import Link from 'next/link'
 
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
-import { ENDPOINT } from '@/endpoints'; 
-import LeftArrow from '@/@menu/svg/LeftArrow';
-import { AuthContext } from '@/context/AuthContext';
+import { ENDPOINT } from '@/endpoints'
+import LeftArrow from '@/@menu/svg/LeftArrow'
+import { AuthContext } from '@/context/AuthContext'
 
 const Page = ({ params }) => {
-  const { slug } = params; 
-  const [data, setData] = useState(null); 
-  const [isLoading, setIsLoading] = useState(false); 
-  const [isProductsLoading, setIsProductsLoading] = useState(false); 
-  const {setBeerProducts, beerProducts} = useContext(AuthContext);
+  const { slug } = params
+  const [data, setData] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const { fetchCafeProducts } = useContext(AuthContext)
 
   // Fetch the cafe data based on slug
   const fetchData = async () => {
-    setIsLoading(true); 
-    
-    try {
-      const response = await axios.get(`${ENDPOINT.SLUG_CAFE}/${slug}`);
-
-      if (response.data) {
-        console.log('API Response:', response.data);
-        setData(response.data);
-        toast.success(`Data for ${slug} fetched successfully!`);
-
-        fetchCafeProducts(response.data.id); // Pass both cafeId and cafe name
-      } else {
-        toast.error('No data found for this URL');
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to fetch data. URL might be incorrect.');
-    } finally {
-      setIsLoading(false); 
-    }
-  };
-
-  // Fetch the products for the cafe
-  const fetchCafeProducts = async (cafeId) => {
-    setIsProductsLoading(true); 
+    setIsLoading(true)
 
     try {
-      const response = await axios.get(`${ENDPOINT.GET_CAFE_PRODUCTS}/${cafeId}`);
+      const response = await axios.get(`${ENDPOINT.SLUG_CAFE}/${slug}`)
 
       if (response.data) {
-        console.log('Cafe Products:', response.data);
+        console.log('API Response:', response.data)
+        setData(response.data)
+        toast.success(`Data for ${slug} fetched successfully!`)
 
-        // Set state with cafe details and product variations
-        setBeerProducts(response.data);
-
-        console.log(beerProducts, 'beerProducts');
-
-        toast.success('Products fetched successfully!');
+        fetchCafeProducts(response.data.id) // Pass both cafeId and cafe name
       } else {
-        toast.error('No products found for this cafe.');
+        toast.error('No data found for this URL')
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('Failed to fetch products.');
+      console.error('Error fetching data:', error)
+      toast.error('Failed to fetch data. URL might be incorrect.')
     } finally {
-      setIsProductsLoading(false); 
+      setIsLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (slug) {
-      fetchData();
+      fetchData()
     }
-  }, [slug]);
+  }, [slug])
 
   return (
     <div className='h-screen w-full'>
@@ -104,7 +76,7 @@ const Page = ({ params }) => {
         </Link>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

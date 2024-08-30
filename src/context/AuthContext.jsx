@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }) => {
   const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
   const [brands, setBrands] = useState(null)
   const [cartItem, setCartItem] = useState([])
-  const [beerProducts, setBeerProducts] = useState([])
+  const [beerProducts, setBeerProducts] = useState(null)
+  const [isProductsLoading, setIsProductsLoading] = useState(false)
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -142,6 +143,33 @@ export const AuthProvider = ({ children }) => {
     setCartItem({ ...product, ...variation, quantity: 1 })
   }
 
+  // Fetch the products for the cafe
+  const fetchCafeProducts = async (cafeId) => {
+    setIsProductsLoading(true); 
+
+    try {
+      const response = await axios.get(`${ENDPOINT.GET_CAFE_PRODUCTS}/${cafeId}`);
+
+      if (response.data) {
+        console.log('Cafe Products:', response.data);
+
+        // Set state with cafe details and product variations
+        setBeerProducts(response.data);
+
+        console.log(beerProducts, 'beerProducts');
+
+        toast.success('Products fetched successfully!');
+      } else {
+        toast.error('No products found for this cafe.');
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error('Failed to fetch products.');
+    } finally {
+      setIsProductsLoading(false); 
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -163,7 +191,9 @@ export const AuthProvider = ({ children }) => {
         setCartItem,
         addToCart,
         beerProducts,
-        setBeerProducts
+        setBeerProducts,
+        fetchCafeProducts,
+        isProductsLoading
       }}
     >
       {children}
