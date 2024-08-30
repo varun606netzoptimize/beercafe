@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 
@@ -27,6 +25,8 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+import IconButton from '@mui/material/IconButton'
+
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -34,7 +34,6 @@ import { ENDPOINT } from '@/endpoints'
 // Validation schemas
 const mainCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
-  slug: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
   address: yup.string().required('Address is required'),
   description: yup.string().required('Description is required'),
@@ -44,7 +43,6 @@ const mainCafeSchema = yup.object().shape({
 const branchCafeSchema = yup.object().shape({
   name: yup.string().required('Cafe name is required'),
   location: yup.string().required('Location is required'),
-  slug: yup.string().required('Cafe name is required'),
   address: yup.string().required('Address is required'),
   description: yup.string().required('Description is required'),
   priceConversionRate: yup.number().required('Price conversion rate is required').positive('Must be positive'),
@@ -69,6 +67,8 @@ export default function AddCafeDrawer({
   const { authToken, managers } = React.useContext(AuthContext)
   const [radioValue, setRadioValue] = useState('mainCafe')
   const [isLoading, setIsLoading] = useState(false)
+  const [slug, setSlug] = useState(null)
+  const [loadingSlug, setLoadingSlug] = useState(false)
 
   const {
     control,
@@ -76,6 +76,7 @@ export default function AddCafeDrawer({
     reset,
     setValue,
     formState: { errors, isSubmitted },
+    watch,
     trigger
   } = useForm({
     resolver: yupResolver(getValidationSchema(radioValue)),
@@ -86,19 +87,9 @@ export default function AddCafeDrawer({
   })
 
   useEffect(() => {
-    trigger()
-  }, [radioValue, trigger])
-
-  const handleChange = event => {
-    const { value } = event.target
-
-    setRadioValue(value)
-  }
-
-  useEffect(() => {
     if (drawerType === 'update' && updateCafeData) {
       setValue('name', updateCafeData.name)
-      setValue('slug', updateCafeData.slug ? updateCafeData.slug : '')
+      setSlug(updateCafeData.slug ? updateCafeData.slug : '')
       setValue('location', updateCafeData.location)
       setValue('address', updateCafeData.address)
       setValue('description', updateCafeData.description)
@@ -110,11 +101,63 @@ export default function AddCafeDrawer({
       } else {
         setRadioValue('mainCafe')
       }
-    } else if (drawerType === 'create') {
+    } else {
       reset()
+      setSlug(null)
       setRadioValue('mainCafe')
     }
   }, [drawerType, updateCafeData, setValue, reset])
+
+  const nameValue = watch('name')
+
+  const cleanSlug = name => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+  }
+
+  useEffect(() => {
+    trigger()
+  }, [radioValue, trigger])
+
+  useEffect(() => {
+    if (nameValue && drawerType === 'create') {
+      fetchSlug()
+    }
+  }, [nameValue, authToken.token])
+
+  const fetchSlug = async () => {
+    setLoadingSlug(true)
+
+    try {
+      const cleanedSlug = cleanSlug(nameValue)
+
+      const response = await axios.post(
+        ENDPOINT.GENERATE_SLUG,
+        { baseSlug: cleanedSlug },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.token}`
+          }
+        }
+      )
+
+      setSlug(response.data.slug)
+    } catch (error) {
+      console.error('Error generating slug:', error)
+    } finally {
+      setLoadingSlug(false)
+    }
+  }
+
+  const handleChange = event => {
+    const { value } = event.target
+
+    setRadioValue(value)
+  }
 
   // Create cafe
   const createCafe = async data => {
@@ -122,7 +165,7 @@ export default function AddCafeDrawer({
 
     const mainCafeData = {
       name: data.name,
-      slug: data.slug,
+      slug: slug,
       location: data.location,
       address: data.address,
       description: data.description,
@@ -132,7 +175,7 @@ export default function AddCafeDrawer({
     const branchCafeData = {
       name: data.name,
       location: data.location,
-      slug: data.slug,
+      slug: slug,
       address: data.address,
       description: data.description,
       priceConversionRate: data.priceConversionRate,
@@ -159,6 +202,7 @@ export default function AddCafeDrawer({
     } finally {
       setIsLoading(false)
       onClose()
+      setDrawerType('create')
       GetCafe()
     }
   }
@@ -170,7 +214,7 @@ export default function AddCafeDrawer({
     const mainCafeData = {
       id: updateCafeData.id,
       name: data.name,
-      slug: data.slug,
+      slug: slug,
       location: data.location,
       address: data.address,
       description: data.description,
@@ -180,7 +224,7 @@ export default function AddCafeDrawer({
     const branchCafeData = {
       id: updateCafeData.id,
       name: data.name,
-      slug: data.slug,
+      slug: slug,
       location: data.location,
       address: data.address,
       description: data.description,
@@ -199,18 +243,25 @@ export default function AddCafeDrawer({
         }
       })
 
-      console.log('cafe added:', response.data)
+      console.log('cafe updated:', response.data)
       toast.success(data.name + ' Cafe Updated')
       reset()
     } catch (err) {
-      console.error('Error adding cafe:', err)
-      toast.error('Failed to add cafe')
+      console.error('Error updating cafe:', err)
+      toast.error('Failed to update cafe')
     } finally {
       setIsLoading(false)
       onClose()
-      GetCafe()
       setDrawerType('create')
+      GetCafe()
     }
+  }
+
+  const handleDrawerClose = () => {
+    reset()
+    setSlug('')
+    setDrawerType('create')
+    onClose()
   }
 
   const DrawerList = (
@@ -259,30 +310,23 @@ export default function AddCafeDrawer({
           )}
         />
 
-        <div style={{ flexDirection: 'row', alignItems: 'center', display: 'flex', gap: '4px', marginTop: '-16px' }}>
+        <div style={{ marginTop: '-20px', display: 'flex', alignItems: 'center' }}>
           <Typography
             variant='p'
-            color={'primary'}
-            sx={{ fontWeight: '600', fontSize: '13px' }}
+            color={'secondary'}
+            sx={{ fontWeight: '600', fontSize: '14px' }}
           >{`${baseURL}/cafe/`}</Typography>
-          <Controller
-            name='slug'
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                variant='standard'
-                size='small'
-                placeholder='slug name'
-                autoComplete='off'
-                onChange={e => {
-                  field.onChange(e.target.value)
-                }}
-                error={isSubmitted && !!errors.slug}
-              />
-            )}
-          />
+          <Typography variant='p' color={'primary'} sx={{ fontWeight: '600', fontSize: '14px' }}>
+            {slug}
+          </Typography>
+
+          {loadingSlug ? (
+            <CircularProgress size={14} style={{ marginLeft: '2px' }} />
+          ) : (
+            <IconButton size='small' onClick={fetchSlug} style={{ marginLeft: slug ? '-4px' : '-6px' }}>
+              <i className='tabler-reload text-[16px]' />
+            </IconButton>
+          )}
         </div>
 
         <Controller
@@ -398,15 +442,7 @@ export default function AddCafeDrawer({
   )
 
   return (
-    <Drawer
-      anchor='right'
-      open={open}
-      onClose={() => {
-        onClose()
-        reset()
-        setDrawerType('create')
-      }}
-    >
+    <Drawer anchor='right' open={open} onClose={handleDrawerClose}>
       {DrawerList}
     </Drawer>
   )
