@@ -21,6 +21,6 @@ export async function GET(req, { params }) {
   } catch (error) {
     console.error('Error fetching products:', error)
 
-    return new Response('Error fetching products', { status: 500 })
+    return new Response('Error fetching productss', { status: 500 })
   }
 }
