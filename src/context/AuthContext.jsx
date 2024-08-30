@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
   const [cartItem, setCartItem] = useState([])
   const [beerProducts, setBeerProducts] = useState(null)
   const [isProductsLoading, setIsProductsLoading] = useState(false)
+  const [orderId, setOrderId] = useState(null)
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -158,7 +159,7 @@ export const AuthProvider = ({ children }) => {
 
         console.log(beerProducts, 'beerProducts');
 
-        toast.success('Products fetched successfully!');
+        // toast.success('Products fetched successfully!');
       } else {
         toast.error('No products found for this cafe.');
       }
@@ -193,7 +194,9 @@ export const AuthProvider = ({ children }) => {
         beerProducts,
         setBeerProducts,
         fetchCafeProducts,
-        isProductsLoading
+        isProductsLoading,
+        setOrderId,
+        orderId
       }}
     >
       {children}

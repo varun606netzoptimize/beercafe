@@ -3,6 +3,8 @@ import { useContext } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { useRouter } from 'next/navigation'
+
 import axios from 'axios'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -11,7 +13,8 @@ import BeerIcon from '@/@menu/svg/BeerIcon'
 import { ENDPOINT } from '@/endpoints'
 
 const TabletFooterCheckout = () => {
-  const { cartItem } = useContext(AuthContext)
+  const { cartItem, setOrderId } = useContext(AuthContext)
+  const router = useRouter()
 
   const handleCheckout = async () => {
     try {
@@ -23,24 +26,26 @@ const TabletFooterCheckout = () => {
         paymentStatus: 'PENDING',
         details: [
           {
-            quantity: cartItem.value,  // Update if necessary
+            quantity: cartItem.value, // Update if necessary
             amount: cartItem.regularPrice,
-            productVariationId: cartItem.id  // Use the correct identifier
+            productVariationId: cartItem.id // Use the correct identifier
           }
         ]
       }
 
       // Make the API call
       const response = await axios.post(ENDPOINT.PLACE_ORDER, payload)
-      
-      // Log the response
-      console.log('Order placed successfully:', response.data)
+
+      if (response.data) {
+        setOrderId(response.data.details[0].orderId)
+        router.push('/tablet/membership-card')
+      }
     } catch (error) {
       console.error('Error placing order:', error)
     }
   }
 
-  console.log(cartItem, 'cartItem');
+  console.log(cartItem, 'cartItem')
 
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>

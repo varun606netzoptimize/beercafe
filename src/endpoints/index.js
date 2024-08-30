@@ -34,6 +34,7 @@ export const ENDPOINT = {
   GENERATE_SLUG: baseURL + '/api/admin/generateSlug',
   SLUG_CAFE: baseURL + '/api',
   PLACE_ORDER: baseURL + '/api/order',
+  ORDER_STATUS: baseURL + '/api/pos/orders/status'
 }
 
 export const POS_ENDPOINTS = {

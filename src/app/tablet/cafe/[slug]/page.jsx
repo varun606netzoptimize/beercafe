@@ -15,7 +15,6 @@ const Page = ({ params }) => {
   const { slug } = params
   const [data, setData] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { fetchCafeProducts } = useContext(AuthContext)
 
   // Fetch the cafe data based on slug
   const fetchData = async () => {
@@ -27,9 +26,8 @@ const Page = ({ params }) => {
       if (response.data) {
         console.log('API Response:', response.data)
         setData(response.data)
-        toast.success(`Data for ${slug} fetched successfully!`)
 
-        fetchCafeProducts(response.data.id) // Pass both cafeId and cafe name
+        // toast.success(`Data for ${slug} fetched successfully!`)
       } else {
         toast.error('No data found for this URL')
       }
@@ -66,7 +64,7 @@ const Page = ({ params }) => {
 
       {/* Button to navigate, only shown after data is loaded */}
       {!isLoading && data && (
-        <Link href='/tablet/drinks'>
+        <Link href= {`/tablet/cafe/${slug}/drinks`}>
           <div className='absolute bottom-8 right-8 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
             <div className='flex items-center gap-2'>
               <p>Order Now</p>
