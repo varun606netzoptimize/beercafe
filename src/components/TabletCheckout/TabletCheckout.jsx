@@ -6,26 +6,31 @@ import clsx from 'clsx'
 
 import { AuthContext } from '@/context/AuthContext'
 
-const TabletCheckout = ({isModal= false}) => {
-  const { cartItems } = useContext(AuthContext)
+const TabletCheckout = ({ isModal = false }) => {
+  const { cartItem } = useContext(AuthContext)
 
   // Calculate the subtotal by summing the prices of all items in the cart
-  const subtotal = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2)
+  const subtotal = cartItem?.reduce((total, item) => total + item.price, 0).toFixed(2)
 
   // You can add any additional charges or taxes if needed
   const total = subtotal
 
   return (
-    <div className={clsx('w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom px-5 py-5 pb-8 sticky top-0 h-fit', isModal ? "shadow-none h-full" : "")}>
+    <div
+      className={clsx(
+        'w-full flex-3 bg-white rounded-2xl shadow-itemsShadowCustom px-5 py-5 pb-8 sticky top-0 h-fit',
+        isModal ? 'shadow-none h-full' : ''
+      )}
+    >
       <h2 className='text-xl font-semibold'>Table 1</h2>
 
-      {cartItems.length > 0 ? (
+      {cartItem.length > 0 ? (
         <div className='flex flex-col relative'>
           <div className='border-b my-4 w-full border-gray-400'></div>
 
           {/* Display Cart Items */}
           <div className='space-y-4 mb-10'>
-            {cartItems.map((item, index) => (
+            {cartItem.map((item, index) => (
               <div key={index} className='flex justify-between'>
                 <span>
                   {item.name} <small>({item.quantity})</small>

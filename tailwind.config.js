@@ -7,6 +7,9 @@ const config = {
   plugins: [require('tailwindcss-logical'), require('./src/@core/tailwind/plugin')],
   theme: {
     extend: {
+      boxShadow: {
+        'custom': '2px 4px 6px rgba(0, 0, 0, 1)',
+      },
       colors: {
         primary: '#F8C459',
         secondary: '#FFFFFF',

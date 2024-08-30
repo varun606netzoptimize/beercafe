@@ -58,16 +58,15 @@ const CoffeeCard = ({
 
 const Page = () => {
   const itemsPerSlide = 8
-  const totalSlides = Math.ceil(beers.length / itemsPerSlide)
+  const totalSlides = Math.ceil(beers?.length / itemsPerSlide)
 
   const carouselRef = useRef(null)
-  const { setCartItems } = useContext(AuthContext)
+  const { setCartItem } = useContext(AuthContext)
   const [selectedBeerId, setSelectedBeerId] = useState(null) // State to keep track of the selected card by ID
 
   const handleAddToCart = beer => {
     setSelectedBeerId(beer.id) // Set the selected card by ID
-    // setCartItems(prevCartItems => [...prevCartItems, beer])
-    setCartItems([beer])
+    setCartItem([beer])
   }
 
   return (
@@ -81,7 +80,7 @@ const Page = () => {
           {[...Array(totalSlides)].map((_, slideIndex) => (
             <CarouselItem key={slideIndex}>
               <div className='grid grid-cols-2 min-[550px]:grid-cols-3 min-[700px]:grid-cols-4 gap-4 px-1 pb-5'>
-                {beers.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((beer, index) => (
+                {beers?.slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide).map((beer, index) => (
                   <CoffeeCard
                     key={beer.id}
                     {...beer}
