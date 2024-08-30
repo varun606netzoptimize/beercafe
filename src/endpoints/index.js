@@ -32,7 +32,8 @@ export const ENDPOINT = {
   UPDATE_PRODUCT_VARIATION: baseURL + '/api/admin/updateProductVariation',
   GET_ALL_PRODUCTS: baseURL + '/api/admin/getAllProducts',
   GENERATE_SLUG: baseURL + '/api/admin/generateSlug',
-  SLUG_CAFE: baseURL + '/api'
+  SLUG_CAFE: baseURL + '/api',
+  PLACE_ORDER: baseURL + '/api/order',
 }
 
 export const POS_ENDPOINTS = {

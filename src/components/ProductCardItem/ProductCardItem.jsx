@@ -18,7 +18,7 @@ const ProductCardItem = ({ productId, imageSrc, variations, selectedProduct, sel
             } uppercase flex flex-col cursor-pointer`}
           >
             <div className='py-4 pl-5'>
-              <p className='text-2xl font-bold'>${variation.salePrice}</p> {/* Use salePrice from API */}
+              <p className='text-2xl font-bold'>${variation.regularPrice}</p> {/* Use salePrice from API */}
               <p className='text-lg text-[#b1b1b1] font-medium'>{variation.value}</p> {/* Use size/value from API */}
             </div>
             <div className='bg-posPrimaryColor transition-all duration-300 py-1 px-3 pl-5 w-full flex justify-between items-center text-lg font-bold'>
