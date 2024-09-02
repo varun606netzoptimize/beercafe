@@ -49,15 +49,15 @@ const Page = () => {
   return (
     <>
       <TabletHeader>
-        <h1 className='text-[30px] md:text-[38px] font-bold' style={{ textShadow: '0px 2px 0px #ffffff' }}>
+        <h1 className='text-[30px] md:text-[38px] font-black' style={{ textShadow: '0px 2px 0px #ffffff' }}>
           Tap Your Membership Card
         </h1>
-        <p className='text-xl max-w-[650px] font-semibold mt-3'>
+        <p className='text-xl max-w-[650px] font-bold mt-3'>
           Tap your beer membership card on the machine marked with the sign shown below to start pouring your fresh
           beer!
         </p>
       </TabletHeader>
-      <div className='flex flex-col justify-center items-center w-full h-full text-center'>
+      <div className='flex flex-col justify-center items-center w-full h-full text-center mt-12'>
         <div className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] p-10 py-20 rounded-full'>
           <Image src='/images/mobile/rifd-yellow.png' alt='rifd' width={250} height={210} />
         </div>

@@ -62,30 +62,30 @@ const TabletFooterCheckout = () => {
           {cartItem.length !== 0 ? (
             <>
               <div className='flex items-center justify-between w-full max-w-[200px] md:max-w-[250px]'>
-                <h2 className='text-xl'>{cartItem.name}</h2>
+                <h2 className='text-xl font-bold'>{cartItem.name}</h2>
                 <Image src={imageSrc} className='object-contain' width={70} height={40} />
               </div>
               <div className='flex items-center justify-between w-full max-w-[170px]'>
                 <div className='flex items-center gap-2 text-posPrimaryColors'>
                   <BeerIcon />
                   <div>
-                  <h2 className='text-xl'>{cartItem.value} <span className='ml-2'> X 1 </span></h2>
+                  <h2 className='text-xl font-black'>{cartItem.value} <span className='ml-2 font-bold'> X 1 </span></h2>
                   </div>
                 </div>
               </div>
               <div className='max-w-[150px]'>
-                <h3 className='text-lg text-[#8a8a8a]'>${cartItem.regularPrice}</h3>
+                <h3 className='text-lg text-[#8a8a8a] font-bold'>${cartItem.regularPrice}</h3>
               </div>
             </>
           ) : (
-            <p className='text-lg text-center w-full'>Your cart is empty</p>
+            <p className='text-lg text-center w-full font-bold'>Your cart is empty</p>
           )}
         </div>
         {cartItem.length !== 0 && (
           <div className='bg-posPrimaryColor p-3 flex flex-col cursor-pointer' onClick={handleCheckout}>
             <h2 className='text-2xl font-bold'>${(cartItem.regularPrice).toFixed(2)}</h2>
             <div className='flex w-full gap-8 justify-between items-center'>
-              <p className='text-lg uppercase font-bold'>Checkout</p>
+              <p className='text-lg uppercase font-black'>Checkout</p>
               <LeftArrow className='w-6 h-6' />
             </div>
           </div>

@@ -70,7 +70,7 @@ const Page = ({ params }) => {
       {!isLoading && data && (
         <Link href= {`/tablet/cafe/${slug}/drinks`}>
           <div className='absolute bottom-8 right-8 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-2 font-bold'>
               <p>Order Now</p>
               <LeftArrow className='w-6 h-6' />
             </div>

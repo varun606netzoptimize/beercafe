@@ -1,13 +1,28 @@
 import localFont from 'next/font/local'
 
-import { Inter } from 'next/font/google'
-
 import clsx from 'clsx'
 
-const inter = Inter({ subsets: ['latin'] })
+// const museoSlab = localFont({ src: '../../../public/fonts/MuseoSlab-700.woff2' })
 
-const museoSlab = localFont({ src: '../../../public/fonts/MuseoSlab-700.woff2' })
-
+const museoSlab = localFont({
+  src: [
+    {
+      path: '../../../public/fonts/MuseoSlab-700.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../../public/fonts/MuseoSlab-900.woff2',
+      weight: '900',
+      style: 'normal',
+    },
+    {
+      path: '../../../public/fonts/MuseoSlab-100.woff2',
+      weight: '100',
+      style: 'normal',
+    }
+  ]
+})
 
 const TabletLayout = ({ children }) => {
   return (
