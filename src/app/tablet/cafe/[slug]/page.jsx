@@ -7,6 +7,8 @@ import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+import { Loader2 } from 'lucide-react'
+
 import { ENDPOINT } from '@/endpoints'
 import LeftArrow from '@/@menu/svg/LeftArrow'
 import { AuthContext } from '@/context/AuthContext'
@@ -45,19 +47,21 @@ const Page = ({ params }) => {
     }
   }, [slug])
 
+  console.log(data, 'data')
+
   return (
     <div className='h-dvh h-screen w-full'>
       {/* Show loading message while cafe data is being fetched */}
       {isLoading && (
         <div className='flex items-center justify-center h-full'>
-          <p>Loading...</p>
+          <Loader2 className='w-10 h-10 animate-spin' />
         </div>
       )}
 
       {/* Show the video once the cafe data is loaded */}
       {!isLoading && data && (
         <video className='w-full h-full object-cover' autoPlay muted>
-          <source src="https://videocdn.cdnpk.net/videos/b66fe15c-3e6c-489f-82a3-2172d0b3092e/horizontal/previews/watermarked/large.mp4" type='video/mp4' />
+          <source src={data.videoUrl} type='video/mp4' />
           Your browser does not support the video tag.
         </video>
       )}

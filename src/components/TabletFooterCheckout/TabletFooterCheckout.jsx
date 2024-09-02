@@ -68,9 +68,10 @@ const TabletFooterCheckout = () => {
               <div className='flex items-center justify-between w-full max-w-[170px]'>
                 <div className='flex items-center gap-2 text-posPrimaryColors'>
                   <BeerIcon />
-                  <h3 className='text-lg text-[#8a8a8a]'>{cartItem.size}</h3>
+                  <div>
+                  <h2 className='text-xl'>{cartItem.value} <span className='ml-2'> X 1 </span></h2>
+                  </div>
                 </div>
-                <h2 className='text-xl'>X{cartItem.value}</h2>
               </div>
               <div className='max-w-[150px]'>
                 <h3 className='text-lg text-[#8a8a8a]'>${cartItem.regularPrice}</h3>
