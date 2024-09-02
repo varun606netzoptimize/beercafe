@@ -11,7 +11,7 @@ const page = () => {
           Your perfectly chilled beer is ready to be enjoyed. <br /> Grab your glass and take that first delicious sip!
         </p>
       </TabletHeader>
-      <div className='flex flex-col gap-6 justify-center items-center w-full h-full text-center' style={{ minHeight: 'calc(100vh - 180px)' }}>
+      <div className='flex flex-col gap-6 justify-center items-center w-full h-full text-center'>
         <div className='shadow-[0_0_10px_#00000029] mt-5 gap-2 w-full max-w-[380px] py-[40px] flex flex-col justify-center text-center rounded-[10px] text-[#1f1f1f]'>
           <h3 className='text-xl font-normal'>
             Your card balance is: <span className='text-[40px] font-bold text-posPrimaryColor'>$175</span>
