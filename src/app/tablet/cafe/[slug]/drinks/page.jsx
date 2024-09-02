@@ -2,6 +2,8 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 
+import { Loader2 } from 'lucide-react'
+
 import TabletFooterCheckout from '@/components/TabletFooterCheckout/TabletFooterCheckout'
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import ProductCardItem from '@/components/ProductCardItem/ProductCardItem'
@@ -33,18 +35,18 @@ const Page = ({ params }) => {
 
   return (
     <>
-      <div className='flex flex-col relative max-w-[1024px]'>
-        <div className='fixed top-0 w-full z-40'>
+      <div className='flex flex-col relative h-full max-w-[1024px]'>
+        <div className='fixed top-0 w-full max-w-[1024px] z-40'>
         <TabletHeader>
-          <h1 className='text-[30px] md:text-[50px] font-bold uppercase' style={{ textShadow: '0px 2px 0px #ffffff' }}>
+          <h1 className='text-[30px] md:text-[40px] font-bold uppercase' style={{ textShadow: '0px 2px 0px #ffffff' }}>
           Pick Your Favorite Beer and the Quantity
           </h1>
           <p className='text-xl max-w-[650px] font-semibold mt-3'>Your Ideal Brew Awaits – Select Now!</p>
         </TabletHeader>
         </div>
-        <div className='px-10 mt-[140px] mb-[140px]'>
+        <div className='px-10 mt-[140px] h-full mb-[140px]'>
           {isProductsLoading ? (
-            <div className='flex w-full mt-10 justify-center items-center h-full'>Products is fetching</div>
+            <div className='flex w-full mt-10 justify-center items-center h-full'><Loader2 className='w-20 h-20 animate-spin' /></div>
           ) : (
             <>
               {!beerProducts ? (
