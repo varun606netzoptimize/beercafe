@@ -50,7 +50,7 @@ const Page = ({ params }) => {
   console.log(data, 'data')
 
   return (
-    <div className='h-dvh h-screen w-full'>
+    <div className='h-dvh w-full'>
       {/* Show loading message while cafe data is being fetched */}
       {isLoading && (
         <div className='flex items-center justify-center h-full'>
