@@ -22,7 +22,7 @@ const page = () => {
         {/* <button className='max-w-[200px] mt-8 w-full py-3 px-3 bg-primary drop-shadow-md transition-all duration-300 text-center font-bold uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
           New Order
         </button> */}
-        <button className='max-w-[250px] mt-8 w-full py-3 px-3 bg-white border-2 drop-shadow-md transition-all duration-300 text-center font-black uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
+        <button className='max-w-[250px] mt-8 w-full py-3 px-3 bg-white text-black border-black border-2 drop-shadow-md transition-all duration-300 text-center font-black uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
           Add card balance
         </button>
         </div>
