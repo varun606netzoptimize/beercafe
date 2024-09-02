@@ -49,7 +49,7 @@ const Page = () => {
   return (
     <>
       <TabletHeader>
-        <h1 className='text-[40px] lg:text-[50px] font-bold uppercase' style={{ textShadow: '0px 2px 0px #ffffff' }}>
+        <h1 className='text-[30px] md:text-[38px] font-bold' style={{ textShadow: '0px 2px 0px #ffffff' }}>
           Tap Your Membership Card
         </h1>
         <p className='text-xl max-w-[650px] font-semibold mt-3'>

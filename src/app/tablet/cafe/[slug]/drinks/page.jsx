@@ -38,7 +38,7 @@ const Page = ({ params }) => {
       <div className='flex flex-col relative h-full max-w-[1024px]'>
         <div className='fixed top-0 w-full max-w-[1024px] z-40'>
         <TabletHeader>
-          <h1 className='text-[30px] md:text-[40px] font-bold uppercase' style={{ textShadow: '0px 2px 0px #ffffff' }}>
+          <h1 className='text-[30px] md:text-[38px] font-bold' style={{ textShadow: '0px 2px 0px #ffffff' }}>
           Pick Your Favorite Beer and the Quantity
           </h1>
           <p className='text-xl max-w-[650px] font-semibold mt-3' >Your Ideal Brew Awaits – Select Now!</p>
