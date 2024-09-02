@@ -50,7 +50,7 @@ const TabletFooterCheckout = () => {
     Heinekenn : '/images/mobile/Heineken-Logo.png',
     Budweiser: '/images/mobile/Budweiser-Logo.png'
   }
-  
+
 
   console.log(cartItem, 'cartItem');
   const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
@@ -61,7 +61,7 @@ const TabletFooterCheckout = () => {
         <div className='py-5 flex-grow px-8 flex justify-between items-center'>
           {cartItem.length !== 0 ? (
             <>
-              <div className='flex items-center justify-between w-full max-w-[250px]'>
+              <div className='flex items-center justify-between w-full max-w-[200px] md:max-w-[250px]'>
                 <h2 className='text-xl'>{cartItem.name}</h2>
                 <Image src={imageSrc} className='object-contain' width={70} height={40} />
               </div>

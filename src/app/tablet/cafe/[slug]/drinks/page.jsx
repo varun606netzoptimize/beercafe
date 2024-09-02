@@ -41,7 +41,7 @@ const Page = ({ params }) => {
           <h1 className='text-[30px] md:text-[40px] font-bold uppercase' style={{ textShadow: '0px 2px 0px #ffffff' }}>
           Pick Your Favorite Beer and the Quantity
           </h1>
-          <p className='text-xl max-w-[650px] font-semibold mt-3'>Your Ideal Brew Awaits – Select Now!</p>
+          <p className='text-xl max-w-[650px] font-semibold mt-3' >Your Ideal Brew Awaits – Select Now!</p>
         </TabletHeader>
         </div>
         <div className='px-10 mt-[140px] h-full mb-[140px]'>

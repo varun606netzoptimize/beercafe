@@ -14,14 +14,14 @@ const ProductCardItem = ({ productId, variations, selectedProduct, selectedVaria
   const imageSrc = productImages[name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
   return (
-    <div className='flex py-8 justify-start w-full items-center gap-14 pb-8 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
+    <div className='flex py-8 justify-start w-full items-center gap-8 md:gap-14 pb-8 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
       <Image src={imageSrc} className='object-contain' width={150} height={100} alt='Product' />
       <div className='flex gap-6 w-full'>
         {variations.map(variation => (
           <div
             key={variation.id}
             onClick={() => onSelect(productId, variation.id)}
-            className={`max-w-[170px] drop-shadow-md w-full border-2 transition-all duration-300 ${
+            className={`max-w-[170px] w-[150px] md:w-full border-2 transition-all duration-300 ${
               selectedProduct === productId && selectedVariation === variation.id
                 ? 'border-posPrimaryColor drop-shadow-xl'
                 : 'border-[#c4c4c4]'

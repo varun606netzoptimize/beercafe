@@ -57,7 +57,7 @@ const Page = () => {
           beer!
         </p>
       </TabletHeader>
-      <div className='flex flex-col justify-center items-center w-full h-full text-center'>
+      <div className='flex flex-col justify-center items-center w-full h-full text-center' style={{ minHeight: 'calc(100vh - 180px)' }}>
         <div className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] p-10 py-20 rounded-full'>
           <Image src='/images/mobile/rifd-yellow.png' alt='rifd' width={250} height={210} />
         </div>
@@ -66,7 +66,7 @@ const Page = () => {
         {orderStatus && (
           <div>
             <h5 className='text-lg font-bold'>Payment Status:</h5>
-            <p>{orderStatus}</p> 
+            <p>{orderStatus}</p>
           </div>
         )} */}
       </div>

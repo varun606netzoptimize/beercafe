@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Museo Slab';
+  font-weight: 100;
+  font-style: normal;
+  src: url('/public/fonts/Museo_Slab_100.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Museo Slab';
+  font-weight: 300;
+  font-style: italic;
+  src: url('/public/fonts/Museo_Slab_300italic.otf') format('opentype');
+}
+
 :root {
   --border-radius: var(--mui-shape-borderRadius);
   --border-color: var(--mui-palette-divider);
