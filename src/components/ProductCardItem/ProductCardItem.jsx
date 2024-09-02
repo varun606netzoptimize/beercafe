@@ -1,11 +1,13 @@
 import Image from 'next/image'
 
+import clsx from 'clsx'
+
 import Tick from '@/@menu/svg/Tick'
 
 // Mapping of product names to image sources
 const productImages = {
   Tuborg: '/images/mobile/Tuborg-Logo.png',
-  Heinekenn : '/images/mobile/Heineken-Logo.png',
+  Heinekenn: '/images/mobile/Heineken-Logo.png',
   Budweiser: '/images/mobile/Budweiser-Logo.png'
 }
 
@@ -21,11 +23,12 @@ const ProductCardItem = ({ productId, variations, selectedProduct, selectedVaria
           <div
             key={variation.id}
             onClick={() => onSelect(productId, variation.id)}
-            className={`max-w-[170px] w-[150px] md:w-full border-2 transition-all duration-300 ${
+            className={clsx(
+              'max-w-[170px] w-[150px] md:w-full border-2 transition-all duration-300 uppercase flex flex-col cursor-pointer',
               selectedProduct === productId && selectedVariation === variation.id
                 ? 'border-posPrimaryColor drop-shadow-xl'
                 : 'border-[#c4c4c4]'
-            } uppercase flex flex-col cursor-pointer`}
+            )}
           >
             <div className='py-4 pl-5'>
               <p className='text-2xl font-bold'>${variation.regularPrice}</p>
