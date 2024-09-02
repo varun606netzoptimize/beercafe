@@ -44,7 +44,7 @@ const Page = ({ params }) => {
           <p className='text-xl max-w-[650px] font-semibold mt-3' >Your Ideal Brew Awaits – Select Now!</p>
         </TabletHeader>
         </div>
-        <div className='px-10 mt-[140px] h-full mb-[140px]'>
+        <div className='px-6 md:px-10 mt-[140px] h-full mb-[140px]'>
           {isProductsLoading ? (
             <div className='flex w-full mt-10 justify-center items-center h-full'><Loader2 className='w-20 h-20 animate-spin' /></div>
           ) : (
