@@ -64,8 +64,7 @@ const TabletFooterCheckout = () => {
   }
 
 
-  console.log(cartItem, 'cartItem');
-  const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
+  const imageSrc = productImages[cartItem.name] || '/images/mobile/Miller-Logo.png' // Fallback image
 
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>

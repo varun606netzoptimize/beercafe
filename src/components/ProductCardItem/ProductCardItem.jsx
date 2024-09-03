@@ -7,8 +7,11 @@ import Tick from '@/@menu/svg/Tick'
 // Mapping of product names to image sources
 const productImages = {
   Tuborg: '/images/mobile/Tuborg-Logo.png',
-  Heinekenn: '/images/mobile/Heineken-Logo.png',
-  Budweiser: '/images/mobile/Budweiser-Logo.png'
+  Heinekenn : '/images/mobile/Heineken-Logo.png',
+  Budweiser: '/images/mobile/Budweiser-Logo.png',
+  Corona: '/images/mobile/Corona-Logo.png',
+  Miller: '/images/mobile/Miller-Logo.png',
+  Guinness: '/images/mobile/Guinness-logo.png',
 }
 
 const ProductCardItem = ({ productId, variations, selectedProduct, selectedVariation, onSelect, name }) => {
@@ -16,9 +19,9 @@ const ProductCardItem = ({ productId, variations, selectedProduct, selectedVaria
   const imageSrc = productImages[name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
   return (
-    <div className='flex py-8 justify-start w-full items-center gap-6 md:gap-14 pb-8 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
-      <Image src={imageSrc} className='object-contain' width={150} height={100} alt='Product' />
-      <div className='flex gap-5 md:gap-6 w-full overflow-x-auto'>
+    <div className='flex py-8 justify-start w-full items-center gap-6 md:gap-14 pb-6 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
+      <Image src={imageSrc} className='object-contain' width={110} height={100} alt='Product' />
+      <div className='flex pb-2 gap-5 md:gap-6 w-full overflow-x-auto'>
         {variations.map(variation => (
           <div
             key={variation.id}
