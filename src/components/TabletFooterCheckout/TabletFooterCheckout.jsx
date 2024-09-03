@@ -61,14 +61,14 @@ const TabletFooterCheckout = () => {
         <div className='py-5 flex-grow px-8 flex justify-between items-center'>
           {cartItem.length !== 0 ? (
             <>
-              <div className='flex items-center justify-between w-full max-w-[200px] md:max-w-[250px]'>
-                <h2 className='text-xl font-bold'>{cartItem.name}</h2>
+              <div className='flex items-center justify-between w-fit'>
+                {/* <h2 className='text-xl font-bold'>{cartItem.name}</h2> */}
                 <Image src={imageSrc} className='object-contain' width={70} height={40} />
               </div>
               <div className='flex items-center justify-between w-full max-w-[170px]'>
                 <div className='flex items-center gap-2 text-posPrimaryColors'>
                   <BeerIcon />
-                  <div>
+                  <div className='mt-1'>
                   <h2 className='text-xl font-black'>{cartItem.value} <span className='ml-2 font-bold'> X 1 </span></h2>
                   </div>
                 </div>
@@ -82,7 +82,7 @@ const TabletFooterCheckout = () => {
           )}
         </div>
         {cartItem.length !== 0 && (
-          <div className='bg-posPrimaryColor p-3 flex flex-col cursor-pointer' onClick={handleCheckout}>
+          <div className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer' onClick={handleCheckout}>
             <h2 className='text-2xl font-bold'>${(cartItem.regularPrice).toFixed(2)}</h2>
             <div className='flex w-full gap-8 justify-between items-center'>
               <p className='text-lg uppercase font-black'>Checkout</p>

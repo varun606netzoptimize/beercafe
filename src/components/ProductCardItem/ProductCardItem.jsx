@@ -34,7 +34,7 @@ const ProductCardItem = ({ productId, variations, selectedProduct, selectedVaria
               <p className='text-2xl font-black'>${variation.regularPrice}</p>
               <p className='text-lg text-[#b1b1b1] font-bold'>{variation.value}</p>
             </div>
-            <div className='bg-posPrimaryColor transition-all duration-300 py-1 px-3 pl-5 w-full flex justify-between items-center text-lg font-black'>
+            <div className='bg-posPrimaryColor transition-all duration-300 py-1 pt-2 px-3 pl-5 w-full flex justify-between items-center text-lg font-black'>
               <p className='transition-all duration-300'>
                 {selectedProduct === productId && selectedVariation === variation.id ? 'SELECTED' : 'SELECT'}
               </p>

@@ -12,7 +12,7 @@ const page = () => {
         </p>
       </TabletHeader>
       <div className='flex flex-col gap-6 justify-center items-center w-full h-full text-center'>
-        <div className='shadow-[0_0_10px_#00000029] mt-5 gap-2 w-full max-w-[380px] py-[40px] flex flex-col justify-center text-center rounded-[10px] text-[#1f1f1f]'>
+        <div className='mt-5 gap-2 w-full max-w-[380px] py-5 flex flex-col justify-center text-center text-[#1f1f1f]'>
           <h3 className='text-xl font-bold'>
             Your card balance is: <span className='text-[40px] font-black text-posPrimaryColor'>$175</span>
           </h3>
@@ -22,7 +22,7 @@ const page = () => {
         {/* <button className='max-w-[200px] mt-8 w-full py-3 px-3 bg-primary drop-shadow-md transition-all duration-300 text-center font-bold uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
           New Order
         </button> */}
-        <button className='max-w-[250px] mt-8 w-full py-3 px-3 bg-white text-black border-black border-2 drop-shadow-md transition-all duration-300 text-center font-black uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
+        <button className='max-w-[250px] w-full py-3 px-3 bg-white text-black border-black border-2 drop-shadow-md transition-all duration-300 text-center font-black uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
           Add card balance
         </button>
         </div>
