@@ -57,7 +57,9 @@ const TabletFooterCheckout = () => {
   const productImages = {
     Tuborg: '/images/mobile/Tuborg-Logo.png',
     Heinekenn : '/images/mobile/Heineken-Logo.png',
-    Budweiser: '/images/mobile/Budweiser-Logo.png'
+    Budweiser: '/images/mobile/Budweiser-Logo.png',
+    Corona: '/images/mobile/Corona-Logo.png',
+    Miller: '/images/mobile/Miller-Logo.png',
   }
 
 
@@ -72,7 +74,7 @@ const TabletFooterCheckout = () => {
             <>
               <div className='flex items-center justify-between w-fit'>
                 {/* <h2 className='text-xl font-bold'>{cartItem.name}</h2> */}
-                <Image src={imageSrc} className='object-contain' width={70} height={40} />
+                <Image src={imageSrc} className='object-contain' width={80} height={40} />
               </div>
               <div className='flex items-center justify-between w-full max-w-[170px]'>
                 <div className='flex items-center gap-2 text-posPrimaryColors'>

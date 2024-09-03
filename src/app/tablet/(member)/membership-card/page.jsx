@@ -60,7 +60,7 @@ const Page = () => {
         </p>
       </TabletHeader>
       <div className='flex flex-col justify-center items-center w-full h-full text-center mt-12'>
-        <Link href='/tablet/success' className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] p-10 py-20 rounded-full'>
+        <Link href='/tablet/add-balance' className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] p-10 py-20 rounded-full'>
           <div >
             <Image src='/images/mobile/rifd-yellow.png' alt='rifd' width={250} height={210} />
           </div>
