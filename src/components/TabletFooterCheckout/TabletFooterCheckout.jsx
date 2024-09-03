@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation'
 
 import axios from 'axios'
 
+import { Loader2 } from 'lucide-react'
+
 import { AuthContext } from '@/context/AuthContext'
 import RightArrow from '@/@menu/svg/RightArrow'
 import BeerIcon from '@/@menu/svg/BeerIcon'
@@ -14,9 +16,12 @@ import { ENDPOINT } from '@/endpoints'
 
 const TabletFooterCheckout = () => {
   const { cartItem, setOrderId } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
 
   const handleCheckout = async () => {
+    setIsLoading(true);
+
     try {
       // Define your payload here
       const payload = {
@@ -36,12 +41,16 @@ const TabletFooterCheckout = () => {
       // Make the API call
       const response = await axios.post(ENDPOINT.PLACE_ORDER, payload)
 
+
       if (response.data) {
         setOrderId(response.data.details[0].orderId)
         router.push('/tablet/membership-card')
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.error('Error placing order:', error)
+      setIsLoading(false);
     }
   }
 
@@ -82,13 +91,14 @@ const TabletFooterCheckout = () => {
           )}
         </div>
         {cartItem.length !== 0 && (
-          <div className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer' onClick={handleCheckout}>
+          <button disabled={isLoading} className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer' onClick={handleCheckout}>
             <h2 className='text-2xl font-bold'>${(cartItem.regularPrice).toFixed(2)}</h2>
             <div className='flex w-full gap-7 justify-between items-center'>
               <p className='text-lg uppercase font-black'>Checkout</p>
-              <RightArrow className='w-5 h-5   text-black' color='#000' />
+              {isLoading ? <Loader2 className='animate-spin' /> :
+              <RightArrow className='w-5 h-5   text-black' color='#000' />}
             </div>
-          </div>
+          </button>
         )}
       </div>
     </div>
