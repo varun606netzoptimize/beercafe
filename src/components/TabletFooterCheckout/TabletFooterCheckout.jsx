@@ -58,8 +58,8 @@ const TabletFooterCheckout = () => {
     Tuborg: '/images/mobile/Tuborg-Logo.png',
     Heinekenn : '/images/mobile/Heineken-Logo.png',
     Budweiser: '/images/mobile/Budweiser-Logo.png',
-    Corona: '/images/mobile/Corona-Logo.png',
-    Miller: '/images/mobile/Miller-Logo.png',
+    Corona: '/images/mobile/corona-Logo.png',
+    Miller: '/images/mobile/miller-Logo.png',
     Guinness: '/images/mobile/Guinness-logo.png',
   }
 
