@@ -60,6 +60,7 @@ const TabletFooterCheckout = () => {
     Budweiser: '/images/mobile/Budweiser-Logo.png',
     Corona: '/images/mobile/Corona-Logo.png',
     Miller: '/images/mobile/Miller-Logo.png',
+    Guinness: '/images/mobile/Guinness-logo.png',
   }
 
 
