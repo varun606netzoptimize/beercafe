@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import { Loader2 } from 'lucide-react'
 
 import { ENDPOINT } from '@/endpoints'
-import LeftArrow from '@/@menu/svg/LeftArrow'
+import RightArrow from '@/@menu/svg/RightArrow'
 import { AuthContext } from '@/context/AuthContext'
 
 const Page = ({ params }) => {
@@ -70,9 +70,9 @@ const Page = ({ params }) => {
       {!isLoading && data && (
         <Link href= {`/tablet/cafe/${slug}/drinks`}>
           <div className='absolute bottom-8 right-8 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
-            <div className='flex items-center gap-2 font-bold'>
+            <div className='flex items-center gap-3 font-bold'>
               <p>Order Now</p>
-              <LeftArrow className='w-6 h-6' />
+              <RightArrow className='w-5 h-5 text-white' />
             </div>
           </div>
         </Link>

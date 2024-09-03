@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 
 import { AuthContext } from '@/context/AuthContext'
-import LeftArrow from '@/@menu/svg/LeftArrow'
+import RightArrow from '@/@menu/svg/RightArrow'
 import BeerIcon from '@/@menu/svg/BeerIcon'
 import { ENDPOINT } from '@/endpoints'
 
@@ -84,9 +84,9 @@ const TabletFooterCheckout = () => {
         {cartItem.length !== 0 && (
           <div className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer' onClick={handleCheckout}>
             <h2 className='text-2xl font-bold'>${(cartItem.regularPrice).toFixed(2)}</h2>
-            <div className='flex w-full gap-8 justify-between items-center'>
+            <div className='flex w-full gap-7 justify-between items-center'>
               <p className='text-lg uppercase font-black'>Checkout</p>
-              <LeftArrow className='w-6 h-6' />
+              <RightArrow className='w-5 h-5   text-black' color='#000' />
             </div>
           </div>
         )}

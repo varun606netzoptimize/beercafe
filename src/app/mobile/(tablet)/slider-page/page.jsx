@@ -10,7 +10,7 @@ import Autoplay from 'embla-carousel-autoplay'
 
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
-import LeftArrow from '@/@menu/svg/LeftArrow'
+import RightArrow from '@/@menu/svg/RightArrow'
 
 const sliderImages = [
   {
@@ -87,7 +87,7 @@ const Page = () => {
               <div className='absolute bottom-8 right-8 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
                 <div className='flex items-center gap-2'>
                   <p>Order Now</p>
-                  <LeftArrow className='w-6 h-6' />
+                  <RightArrow className='w-6 h-6' />
                 </div>
               </div>
             </Link>
