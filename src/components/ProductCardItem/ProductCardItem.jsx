@@ -6,17 +6,18 @@ import Tick from '@/@menu/svg/Tick'
 
 // Mapping of product names to image sources
 const productImages = {
-  Tuborg: '/images/mobile/Tuborg-Logo.png',
-  Heinekenn : '/images/mobile/Heineken-Logo.png',
-  Budweiser: '/images/mobile/Budweiser-Logo.png',
-  Corona: '/images/mobile/corona-Logo.png',
-  Miller: '/images/mobile/miller-Logo.png',
-  Guinness: '/images/mobile/Guinness-logo.png',
+  'Tuborg': '/images/mobile/Tuborg-Logo.png',
+  'Heinekenn' : '/images/mobile/Heineken-Logo.png',
+  'Budweiser': '/images/mobile/Budweiser-Logo.png',
+  'Corona': '/images/mobile/Tuborg-Logo.png',
+  'Miller': '/images/mobile/Tuborg-Logo.png',
+  'Guinness': '/images/mobile/Guinness-logo.png',
 }
 
 const ProductCardItem = ({ productId, variations, selectedProduct, selectedVariation, onSelect, name }) => {
-  // Determine the image source based on the product name
-  const imageSrc = productImages[name] || '/images/mobile/Miller-Logo.png' // Fallback image
+  const imageSrc = productImages[name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
+
+  console.log(imageSrc, 'imageSrc');
 
   return (
     <div className='flex py-8 justify-start w-full items-center gap-6 md:gap-14 pb-6 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
