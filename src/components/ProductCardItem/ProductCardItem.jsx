@@ -18,13 +18,13 @@ const ProductCardItem = ({ productId, variations, selectedProduct, selectedVaria
   return (
     <div className='flex py-8 justify-start w-full items-center gap-6 md:gap-14 pb-8 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
       <Image src={imageSrc} className='object-contain' width={150} height={100} alt='Product' />
-      <div className='flex gap-5 md:gap-6 w-full'>
+      <div className='flex gap-5 md:gap-6 w-full overflow-x-auto'>
         {variations.map(variation => (
           <div
             key={variation.id}
             onClick={() => onSelect(productId, variation.id)}
             className={clsx(
-              'max-w-[170px] w-[160px] md:w-full border-2 transition-all duration-300 uppercase flex flex-col cursor-pointer',
+              'min-w-[170px] border-2 transition-all duration-300 uppercase flex flex-col cursor-pointer',
               selectedProduct === productId && selectedVariation === variation.id
                 ? 'border-posPrimaryColor drop-shadow-xl'
                 : 'border-[#c4c4c4]'
