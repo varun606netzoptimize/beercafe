@@ -55,16 +55,18 @@ const TabletFooterCheckout = () => {
   }
 
   const productImages = {
-    Tuborg: '/images/mobile/Tuborg-Logo.png',
-    Heinekenn : '/images/mobile/Heineken-Logo.png',
-    Budweiser: '/images/mobile/Budweiser-Logo.png',
-    Corona: '/images/mobile/corona-Logo.png',
-    Miller: '/images/mobile/miller-Logo.png',
-    Guinness: '/images/mobile/Guinness-logo.png',
+    'Tuborg': '/images/mobile/Tuborg-Logo.png',
+    'Heinekenn' : '/images/mobile/Heineken-Logo.png',
+    'Budweiser': '/images/mobile/Budweiser-Logo.png',
+    'Corona': '/images/mobile/Tuborg-Logo.png',
+    'Miller': '/images/mobile/Tuborg-Logo.png',
+    'Guinness': '/images/mobile/Guinness-logo.png',
   }
 
 
-  const imageSrc = productImages[cartItem.name] || '/images/mobile/Miller-Logo.png' // Fallback image
+  const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
+
+  console.log(imageSrc, 'imageSrc')
 
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>
