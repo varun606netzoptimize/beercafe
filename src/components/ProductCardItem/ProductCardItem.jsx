@@ -15,7 +15,7 @@ const productImages = {
 }
 
 const ProductCardItem = ({ productId, variations, selectedProduct, selectedVariation, onSelect, name }) => {
-  const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
+  const imageSrc = productImages[name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
   console.log(imageSrc, 'imageSrc');
 
