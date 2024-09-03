@@ -95,7 +95,7 @@ const TabletFooterCheckout = () => {
           )}
         </div>
         {cartItem.length !== 0 && (
-          <button disabled={isLoading} className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer' onClick={handleCheckout}>
+          <button disabled={isLoading} className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer text-black' onClick={handleCheckout}>
             <h2 className='text-2xl font-bold'>${(cartItem.regularPrice).toFixed(2)}</h2>
             <div className='flex w-full gap-7 justify-between items-center'>
               <p className='text-lg uppercase font-black'>Checkout</p>
