@@ -22,8 +22,6 @@ const Page = ({ params }) => {
     const selectedProduct = beerProducts.find(product => product.id === productId)
     const selectedVariation = selectedProduct.variations.find(variation => variation.id === variationId)
 
-    console.log(selectedProduct, selectedVariation)
-
     addToCart(selectedProduct, selectedVariation)
   }
 
@@ -46,7 +44,7 @@ const Page = ({ params }) => {
         </div>
         <div className='px-6 md:px-10 mt-[140px] h-full mb-[140px]'>
           {isProductsLoading ? (
-            <div className='flex w-full mt-10 justify-center items-center h-full'><Loader2 className='w-20 h-20 animate-spin' /></div>
+            <div className='flex w-full mt-10 justify-center items-center h-full'><Loader2 className='w-16 h-16 animate-spin text-posPrimaryColor' /></div>
           ) : (
             <>
               {!beerProducts ? (
