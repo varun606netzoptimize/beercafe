@@ -29,7 +29,6 @@ const Page = ({ params }) => {
     fetchCafeProducts(slug)
   }, [slug])
 
-  console.log(beerProducts, 'beerProducts')
 
   return (
     <>

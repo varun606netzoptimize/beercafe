@@ -1,18 +1,24 @@
 'use client';
 
+import { useContext } from 'react';
+
 import { useRouter } from 'next/navigation';
 
 import AddBalanceButton from '@/components/AddBalanceButton/AddBalanceButton '
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
+import { AuthContext } from '@/context/AuthContext';
 
 const Page = () => {
+
+  const {cartItem, userBalanceData} = useContext(AuthContext)
+
   const router = useRouter()
 
-  const amounts = [500, 800, 1000, 1200, 1500]
+  const amounts = [(cartItem?.regularPrice - userBalanceData?.balance).toFixed(2),800, 1000, 1200, 1500]
 
   const handleAddBalance = amount => {
-    router.push('/tablet/scanner')
-    console.log(`Adding $${amount} to balance`)
+    router.push("/tablet/scanner?amount=" +amount)
+
   }
 
   return (
@@ -28,10 +34,10 @@ const Page = () => {
       <div className='flex flex-col gap-10 justify-center items-center w-full h-full text-center'>
         <div className='mt-16 gap-2 w-full max-w-[380px] flex flex-col justify-center text-center text-[#1f1f1f]'>
           <h3 className='text-xl font-bold mb-16'>
-            Cart Amount: <span className='text-[40px] font-black text-posPrimaryColor'>$499</span>
+            Cart Amount: <span className='text-[40px] font-black text-posPrimaryColor'>${cartItem?.regularPrice}</span>
           </h3>
           <h3 className='text-xl font-bold'>
-            Your card balance is: <span className='text-[40px] font-black text-posPrimaryColor'>$175</span>
+            Your card balance is: <span className='text-[40px] font-black text-posPrimaryColor'>${userBalanceData?.balance}</span>
           </h3>
         </div>
 

@@ -15,7 +15,7 @@ import { ENDPOINT } from '@/endpoints' // Import your ENDPOINTS
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 
 const Page = () => {
-  const { orderId } = useContext(AuthContext) // Get orderId from context
+  const { orderId, cartItem, userBalanceData } = useContext(AuthContext) // Get orderId from context
   const [orderStatus, setOrderStatus] = useState(null) // State to store order status
   const [loading, setLoading] = useState(true) // State for loading status
   const [error, setError] = useState(null) // State for error handling
@@ -60,8 +60,11 @@ const Page = () => {
         </p>
       </TabletHeader>
       <div className='flex flex-col justify-center items-center w-full h-full text-center mt-12'>
-        <Link href='/tablet/add-balance' className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] p-10 py-20 rounded-full'>
-          <div >
+        <Link
+          href={userBalanceData.balance < cartItem.regularPrice ? '/tablet/add-balance' : '/tablet/success'}
+          className='shadow-[0_0_10px_#00000029] w-full max-w-[380px] p-10 py-20 rounded-full'
+        >
+          <div>
             <Image src='/images/mobile/rifd-yellow.png' alt='rifd' width={250} height={210} />
           </div>
         </Link>

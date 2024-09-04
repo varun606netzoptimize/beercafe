@@ -16,11 +16,11 @@ import { ENDPOINT } from '@/endpoints'
 
 const TabletFooterCheckout = () => {
   const { cartItem, setOrderId } = useContext(AuthContext)
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const handleCheckout = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
       // Define your payload here
@@ -41,28 +41,26 @@ const TabletFooterCheckout = () => {
       // Make the API call
       const response = await axios.post(ENDPOINT.PLACE_ORDER, payload)
 
-
       if (response.data) {
         setOrderId(response.data.details[0].orderId)
         router.push('/tablet/membership-card')
       }
 
-      setIsLoading(false);
+      setIsLoading(false)
     } catch (error) {
       console.error('Error placing order:', error)
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
   const productImages = {
-    'Tuborg': '/images/mobile/Tuborg-Logo.png',
-    'Heinekenn' : '/images/mobile/Heineken-Logo.png',
-    'Budweiser': '/images/mobile/Budweiser-Logo.png',
-    'Corona': '/images/mobile/beer-corona.png',
-    'Miller': '/images/mobile/beer-miller.png',
-    'Guinness': '/images/mobile/Guinness-logo.png',
+    Tuborg: '/images/mobile/Tuborg-Logo.png',
+    Heinekenn: '/images/mobile/Heineken-Logo.png',
+    Budweiser: '/images/mobile/Budweiser-Logo.png',
+    Corona: '/images/mobile/beer-corona.png',
+    Miller: '/images/mobile/beer-miller.png',
+    Guinness: '/images/mobile/Guinness-logo.png'
   }
-
 
   const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
@@ -82,7 +80,9 @@ const TabletFooterCheckout = () => {
                 <div className='flex items-center gap-2 text-posPrimaryColors'>
                   <BeerIcon />
                   <div className='mt-1'>
-                  <h2 className='text-xl font-black'>{cartItem.value} <span className='ml-2 font-bold'> X 1 </span></h2>
+                    <h2 className='text-xl font-black'>
+                      {cartItem.value} <span className='ml-2 font-bold'> X 1 </span>
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -95,12 +95,19 @@ const TabletFooterCheckout = () => {
           )}
         </div>
         {cartItem.length !== 0 && (
-          <button disabled={isLoading} className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer text-black' onClick={handleCheckout}>
-            <h2 className='text-2xl font-bold'>${(cartItem.regularPrice).toFixed(2)}</h2>
+          <button
+            disabled={isLoading}
+            className='bg-posPrimaryColor p-3 pl-5 flex flex-col cursor-pointer text-black'
+            onClick={handleCheckout}
+          >
+            <h2 className='text-2xl font-bold'>${cartItem.regularPrice.toFixed(2)}</h2>
             <div className='flex w-full gap-7 justify-between items-center'>
               <p className='text-lg uppercase font-black'>Checkout</p>
-              {isLoading ? <Loader2 className='animate-spin' /> :
-              <RightArrow className='w-5 h-5   text-black' color='#000' />}
+              {isLoading ? (
+                <Loader2 className='animate-spin' />
+              ) : (
+                <RightArrow className='w-5 h-5   text-black' color='#000' />
+              )}
             </div>
           </button>
         )}

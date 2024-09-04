@@ -30,6 +30,13 @@ export const AuthProvider = ({ children }) => {
   const [isProductsLoading, setIsProductsLoading] = useState(false)
   const [orderId, setOrderId] = useState(null)
 
+  const [userBalanceData, setUserBalanceData] = useState({
+    name: "John Doe",
+    email: 'john@doe.com',
+    phone: '9868785412',
+    balance: 4.59
+  })
+
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
     // window.localStorage.removeItem('userRole')
@@ -220,7 +227,8 @@ export const AuthProvider = ({ children }) => {
         isProductsLoading,
         setOrderId,
         orderId,
-        fetchData
+        fetchData,
+        userBalanceData, setUserBalanceData
       }}
     >
       {children}
