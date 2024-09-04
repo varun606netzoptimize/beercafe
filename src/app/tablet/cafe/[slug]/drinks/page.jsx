@@ -22,8 +22,6 @@ const Page = ({ params }) => {
     const selectedProduct = beerProducts.find(product => product.id === productId)
     const selectedVariation = selectedProduct.variations.find(variation => variation.id === variationId)
 
-    console.log(selectedProduct, selectedVariation)
-
     addToCart(selectedProduct, selectedVariation)
   }
 
