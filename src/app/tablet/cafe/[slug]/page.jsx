@@ -15,6 +15,7 @@ import { ENDPOINT } from '@/endpoints'
 import RightArrow from '@/@menu/svg/RightArrow'
 import { AuthContext } from '@/context/AuthContext'
 import Logo from '@/@core/svg/Logo'
+import BeerLoader from '@/components/BeerLoader/BeerLoader'
 
 const Page = ({ params }) => {
   const { slug } = params
@@ -50,16 +51,11 @@ const Page = ({ params }) => {
     }
   }, [slug])
 
-  console.log(data, 'data')
-
   return (
     <div className='h-dvh w-full'>
       {/* Show loading message while cafe data is being fetched */}
       {isLoading && (
-        <div className='flex items-center flex-col gap-5 justify-center h-full'>
-        <Image src='/images/mobile/appLogo.png' alt='App Logo' width={220} height={230} className='object-contain' />
-            <Loader2 className='w-10 h-10 animate-spin text-posPrimaryColor' />
-        </div>
+        <BeerLoader />
       )}
 
       {/* Show the video once the cafe data is loaded */}

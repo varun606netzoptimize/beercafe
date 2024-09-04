@@ -3,6 +3,7 @@ import Image from 'next/image'
 import clsx from 'clsx'
 
 import Tick from '@/@menu/svg/Tick'
+import Plus from '@/@menu/svg/Plus'
 
 // Mapping of product names to image sources
 const productImages = {
@@ -43,7 +44,7 @@ const ProductCardItem = ({ productId, variations, selectedProduct, selectedVaria
                 {selectedProduct === productId && selectedVariation === variation.id ? 'SELECTED' : 'SELECT'}
               </p>
               <div className='h-fit w-fit transition-all duration-300'>
-                {selectedProduct === productId && selectedVariation === variation.id ? <Tick /> : '+'}
+                {selectedProduct === productId && selectedVariation === variation.id ? <Tick /> : <Plus />}
               </div>
             </div>
           </div>
