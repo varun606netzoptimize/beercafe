@@ -60,7 +60,7 @@ const Page = ({ params }) => {
 
       {/* Show the video once the cafe data is loaded */}
       {!isLoading && data && (
-        <video className='w-full h-full object-cover' autoPlay muted>
+        <video className='w-full h-full object-cover' autoPlay loop muted>
           <source src={data.videoUrl} type='video/mp4' />
           Your browser does not support the video tag.
         </video>
