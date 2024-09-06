@@ -29,13 +29,9 @@ export const AuthProvider = ({ children }) => {
   const [beerProducts, setBeerProducts] = useState(null)
   const [isProductsLoading, setIsProductsLoading] = useState(false)
   const [orderId, setOrderId] = useState(null)
+  const [remainingBalance, setRemainingBalance] = useState('')
 
-  const [userBalanceData, setUserBalanceData] = useState({
-    name: "John Doe",
-    email: 'john@doe.com',
-    phone: '9868785412',
-    balance: 4.59
-  })
+  const [userBalanceData, setUserBalanceData] = useState('')
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -228,7 +224,10 @@ export const AuthProvider = ({ children }) => {
         setOrderId,
         orderId,
         fetchData,
-        userBalanceData, setUserBalanceData
+        userBalanceData,
+        setUserBalanceData,
+        remainingBalance,
+        setRemainingBalance
       }}
     >
       {children}

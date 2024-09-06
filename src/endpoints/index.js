@@ -34,8 +34,13 @@ export const ENDPOINT = {
   GENERATE_SLUG: baseURL + '/api/admin/generateSlug',
   SLUG_CAFE: baseURL + '/api',
   PLACE_ORDER: baseURL + '/api/order',
-  ORDER_STATUS: baseURL + '/api/pos/orders/status'
+  ORDER_STATUS: baseURL + '/api/pos/orders/status',
+  VERIFY_RFID: baseURL + '/api/order/',
+  PROCESS_PAYMENT: baseURL + '/api/order/process',
+  UPDATE_USER_POINTS: baseURL + '/api/order/updatePoints'
 }
+
+
 
 export const POS_ENDPOINTS = {
   GET_ORDER: baseURL + '/api/pos/orders',

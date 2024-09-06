@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react'
 
 import Image from 'next/image'
-import Link from 'next/link'
 
 import { useRouter } from 'next/navigation'
 
@@ -14,7 +13,7 @@ import RightArrow from '@/@menu/svg/RightArrow'
 import BeerIcon from '@/@menu/svg/BeerIcon'
 import { ENDPOINT } from '@/endpoints'
 
-const TabletFooterCheckout = () => {
+const TabletFooterCheckout = ({ slug }) => {
   const { cartItem, setOrderId } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -25,7 +24,6 @@ const TabletFooterCheckout = () => {
     try {
       // Define your payload here
       const payload = {
-        customerId: '66b5b48891105005829357ac',
         amount: Number((cartItem.regularPrice * cartItem.quantity).toFixed(2)),
         paymentMode: 'Credit Card',
         paymentStatus: 'PENDING',
@@ -42,8 +40,16 @@ const TabletFooterCheckout = () => {
       const response = await axios.post(ENDPOINT.PLACE_ORDER, payload)
 
       if (response.data) {
-        setOrderId(response.data.details[0].orderId)
-        router.push('/tablet/membership-card')
+        const orderId = response.data.details[0].orderId
+        const amount = response.data.amount
+
+        setOrderId(orderId)
+
+        // Save the orderId in localStorage
+        window.localStorage.setItem('currentOrder', JSON.stringify({ orderId, amount }))
+
+        // router.push('/tablet/craft-keg/membership-card')
+        router.push(`/tablet/${slug}/membership-card`)
       }
 
       setIsLoading(false)

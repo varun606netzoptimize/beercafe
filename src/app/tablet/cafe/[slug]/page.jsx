@@ -54,9 +54,7 @@ const Page = ({ params }) => {
   return (
     <div className='h-dvh w-full'>
       {/* Show loading message while cafe data is being fetched */}
-      {isLoading && (
-        <BeerLoader />
-      )}
+      {isLoading && <BeerLoader />}
 
       {/* Show the video once the cafe data is loaded */}
       {!isLoading && data && (

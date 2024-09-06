@@ -1,24 +1,27 @@
-'use client';
+'use client'
 
-import { useContext } from 'react';
+import { useContext } from 'react'
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 import AddBalanceButton from '@/components/AddBalanceButton/AddBalanceButton '
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
-import { AuthContext } from '@/context/AuthContext';
+import { AuthContext } from '@/context/AuthContext'
+import { ENDPOINT } from '@/endpoints'
 
-const Page = () => {
+const Page = ({ params }) => {
+  const { slug } = params
 
-  const {cartItem, userBalanceData} = useContext(AuthContext)
+  const { userBalanceData } = useContext(AuthContext)
 
   const router = useRouter()
+  const currentOrder = JSON.parse(window.localStorage.getItem('currentOrder'))
 
-  const amounts = [(cartItem?.regularPrice - userBalanceData?.balance).toFixed(2),800, 1000, 1200, 1500]
+  const amounts = [(currentOrder.amount - Number(userBalanceData)).toFixed(2), 800, 1000, 1200, 1500]
 
   const handleAddBalance = amount => {
-    router.push("/tablet/scanner?amount=" +amount)
-
+    // router.push('/tablet/scanner?amount=' + amount)
+    router.push(`/tablet/${slug}/scanner?amount=${amount}`)
   }
 
   return (
@@ -32,23 +35,15 @@ const Page = () => {
         </p>
       </TabletHeader>
       <div className='flex flex-col gap-10 justify-center items-center w-full h-full text-center'>
-        <div className='mt-16 gap-2 w-full max-w-[380px] flex flex-col justify-center text-center text-[#1f1f1f]'>
+        <div className='mt-16 gap-2 w-full m  ax-w-[380px] flex flex-col justify-center text-center text-[#1f1f1f]'>
           <h3 className='text-xl font-bold mb-16'>
-            Cart Amount: <span className='text-[40px] font-black text-posPrimaryColor'>${cartItem?.regularPrice}</span>
+            Cart Amount: <span className='text-[40px] font-black text-posPrimaryColor'>${currentOrder.amount}</span>
           </h3>
           <h3 className='text-xl font-bold'>
-            Your card balance is: <span className='text-[40px] font-black text-posPrimaryColor'>${userBalanceData?.balance}</span>
+            Your card balance is:{' '}
+            <span className='text-[40px] font-black text-posPrimaryColor'>${userBalanceData}</span>
           </h3>
         </div>
-
-        {/* <div className='flex  gap-3 items-center w-full justify-center'>
-        <button className='max-w-[200px] mt-8 w-full py-3 px-3 bg-primary drop-shadow-md transition-all duration-300 text-center font-bold uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
-          New Order
-        </button>
-        <button className='max-w-[250px] w-full py-3 px-3 bg-white text-black border-black border-2 drop-shadow-md transition-all duration-300 text-center font-black uppercase text-lg cursor-pointer hover:drop-shadow-xl'>
-            Add card balance
-          </button>
-        </div> */}
 
         <div className='flex flex-col justify-center items-center gap-10 w-4/5'>
           <div className='bg-white w-full'>

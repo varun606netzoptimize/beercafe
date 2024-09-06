@@ -143,12 +143,13 @@ export default function Page() {
     },
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'phoneNumber', headerName: 'Phone', flex: 1 },
-    { field: 'userType', headerName: 'Role', flex: 1 },
+    { field: 'userType', headerName: 'Role', flex: 1, renderCell: params => <p>{params?.row?.userType?.type}</p> },
     {
       field: 'cafe',
       headerName: 'Cafe',
-      flex: 1,
-      renderCell: params => <Box>{params?.row?.cafes[0]?.name}</Box>
+      flex: 1
+
+      // renderCell: params => <Box>{params?.row?.cafes[0]?.name}</Box>
     },
     {
       field: 'actions',
