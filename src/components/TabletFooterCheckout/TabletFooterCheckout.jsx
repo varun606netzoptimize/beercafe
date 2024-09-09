@@ -59,10 +59,6 @@ const TabletFooterCheckout = ({ slug }) => {
     }
   }
 
-  useEffect(() => {
-    setCartItem(null);
-  },[slug]);
-
   const productImages = {
     Tuborg: '/images/mobile/Tuborg-Logo.png',
     Heinekenn: '/images/mobile/Heineken-Logo.png',
