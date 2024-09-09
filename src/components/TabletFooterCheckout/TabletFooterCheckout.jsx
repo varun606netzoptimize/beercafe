@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import Image from 'next/image'
 
@@ -14,7 +14,7 @@ import BeerIcon from '@/@menu/svg/BeerIcon'
 import { ENDPOINT } from '@/endpoints'
 
 const TabletFooterCheckout = ({ slug }) => {
-  const { cartItem, setOrderId } = useContext(AuthContext)
+  const { cartItem, setOrderId , setCartItem } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -59,6 +59,10 @@ const TabletFooterCheckout = ({ slug }) => {
     }
   }
 
+  useEffect(() => {
+    setCartItem(null);
+  },[slug]);
+
   const productImages = {
     Tuborg: '/images/mobile/Tuborg-Logo.png',
     Heinekenn: '/images/mobile/Heineken-Logo.png',
@@ -69,6 +73,7 @@ const TabletFooterCheckout = ({ slug }) => {
   }
 
   const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
+
 
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>

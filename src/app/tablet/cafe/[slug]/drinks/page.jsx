@@ -13,11 +13,11 @@ const Page = ({ params }) => {
   const { slug } = params
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedVariation, setSelectedVariation] = useState(null)
-  const { beerProducts, addToCart, isProductsLoading, fetchCafeProducts } = useContext(AuthContext) // Get beerProducts from AuthContext
+  const { beerProducts, addToCart, isProductsLoading, fetchCafeProducts, setCartItem } = useContext(AuthContext) // Get beerProducts from AuthContext
 
   useEffect(() => {
-    setSelectedProduct(null)
-    setSelectedVariation(null)
+    setSelectedProduct(null);
+    setSelectedVariation(null);
   }, [])
 
   const handleSelect = (productId, variationId) => {
@@ -31,7 +31,7 @@ const Page = ({ params }) => {
   }
 
   useEffect(() => {
-    fetchCafeProducts(slug)
+    fetchCafeProducts(slug);
   }, [slug])
 
   return (
