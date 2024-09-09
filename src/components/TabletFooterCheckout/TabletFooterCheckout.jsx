@@ -70,8 +70,6 @@ const TabletFooterCheckout = ({ slug }) => {
 
   const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
-  console.log(imageSrc, 'imageSrc')
-
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>
       <div className='bg-white border-2 flex border-black'>

@@ -12,6 +12,8 @@ import axios from 'axios'
 
 import { CircularProgress } from '@mui/material'
 
+import { toast } from 'react-toastify'
+
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import QR from '@/@menu/svg/QR'
 import { AuthContext } from '@/context/AuthContext'
@@ -53,7 +55,8 @@ const Page = ({ params }) => {
     axios
       .post(url, data)
       .then(res => {
-        console.log('successfully updated the balance', res.data)
+        console.log('successfully updated the balance', res.data.message)
+        toast.success(res.data.message);
         ProcessPayment()
       })
       .catch(err => {

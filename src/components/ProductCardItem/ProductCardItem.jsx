@@ -18,8 +18,6 @@ const productImages = {
 const ProductCardItem = ({ productId, variations, selectedProduct, selectedVariation, onSelect, name }) => {
   const imageSrc = productImages[name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
 
-  console.log(imageSrc, 'imageSrc');
-
   return (
     <div className='flex py-8 justify-start w-full items-center gap-6 md:gap-14 pb-6 pl-5 border-b border-[#c4c4c4] transition-all duration-300'>
       <Image src={imageSrc} className='object-contain' width={110} height={100} alt='Product' />

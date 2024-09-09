@@ -12,6 +12,8 @@ import axios from 'axios'
 
 import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
+import { toast } from 'react-toastify'
+
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints' // Import your ENDPOINTS
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
@@ -37,7 +39,7 @@ const Page = ({ params }) => {
           setOrderStatus(response.data.paymentStatus) // Set order status data
 
           if (response.data.paymentStatus == 'PAID') {
-            router.push('/tablet/waiting')
+            router.push('/tablet/success')
           }
         } catch (err) {
           console.error('Failed to fetch order status:', err)
@@ -66,8 +68,8 @@ const Page = ({ params }) => {
           ProcessPayment(rfidNumber, currentOrder.orderId)
         } else {
           window.localStorage.setItem('rfidNumber', res.data.rfidDetails.rfidNumber)
-          setUserBalanceData(cutomerPoints)
-          router.push(`/tablet/${slug}/add-balance`)
+          setUserBalanceData(cutomerPoints);
+          router.push(`/tablet/${slug}/add-balance`);
 
           setTimeout(() => {
             setLoading(false)
@@ -75,7 +77,8 @@ const Page = ({ params }) => {
         }
       })
       .catch(err => {
-        console.log('failed to verify rfid', err.response)
+        console.log('failed to verify rfid', err.response.data.message);
+        toast.error(err.response.data.message);
         setLoading(false)
       })
   }
@@ -129,6 +132,7 @@ const Page = ({ params }) => {
               <MenuItem value={'9314890E'}>{'9314890E'}</MenuItem>
               <MenuItem value={'D30DDD24'}>{'D30DDD24'}</MenuItem>
               <MenuItem value={'9314872E'}>{'9314872E'}</MenuItem>
+              <MenuItem value={'93148727'}>{'93148727'}</MenuItem>
             </Select>
           </FormControl>
         </Box>

@@ -71,7 +71,8 @@ export async function POST(req) {
 
     const response = {
       RFID,
-      updatedPoints
+      updatedPoints,
+      message: 'Points updated successfully'
     };
 
     return new Response(
@@ -80,7 +81,7 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error('Error updating points and history:', error);
-    
+
 return new Response(JSON.stringify({ error: 'Server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
