@@ -14,7 +14,7 @@ import BeerIcon from '@/@menu/svg/BeerIcon'
 import { ENDPOINT } from '@/endpoints'
 
 const TabletFooterCheckout = ({ slug }) => {
-  const { cartItem, setOrderId , setCartItem } = useContext(AuthContext)
+  const { cartItem, setOrderId } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
