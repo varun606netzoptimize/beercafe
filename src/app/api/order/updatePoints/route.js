@@ -4,8 +4,15 @@ const prisma = new PrismaClient()
 
 export async function POST(req) {
   try {
-    const body = await req.json();
-    const { RFID, amount, action } = body; // action should be 'credit' or 'debit'
+    const { searchParams } = new URL(req.url);
+    const RFID = searchParams.get('RFID');
+    const amount = searchParams.get('amount');
+    const action = searchParams.get('action');
+
+    // Example: process the data here
+    console.log('RFID:', RFID);
+    console.log('Amount:', amount);
+    console.log('Action:', action); // action should be 'credit' or 'debit'
 
     if (!RFID || !amount || !action) {
       return new Response(JSON.stringify({ error: 'RFID, amount, and action are required' }), {

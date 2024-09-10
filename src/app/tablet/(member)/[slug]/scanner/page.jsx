@@ -14,10 +14,15 @@ import { CircularProgress } from '@mui/material'
 
 import { toast } from 'react-toastify'
 
+import { QRCodeCanvas } from 'qrcode.react'
+
+import upiqr from "upiqr";
+
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import QR from '@/@menu/svg/QR'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
+
 
 const Page = ({ params }) => {
   const { slug } = params
@@ -26,6 +31,8 @@ const Page = ({ params }) => {
 
   const [amountToAdd, setAmountToAdd] = useState(null)
   const [loading, setIsLoading] = useState(false)
+
+  const [upiCode, setUpiCode] = useState(null)
 
   const router = useRouter()
 
@@ -41,8 +48,9 @@ const Page = ({ params }) => {
   const rfidNumber = window.localStorage.getItem('rfidNumber')
   const currentOrder = JSON.parse(window.localStorage.getItem('currentOrder'))
 
+  const url = ENDPOINT.UPDATE_USER_POINTS
+
   function handleAddBalance() {
-    const url = ENDPOINT.UPDATE_USER_POINTS
 
     const data = {
       RFID: rfidNumber,
@@ -53,10 +61,10 @@ const Page = ({ params }) => {
     setIsLoading(true)
 
     axios
-      .post(url, data)
+      .post(`${url}?rfid=${rfidNumber}&amount=${amountToAdd}&action='credit'`)
       .then(res => {
         console.log('successfully updated the balance', res.data.message)
-        toast.success(res.data.message);
+        toast.success(res.data.message)
         ProcessPayment()
       })
       .catch(err => {
@@ -92,6 +100,20 @@ const Page = ({ params }) => {
       })
   }
 
+  upiqr({
+    payeeVPA: "yashk7366@oksbu",
+    payeeName: "Yash Kumar"
+  })
+  .then((upi) => {
+    console.log(upi.qr);      // data:image/png;base64,eR0lGODP...
+    console.log(upi.intent);  // upi://pay?pa=bhar4t@upi&pn=Bharat..
+
+    setUpiCode(upi.intent);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
   return (
     <>
       <TabletHeader>
@@ -109,9 +131,11 @@ const Page = ({ params }) => {
           <div
             className='flex flex-col justify-center items-center gap-10 border'
             style={{ cursor: 'pointer' }}
-            onClick={handleAddBalance}
+
+            // onClick={handleAddBalance}
           >
-            <QR />
+            <QRCodeCanvas value={'upi://pay?pa=yashk7366%40oksbu&pn=Yash%20Kumar'} />
+            {/* <QR /> */}
           </div>
         )}
 
