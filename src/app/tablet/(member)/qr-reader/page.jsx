@@ -38,7 +38,7 @@ const Page = () => {
   }
 
   useEffect(() => {
-    verifyRFID(rfidNumber)
+    verifyRFID(rfidNumber);
   }, [])
 
   return (

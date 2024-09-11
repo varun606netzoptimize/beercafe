@@ -24,8 +24,8 @@ const Page = ({ params }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setProgress(prevProgress => prevProgress + 2)
-    }, 100)
+      setProgress(prevProgress => prevProgress + 1)
+    }, 200)
 
     return () => {
       clearInterval(timer)
@@ -33,7 +33,7 @@ const Page = ({ params }) => {
   }, [])
 
   useEffect(() => {
-    if (progress >= 100) {
+    if (progress >= 200) {
       router.push(`/tablet/cafe/${slug}/drinks`)
     }
   }, [progress])
@@ -58,7 +58,7 @@ const Page = ({ params }) => {
             height={500}
           />
         </div>
-        <p className='text-xl max-w-[650px] font-bold mt-3'>Your Balance ${remainingBalance}</p>
+        <p className='text-xl max-w-[650px] font-bold mt-3'>Your Balance ${Math.round(remainingBalance)}</p>
 
         <div className='w-full flex justify-end px-16 pt-10'>
         <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 8 }}>
