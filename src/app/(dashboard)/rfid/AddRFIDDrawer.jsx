@@ -21,7 +21,7 @@ const schema = yup.object().shape({
   points: yup.number().optional()
 })
 
-export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData, setUpdateUserData, drawerType }) {
+export default function AddRFIDDrawer({ open, onClose, GetUsers, updateRFIDData, setUpdateRFIDData, drawerType }) {
   const { authToken } = React.useContext(AuthContext)
 
   const {
@@ -38,14 +38,13 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
   const [isLoading, setIsLoading] = useState(false)
 
   React.useEffect(() => {
-    if (drawerType === 'update' && updateUserData) {
-      setValue('firstname', updateUserData.firstname)
-      setValue('phoneNumber', updateUserData.phoneNumber)
-      setValue('points', updateUserData.points || 0)
+    if (drawerType === 'update' && updateRFIDData) {
+      setValue('rfidNumber', updateRFIDData.firstname)
+      setValue('expiry', updateRFIDData.expiry)
     } else if (drawerType === 'create') {
       reset()
     }
-  }, [drawerType, updateUserData, setValue, reset])
+  }, [drawerType, updateRFIDData, setValue, reset])
 
   const CreateUser = async data => {
     const url = ENDPOINT.CREATE_CUSTOMER
@@ -69,7 +68,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
       GetUsers()
       onClose()
       reset()
-      setUpdateUserData(null)
+      setUpdateRFIDData(null)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add user')
       console.log('Failed to add user data:', err.response?.data)
@@ -82,7 +81,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
     const url = ENDPOINT.UPDATE_CUSTOMER
 
     const userData = {
-      id: updateUserData.id,
+      id: updateRFIDData.id,
       firstname: data.firstname,
       phoneNumber: data.phoneNumber,
       points: Number(data.points)
@@ -101,7 +100,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
       console.log('User updated:', res.data)
       GetUsers()
       onClose()
-      setUpdateUserData(null)
+      setUpdateRFIDData(null)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update user')
       console.log('Failed to update user data:', err.response)
@@ -115,7 +114,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
       <form
         noValidate
         autoComplete='off'
-        onSubmit={handleSubmit(drawerType === 'update' && updateUserData ? UpdateUser : CreateUser)}
+        onSubmit={handleSubmit(drawerType === 'update' && updateRFIDData ? UpdateUser : CreateUser)}
         style={{ marginTop: 16 }}
         className='flex flex-col gap-6'
       >
@@ -201,7 +200,7 @@ export default function AddUserDrawer({ open, onClose, GetUsers, updateUserData,
         onClose={() => {
           onClose()
           reset()
-          setUpdateUserData(null)
+          setUpdateRFIDData(null)
         }}
       >
         {DrawerList}
