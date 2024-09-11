@@ -24,7 +24,7 @@ export async function POST(req) {
     if(transaction.status === PaymentStatus.Pending){
       const pointsHistory = await prisma.customerPointsHistory.update({
         where: { id: payment_id },
-        data: { status: PaymentStatus.Completed }
+        data: { status: PaymentStatus.Completed, updatedAt: new Date() }
       })
   
       const updatedCustomer = await prisma.customer.update({
