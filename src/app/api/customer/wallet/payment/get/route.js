@@ -1,5 +1,6 @@
-import { PaymentStatus } from '@/constants/paymentStatus';
 import { PrismaClient } from '@prisma/client'
+
+import { PaymentStatus } from '@/constants/paymentStatus';
 
 const prisma = new PrismaClient()
 
@@ -25,7 +26,7 @@ export async function POST(req) {
       JSON.stringify(transaction),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
-    
+
   } catch (error) {
     console.error('Error fetching the transaction:', error);
 

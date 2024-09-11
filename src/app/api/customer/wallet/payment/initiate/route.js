@@ -1,5 +1,6 @@
-import { PaymentStatus } from '@/constants/paymentStatus';
 import { PrismaClient } from '@prisma/client'
+
+import { PaymentStatus } from '@/constants/paymentStatus';
 
 const prisma = new PrismaClient()
 

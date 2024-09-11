@@ -37,7 +37,10 @@ export const ENDPOINT = {
   ORDER_STATUS: baseURL + '/api/pos/orders/status',
   VERIFY_RFID: baseURL + '/api/order/',
   PROCESS_PAYMENT: baseURL + '/api/order/process',
-  UPDATE_USER_POINTS: baseURL + '/api/order/updatePoints'
+  UPDATE_USER_POINTS: baseURL + '/api/order/updatePoints',
+  TRANSACTION_INITIATE : baseURL + '/api/customer/wallet/payment/initiate',
+  TRANSACTION_COMPLETE : baseURL + '/api/customer/wallet/payment/complete',
+  TRANSACTION_GET : baseURL + '/api/customer/wallet/payment/get',
 }
 
 

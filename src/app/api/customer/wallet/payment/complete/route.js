@@ -1,5 +1,6 @@
-import { PaymentStatus } from '@/constants/paymentStatus';
 import { PrismaClient } from '@prisma/client'
+
+import { PaymentStatus } from '@/constants/paymentStatus';
 
 const prisma = new PrismaClient()
 
@@ -26,12 +27,12 @@ export async function POST(req) {
         where: { id: payment_id },
         data: { status: PaymentStatus.Completed, updatedAt: new Date() }
       })
-  
+
       const updatedCustomer = await prisma.customer.update({
         where: { id: pointsHistory.customerId },
         data: { points: { increment: pointsHistory.amount } }
       });
-      
+
       return new Response(
         JSON.stringify(updatedCustomer),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
@@ -43,7 +44,7 @@ export async function POST(req) {
         { status: 409, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    
+
   } catch (error) {
     console.error('Error updating points and history:', error);
 

@@ -4,6 +4,8 @@ import { useContext } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import axios from 'axios'
+
 import AddBalanceButton from '@/components/AddBalanceButton/AddBalanceButton '
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import { AuthContext } from '@/context/AuthContext'
@@ -16,12 +18,36 @@ const Page = ({ params }) => {
 
   const router = useRouter()
   const currentOrder = JSON.parse(window.localStorage.getItem('currentOrder'))
+  const rfidNumber = window.localStorage.getItem('rfidNumber')
 
   const amounts = [(currentOrder.amount - Number(userBalanceData)).toFixed(2), 800, 1000, 1200, 1500]
 
+  const initiateTransaction = ({amount}) => {
+    const url = ENDPOINT.TRANSACTION_INITIATE
+
+    console.log('url', url);
+
+    const data = {
+      RFID: rfidNumber,
+      amount: Number(amount),
+      action: 'credit'
+    }
+
+    axios.post(url, data)
+    .then(res => {
+      console.log('successfully paid', res)
+
+      if(res.data.id){
+        router.push(`/tablet/${slug}/scanner?amount=${amount}&transactionId=${res.data.id}`);
+      }
+    })
+    .catch(err => {
+      console.log('failed to process', err.response.data)
+    })
+  }
+
   const handleAddBalance = amount => {
-    // router.push('/tablet/scanner?amount=' + amount)
-    router.push(`/tablet/${slug}/scanner?amount=${amount}`)
+    initiateTransaction({ amount });
   }
 
   return (

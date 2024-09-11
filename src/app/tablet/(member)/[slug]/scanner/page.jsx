@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
 
@@ -21,6 +21,7 @@ import { ENDPOINT } from '@/endpoints'
 
 const Page = ({ params }) => {
   const { slug } = params
+  const searchParams = useSearchParams()
 
   const { setRemainingBalance } = useContext(AuthContext)
 
@@ -29,14 +30,15 @@ const Page = ({ params }) => {
 
   const router = useRouter()
 
+  const queryAmount = searchParams.get('amount') || '0.00';
+  const transactionId =  searchParams.get('transactionId') || '';
+
   useEffect(() => {
     // Extract phone number from query parameters
-    const queryAmount = new URLSearchParams(window.location.search).get('amount')
-
     if (queryAmount) {
       setAmountToAdd(Number(queryAmount))
     }
-  }, [])
+  }, [queryAmount])
 
   const rfidNumber = window.localStorage.getItem('rfidNumber')
   const currentOrder = JSON.parse(window.localStorage.getItem('currentOrder'))
@@ -93,7 +95,11 @@ const Page = ({ params }) => {
       })
   }
 
-  const redirectUrl = `/tablet/qr-reader?amount=${amountToAdd}&orderId=${currentOrder.orderId}&rfidNumber=${rfidNumber}`
+  const checkPayment = () => {
+    const url = ENDPOINT.TRANSACTION_GET;
+  }
+
+  const redirectUrl = `/tablet/${slug}/qr-reader?amount=${amountToAdd}&orderId=${currentOrder.orderId}&rfidNumber=${rfidNumber}&id=${transactionId}`
 
   return (
     <>

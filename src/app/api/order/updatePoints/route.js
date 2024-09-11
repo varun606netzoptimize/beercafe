@@ -5,8 +5,8 @@ const prisma = new PrismaClient()
 export async function POST(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const RFID = searchParams.get('RFID');
-    const amount = searchParams.get('amount');
+    const RFID = searchParams.get('rfid');
+    const amount = Number(searchParams.get('amount'));
     const action = searchParams.get('action');
 
     // Example: process the data here
