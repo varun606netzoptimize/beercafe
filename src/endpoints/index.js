@@ -38,12 +38,15 @@ export const ENDPOINT = {
   VERIFY_RFID: baseURL + '/api/order/',
   PROCESS_PAYMENT: baseURL + '/api/order/process',
   UPDATE_USER_POINTS: baseURL + '/api/order/updatePoints',
-  TRANSACTION_INITIATE : baseURL + '/api/customer/wallet/payment/initiate',
-  TRANSACTION_COMPLETE : baseURL + '/api/customer/wallet/payment/complete',
-  TRANSACTION_GET : baseURL + '/api/customer/wallet/payment/get',
+  TRANSACTION_INITIATE: baseURL + '/api/customer/wallet/payment/initiate',
+  TRANSACTION_COMPLETE: baseURL + '/api/customer/wallet/payment/complete',
+  TRANSACTION_GET: baseURL + '/api/customer/wallet/payment/get',
+
+  GET_RFIDS: baseURL + '/api/admin/rfids/get',
+  CREATE_RFIDS: baseURL + '/api/admin/rfids/create',
+  UPDATE_RFIDS: baseURL + '/api/admin/rfids/update',
+  DELETE_RFIDS: baseURL + '/api/admin/rfids/delete'
 }
-
-
 
 export const POS_ENDPOINTS = {
   GET_ORDER: baseURL + '/api/pos/orders',
