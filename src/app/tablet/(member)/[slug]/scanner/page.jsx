@@ -4,19 +4,14 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import Image from 'next/image'
-
-import { prev } from 'stylis'
-
 import axios from 'axios'
 
 import { CircularProgress } from '@mui/material'
 
 import { toast } from 'react-toastify'
 
-import { QRCodeCanvas } from 'qrcode.react'
 
-import upiqr from "upiqr";
+import {QRCodeSVG} from 'qrcode.react';
 
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import QR from '@/@menu/svg/QR'
@@ -31,8 +26,6 @@ const Page = ({ params }) => {
 
   const [amountToAdd, setAmountToAdd] = useState(null)
   const [loading, setIsLoading] = useState(false)
-
-  const [upiCode, setUpiCode] = useState(null)
 
   const router = useRouter()
 
@@ -100,19 +93,7 @@ const Page = ({ params }) => {
       })
   }
 
-  upiqr({
-    payeeVPA: "yashk7366@oksbu",
-    payeeName: "Yash Kumar"
-  })
-  .then((upi) => {
-    console.log(upi.qr);      // data:image/png;base64,eR0lGODP...
-    console.log(upi.intent);  // upi://pay?pa=bhar4t@upi&pn=Bharat..
-
-    setUpiCode(upi.intent);
-  })
-  .catch(err => {
-    console.log(err);
-  });
+  const redirectUrl = `/tablet/qr-reader?amount=${amountToAdd}&orderId=${currentOrder.orderId}&rfidNumber=${rfidNumber}`
 
   return (
     <>
@@ -129,13 +110,13 @@ const Page = ({ params }) => {
           <CircularProgress size={200} sx={{ color: '#EBBB40' }} />
         ) : (
           <div
-            className='flex flex-col justify-center items-center gap-10 border'
+            className='flex flex-col justify-center items-center gap-10 border p-5'
             style={{ cursor: 'pointer' }}
 
             // onClick={handleAddBalance}
+            onClick={() => {router.push(redirectUrl)}}
           >
-            <QRCodeCanvas value={'upi://pay?pa=yashk7366%40oksbu&pn=Yash%20Kumar'} />
-            {/* <QR /> */}
+          <QRCodeSVG value={`https://beercafe-staging.vercel.app/${redirectUrl}`} size={280}  />
           </div>
         )}
 

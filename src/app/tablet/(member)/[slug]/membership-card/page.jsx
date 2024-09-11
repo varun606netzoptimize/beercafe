@@ -20,10 +20,10 @@ import TabletHeader from '@/components/TabletHeader/TabletHeader'
 
 const Page = ({ params }) => {
   const { slug } = params
-  const { orderId, setUserBalanceData, setRemainingBalance } = useContext(AuthContext) // Get orderId from context
-  const [orderStatus, setOrderStatus] = useState(null) // State to store order status
-  const [loading, setLoading] = useState(false) // State for loading status
-  const [error, setError] = useState(null) // State for error handling
+  const { orderId, setUserBalanceData, setRemainingBalance } = useContext(AuthContext)
+  const [orderStatus, setOrderStatus] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const router = useRouter()
 
   const [selectRFID, setSelectRFID] = useState('9314890E')
