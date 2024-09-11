@@ -41,23 +41,6 @@ export async function POST(req) {
     }
 
     const customerId = rfidRecord[0].Customer.id;
-    let updatedPoints;
-
-    // if (action === 'credit') {
-    //   const updatedCustomer = await prisma.customer.update({
-    //     where: { id: customerId },
-    //     data: { points: { increment: amount } }
-    //   });
-
-    //   updatedPoints = updatedCustomer.points;
-    // } else {
-    //   const updatedCustomer = await prisma.customer.update({
-    //     where: { id: customerId },
-    //     data: { points: { decrement: amount } }
-    //   });
-
-    //   updatedPoints = updatedCustomer.points;
-    // }
 
     const pointsHistory = await prisma.customerPointsHistory.create({
       data: {
@@ -71,18 +54,12 @@ export async function POST(req) {
       }
     });
 
-    const response = {
-      RFID,
-      updatedPoints,
-      message: 'Points updated successfully'
-    };
-
     return new Response(
       JSON.stringify(pointsHistory),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error updating points and history:', error);
+    console.error('Error initiating the payment:', error);
 
 return new Response(JSON.stringify({ error: 'Server error' }), {
       status: 500,
