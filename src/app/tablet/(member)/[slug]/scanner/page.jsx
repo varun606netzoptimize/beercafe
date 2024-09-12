@@ -61,7 +61,6 @@ const Page = ({ params }) => {
   }
 
   useEffect(() => {
-    // Set an interval to call the transaction status API every 5 seconds
     const interval = setInterval(() => {
       getTransactionStatus()
     }, 5000) // Polling every 5 seconds
