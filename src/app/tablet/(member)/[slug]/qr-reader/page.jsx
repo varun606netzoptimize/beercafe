@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
 
@@ -13,13 +13,16 @@ import { Loader2 } from 'lucide-react'
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
 import { ENDPOINT } from '@/endpoints'
 import BeerLoader from '@/components/BeerLoader/BeerLoader'
+import { AuthContext } from '@/context/AuthContext'
 
 const Page = ({ params }) => {
   const { slug } = params
-  const searchParams = useSearchParams()
-  const [loading, setLoading] = useState(true)
-  const [userData, setUserData] = useState(null)
-  const [handleLoading, setHandleLoading] = useState(false)
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [handleLoading, setHandleLoading] = useState(false);
+  const { setRemainingBalance}  = useContext(AuthContext);
+  const router = useRouter();
 
   const amount = searchParams.get('amount') || '0.00'
   const orderId = searchParams.get('orderId') || ''
@@ -51,7 +54,7 @@ const Page = ({ params }) => {
     }
 
     axios
-      .get(url, data)
+      .post(url, data)
       .then(res => {
         console.log(res.data, 'payment_id data')
 
@@ -61,7 +64,7 @@ const Page = ({ params }) => {
       })
       .catch(err => {
         console.log('failed to verify rfid', err);
-        setHandleLoading(false)
+        setHandleLoading(false);
       })
       .finally(() => {
         setTimeout(() => {
@@ -106,13 +109,14 @@ const Page = ({ params }) => {
     axios
       .post(url, data)
       .then(res => {
-        console.log('successfully paid')
-        setRemainingBalance(res.data.remainingBalance)
-        transactionComplete()
-        router.push(`/tablet/${slug}/success`)
+        console.log('successfully paid');
+        setRemainingBalance(res.data.remainingBalance);
+        transactionComplete();
+
+        // router.push(`/tablet/${slug}/success`)
       })
       .catch(err => {
-        console.log('failed to process', err.response.data)
+        console.log('failed to process', err)
       })
   }
 

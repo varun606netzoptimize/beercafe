@@ -10,28 +10,24 @@ import { CircularProgress } from '@mui/material'
 
 import { toast } from 'react-toastify'
 
-
-import {QRCodeSVG} from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react'
 
 import TabletHeader from '@/components/TabletHeader/TabletHeader'
-import QR from '@/@menu/svg/QR'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
-
 
 const Page = ({ params }) => {
   const { slug } = params
   const searchParams = useSearchParams()
 
-  const { setRemainingBalance } = useContext(AuthContext)
-
   const [amountToAdd, setAmountToAdd] = useState(null)
   const [loading, setIsLoading] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(5 * 60)
 
   const router = useRouter()
 
-  const queryAmount = searchParams.get('amount') || '0.00';
-  const transactionId =  searchParams.get('transactionId') || '';
+  const queryAmount = searchParams.get('amount') || '0.00'
+  const transactionId = searchParams.get('transactionId') || ''
 
   useEffect(() => {
     // Extract phone number from query parameters
@@ -43,63 +39,64 @@ const Page = ({ params }) => {
   const rfidNumber = window.localStorage.getItem('rfidNumber')
   const currentOrder = JSON.parse(window.localStorage.getItem('currentOrder'))
 
-  const url = ENDPOINT.UPDATE_USER_POINTS
-
-  function handleAddBalance() {
-
-    const data = {
-      RFID: rfidNumber,
-      amount: amountToAdd,
-      action: 'credit'
-    }
-
-    setIsLoading(true)
-
-    axios
-      .post(`${url}?rfid=${rfidNumber}&amount=${amountToAdd}&action='credit'`)
-      .then(res => {
-        console.log('successfully updated the balance', res.data.message)
-        toast.success(res.data.message)
-        ProcessPayment()
-      })
-      .catch(err => {
-        console.log('failed to update balance')
-        setIsLoading(false)
-      })
-  }
-
-  function ProcessPayment() {
-    const url = ENDPOINT.PROCESS_PAYMENT
+  const getTransactionStatus = () => {
+    const url = ENDPOINT.TRANSACTION_GET
 
     const data = {
-      rfidNumber: rfidNumber,
-      orderId: currentOrder.orderId,
-      paymentStatus: 'PAID'
+      payment_id: transactionId
     }
 
     axios
       .post(url, data)
       .then(res => {
-        console.log('successfully paid')
-        setRemainingBalance(res.data.remainingBalance)
+        console.log(res.data.status, 'TRANSACTION_GET data')
 
-        router.push(`/tablet/${slug}/success`)
+        if (res.data.status == 'COMPLETED') {
+          router.push(`/tablet/${slug}/success`)
+        }
       })
       .catch(err => {
-        console.log('failed to process', err.response.data)
-      })
-      .finally(() => {
-        setTimeout(() => {
-          setIsLoading(false)
-        }, 1000)
+        console.log('failed to verify rfid', err)
       })
   }
 
-  const checkPayment = () => {
-    const url = ENDPOINT.TRANSACTION_GET;
+  useEffect(() => {
+    // Set an interval to call the transaction status API every 5 seconds
+    const interval = setInterval(() => {
+      getTransactionStatus()
+    }, 5000) // Polling every 5 seconds
+
+    // Set an interval to countdown the timer
+    const timerInterval = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime > 0) {
+          return prevTime - 1
+        } else {
+          clearInterval(timerInterval)
+          router.push(`/tablet/cafe/${slug}/drinks`) // Redirect when timer is finished
+
+          return 0
+        }
+      })
+    }, 1000) // Decrease time every second
+
+    // Clean up intervals when the component unmounts
+    return () => {
+      clearInterval(interval)
+      clearInterval(timerInterval)
+    }
+  }, [])
+
+  const formatTimeLeft = () => {
+    const minutes = Math.floor(timeLeft / 60)
+    const seconds = timeLeft % 60
+
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
   const redirectUrl = `/tablet/${slug}/qr-reader?amount=${amountToAdd}&orderId=${currentOrder.orderId}&rfidNumber=${rfidNumber}&id=${transactionId}`
+
+  console.log(redirectUrl, 'redirectUrl')
 
   return (
     <>
@@ -120,9 +117,11 @@ const Page = ({ params }) => {
             style={{ cursor: 'pointer' }}
 
             // onClick={handleAddBalance}
-            onClick={() => {router.push(redirectUrl)}}
+            onClick={() => {
+              router.push(redirectUrl)
+            }}
           >
-          <QRCodeSVG value={`https://beercafe-staging.vercel.app/${redirectUrl}`} size={280}  />
+            <QRCodeSVG value={`https://beercafe-staging.vercel.app/${redirectUrl}`} size={280} />
           </div>
         )}
 
@@ -130,6 +129,10 @@ const Page = ({ params }) => {
           <p className='text-2xl font-semibold text-gray-800'>
             Add <span className='text-posPrimaryColor font-black'>${amountToAdd}</span> to your card!
           </p>
+        </div>
+
+        <div className='timer'>
+          <p className='text-xl font-semibold text-red-600'>Time left: {formatTimeLeft()}</p>
         </div>
       </div>
     </>

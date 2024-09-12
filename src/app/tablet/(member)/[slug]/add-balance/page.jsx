@@ -67,7 +67,7 @@ const Page = ({ params }) => {
           </h3>
           <h3 className='text-xl font-bold'>
             Your card balance is:{' '}
-            <span className='text-[40px] font-black text-posPrimaryColor'>${userBalanceData}</span>
+            <span className='text-[40px] font-black text-posPrimaryColor'>${Number(userBalanceData).toFixed(2)}</span>
           </h3>
         </div>
 

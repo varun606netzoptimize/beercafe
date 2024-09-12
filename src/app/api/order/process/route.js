@@ -80,14 +80,15 @@ export async function POST(req) {
         Customer: { connect: { id: customerId } },
         amount: totalOrderAmount,
         action: 'debit',
-        createdAt: new Date()
+        createdAt: new Date(),
+        status: 'success'
       }
     });
 
     // Step 5: Update the order status and add customerId
     const updatedOrder = await prisma.order.update({
       where: { id: orderId },
-      data: { 
+      data: {
         paymentStatus: paymentStatus,
         customerId: customerId // Add customerId here
       }

@@ -72,7 +72,8 @@ export async function POST(req) {
         },
         amount: amount,
         action: action,
-        createdAt: new Date()
+        createdAt: new Date(),
+        status: 'success',
       }
     });
 
