@@ -52,6 +52,7 @@ const Page = ({ params }) => {
         console.log(res.data.status, 'TRANSACTION_GET data')
 
         if (res.data.status == 'COMPLETED') {
+          toast.success('Transaction completed successfully');
           router.push(`/tablet/${slug}/success`)
         }
       })
