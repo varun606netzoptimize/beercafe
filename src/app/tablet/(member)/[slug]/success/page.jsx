@@ -53,7 +53,7 @@ const Page = ({ params }) => {
           <Image
             src='/images/mobile/beer-pour.png'
             alt='beer'
-            className='rounded-[12px] w-11/12 md:w-full drop-shadow-lg object-cover'
+            className='rounded-[12px] max-h-[300px] md:max-h-full w-11/12 md:w-full drop-shadow-lg object-cover'
             width={900}
             height={500}
           />
