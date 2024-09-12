@@ -61,7 +61,7 @@ const Page = ({ params }) => {
         <p className='text-xl max-w-[650px] font-bold mt-3'>Your Balance ${Math.round(remainingBalance)}</p>
 
         <div className='w-full flex justify-end px-16 pt-10'>
-        <div style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', flexDirection: 'row', gap: 8 }}>
+        <div className='flex items-center gap-2'>
           <Link href={`/tablet/cafe/${slug}/drinks`}>
             <p className='text-[20px] md:text-[20px] font-black'>Go to home</p>
           </Link>
