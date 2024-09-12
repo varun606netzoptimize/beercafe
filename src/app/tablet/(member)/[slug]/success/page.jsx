@@ -44,7 +44,7 @@ const Page = ({ params }) => {
             >
               {({ remainingTime }) => <span className='text-2xl font-bold'>{remainingTime}</span>}
             </CountdownCircleTimer>
-            <div className='absolute inset-0 flex justify-center -z-10 items-center'>
+            {/* <div className='absolute inset-0 flex justify-center -z-10 items-center'>
               <div className='relative'>
                 <Image
                   src='/images/mobile/beer-pour.png'
@@ -55,7 +55,7 @@ const Page = ({ params }) => {
                 />
                 <div className='absolute inset-0 bg-black opacity-20 rounded-2xl z-10' />
               </div>
-            </div>
+            </div> */}
           </div>
           <div className='w-full flex flex-col gap-10 justify-center px-16 pt-10'>
             <p className='text-xl max-w-[650px] font-bold mt-6'>Your Balance: ${Math.round(remainingBalance)}</p>
