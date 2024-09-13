@@ -16,7 +16,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false)
 
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+    page: 1,
     pageSize: 10
   })
 
@@ -53,7 +53,7 @@ export default function Page() {
   }, [search])
 
   const GetRFIDs = () => {
-    const url = `${ENDPOINT.GET_RFIDS}?sortOrder=${sortOrder}&sortBy=${sortBy}&search=${debouncedSearch}`
+    const url = `${ENDPOINT.GET_RFIDS}?sortOrder=${sortOrder}&sortBy=${sortBy}&search=${debouncedSearch}&page=${paginationModel.page}`
 
     setIsLoading(true)
     axios
