@@ -10,8 +10,8 @@ export async function GET(req) {
     const sortBy = url.searchParams.get('sortBy') || 'rfidNumber'
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
     const search = url.searchParams.get('search') || ''
-    const page = url.searchParams.get('search') || 1
-    const pageSize = url.searchParams.get('search') || 10
+    const page = url.searchParams.get('page') || 1
+    const pageSize = url.searchParams.get('pageSize') || 10
 
     const rfids = await prisma.rFIDMaster.findMany({
       where: {
@@ -19,8 +19,8 @@ export async function GET(req) {
           search
             ? {
                 OR: [
-                  { rfidNumber: { contains: search, mode: 'insensitive' } }, // Search by rfidNumber
-                  { Cafe: { name: { contains: search, mode: 'insensitive' } } }, // Search by cafe name
+                  { rfidNumber: { contains: search, mode: 'insensitive' } },
+                  { Cafe: { name: { contains: search, mode: 'insensitive' } } },
                   {
                     customerRFID: {
                       some: {
