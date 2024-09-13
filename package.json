@@ -12,7 +12,8 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "build:icons": "tsx src/assets/iconify-icons/bundle-icons-css.js",
-    "postinstall": "npm run build:icons"
+    "postinstall": "npm run build:icons",
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@emotion/cache": "11.11.0",
@@ -44,8 +45,10 @@
     "next-auth": "^5.0.0-beta.20",
     "otp-generator": "^4.0.1",
     "prisma": "^5.17.0",
+    "qrcode.react": "^4.0.1",
     "react": "18.3.1",
     "react-colorful": "5.6.1",
+    "react-countdown-circle-timer": "^3.2.1",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.52.1",
     "react-perfect-scrollbar": "1.5.8",
@@ -54,6 +57,7 @@
     "server-only": "0.0.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "upiqr": "^1.2.1",
     "valibot": "^0.36.0",
     "yup": "^1.4.0"
   },

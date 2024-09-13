@@ -1,19 +1,22 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export async function POST(req, res) {
+export async function POST(req) {
   try {
-    const { customerId, amount, paymentMode, paymentStatus, details } = await req.json()
+    const { customerId, amount, paymentMode, paymentStatus, details } = await req.json();
 
-    if (!customerId || !amount || !paymentMode || !paymentStatus || !details) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 })
+    // Ensure required fields are present
+    if (!amount || !paymentMode || !paymentStatus || !details) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
     // Create the order
     const order = await prisma.order.create({
       data: {
-        customerId,
         amount,
         paymentMode,
         paymentStatus,
@@ -28,12 +31,54 @@ export async function POST(req, res) {
       include: {
         details: true,
       },
-    })
+    });
 
-    return new Response(JSON.stringify(order), { status: 201 })
+    return new Response(
+      JSON.stringify(order),
+      { status: 201, headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
-    console.error('Error creating order:', error)
-    
-return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 })
+    console.error('Error creating order:', error);
+
+    return new Response(
+      JSON.stringify({ error: 'Internal Server Error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export async function PUT(req) {
+  try {
+    const { orderId, customerId } = await req.json();
+
+    // Ensure required fields are present
+    if (!orderId || !customerId) {
+      return new Response(
+        JSON.stringify({ error: 'orderId and customerId are required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Update the order with the customerId
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { customerId },
+    });
+
+    return new Response(
+      JSON.stringify(updatedOrder),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Error updating order:', error);
+
+    return new Response(
+      JSON.stringify({ error: 'Internal Server Error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }

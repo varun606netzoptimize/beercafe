@@ -29,7 +29,8 @@ model Cafe {
   CafeBrands    CafeBrands[]
   MachineMaster MachineMaster[]
 
-  @@map("cafes")
+  // @@map("cafes")
+  RFIDMaster RFIDMaster[]
 }
 
 model CafeUser {
@@ -43,7 +44,7 @@ model CafeUser {
   user User @relation(fields: [userId], references: [id])
   cafe Cafe @relation(fields: [cafeId], references: [id])
 
-  @@map("cafe_users")
+  // @@map("cafe_users")
 }
 
 model User {
@@ -60,7 +61,7 @@ model User {
   cafeUsers             CafeUser[]
   CustomerPointsHistory CustomerPointsHistory[]
 
-  @@map("users")
+  // @@map("users")
 }
 
 model UserType {
@@ -72,7 +73,7 @@ model UserType {
 
   users User[]
 
-  @@map("user_type")
+  // @@map("user_type")
 }
 
 model Customer {
@@ -81,7 +82,7 @@ model Customer {
   lastname              String
   phoneNumber           String?                 @map("phone_number")
   email                 String?
-  points                Int
+  points                Float
   createdAt             DateTime                @default(now()) @map("created_at")
   updatedAt             DateTime                @updatedAt @map("updated_at")
   deletedAt             DateTime?               @map("deleted_at")
@@ -95,13 +96,16 @@ model CustomerPointsHistory {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   customerId String    @db.ObjectId
   userId     String?   @db.ObjectId
-  amount     Int
+  orderId    String?   @db.ObjectId
+  amount     Float // Changed from Int to Float
   action     String
+  status     String
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
   Customer   Customer  @relation(fields: [customerId], references: [id])
   User       User?     @relation(fields: [userId], references: [id])
+  Order      Order?    @relation(fields: [orderId], references: [id])
 }
 
 model Otp {
@@ -134,7 +138,10 @@ model RFIDMaster {
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
   deletedAt    DateTime?      @map("deleted_at")
+  cafeId       String         @db.ObjectId
   customerRFID CustomerRFID[]
+
+  Cafe Cafe @relation(fields: [cafeId], references: [id])
 }
 
 model CustomerRFID {
@@ -199,7 +206,7 @@ model ProductVariation {
 
 model Order {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  customerId    String        @db.ObjectId
+  customerId    String?       @db.ObjectId
   amount        Float
   rfidMasterId  String?
   paymentMode   String
@@ -209,7 +216,9 @@ model Order {
   deletedAt     DateTime?
   details       OrderDetail[]
 
-  Customer Customer @relation(fields: [customerId], references: [id])
+  Customer Customer? @relation(fields: [customerId], references: [id])
+
+  CustomerPointsHistory CustomerPointsHistory[]
 }
 
 model OrderDetail {

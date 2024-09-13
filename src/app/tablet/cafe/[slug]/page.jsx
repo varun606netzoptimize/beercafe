@@ -4,14 +4,18 @@ import { useContext, useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
+import Image from 'next/image'
+
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
 import { Loader2 } from 'lucide-react'
 
 import { ENDPOINT } from '@/endpoints'
-import LeftArrow from '@/@menu/svg/LeftArrow'
+import RightArrow from '@/@menu/svg/RightArrow'
 import { AuthContext } from '@/context/AuthContext'
+import Logo from '@/@core/svg/Logo'
+import BeerLoader from '@/components/BeerLoader/BeerLoader'
 
 const Page = ({ params }) => {
   const { slug } = params
@@ -47,20 +51,14 @@ const Page = ({ params }) => {
     }
   }, [slug])
 
-  console.log(data, 'data')
-
   return (
     <div className='h-dvh w-full'>
       {/* Show loading message while cafe data is being fetched */}
-      {isLoading && (
-        <div className='flex items-center justify-center h-full'>
-          <Loader2 className='w-10 h-10 animate-spin' />
-        </div>
-      )}
+      {isLoading && <BeerLoader />}
 
       {/* Show the video once the cafe data is loaded */}
       {!isLoading && data && (
-        <video className='w-full h-full object-cover' autoPlay muted>
+        <video className='w-full h-full object-cover' autoPlay loop muted>
           <source src={data.videoUrl} type='video/mp4' />
           Your browser does not support the video tag.
         </video>
@@ -68,11 +66,11 @@ const Page = ({ params }) => {
 
       {/* Button to navigate, only shown after data is loaded */}
       {!isLoading && data && (
-        <Link href= {`/tablet/cafe/${slug}/drinks`}>
+        <Link href={`/tablet/cafe/${slug}/drinks`}>
           <div className='absolute bottom-8 right-8 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
-            <div className='flex items-center gap-2 font-bold'>
+            <div className='flex items-center gap-3 font-bold'>
               <p>Order Now</p>
-              <LeftArrow className='w-6 h-6' />
+              <RightArrow className='w-5 h-5 text-white' />
             </div>
           </div>
         </Link>
