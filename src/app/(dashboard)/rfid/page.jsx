@@ -1,19 +1,12 @@
 'use client'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
-
 import { redirect } from 'next/navigation'
-
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
-
+import { Box, Card, CircularProgress, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
-import AddRFIDDrawer from './AddRFIDDrawer'
-import ConfirmDelete from '@/components/Modal/ConfirmDelete'
-import ViewCafeModal from './ViewCafeModal'
 import { format } from 'date-fns'
 
 export default function Page() {
@@ -21,13 +14,6 @@ export default function Page() {
   const [rfids, setRFIDs] = useState({ data: [], pagination: null })
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [open, setOpen] = React.useState(false)
-  const [drawerType, setDrawerType] = useState('create')
-  const [updateRFIDData, setUpdateRFIDData] = useState(null)
-
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-  const [deleteRFIDsData, setDeleteRFIDsData] = useState(null)
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -40,12 +26,6 @@ export default function Page() {
   const [sortOrder, setSortOrder] = useState('asc')
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [cafes, setCafes] = useState(null)
-  const [showCafes, setShowCafes] = useState(false)
-
-  const toggleDrawer = newOpen => () => {
-    setOpen(newOpen)
-  }
 
   useEffect(() => {
     if (tokenCheck) {
@@ -96,37 +76,6 @@ export default function Page() {
       })
   }
 
-  const DeleteRFIDs = () => {
-    const url = `${ENDPOINT.DELETE_RFIDS}?id=${deleteRFIDsData.id}`
-
-    setDeleting(true)
-
-    axios
-      .delete(url, {
-        headers: {
-          Authorization: `Bearer ${authToken.token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(res => {
-        setRFIDs(prevRFIDs => ({
-          rfids: prevRFIDs.rfids.filter(rfid => rfid.id !== deleteRFIDsData.id),
-          pagination: prevRFIDs.pagination
-        }))
-      })
-      .catch(err => {
-        console.log('Failed to delete rfid:', err.response ? err.response.data : err.message)
-      })
-      .finally(() => {
-        setDeleting(false)
-        setOpenDeleteDialog(false)
-      })
-  }
-
-  function fullName(firstName, lastName) {
-    return `${firstName} ${lastName}`
-  }
-
   const columns = [
     {
       field: 'rfidNumber',
@@ -140,46 +89,22 @@ export default function Page() {
       renderCell: params => <Box>{params.row.expiry ? format(params.row.expiry, 'MMMM dd, yyyy') : 'N/A'}</Box>
     },
     {
+      field: 'cafe',
+      headerName: 'Cafe',
+      flex: 1,
+      renderCell: params => <Box>{params.row.Cafe ? params.row.Cafe.name : 'N/A'}</Box>
+    },
+    {
+      field: 'customer',
+      headerName: 'Customer',
+      flex: 1,
+      renderCell: params => <Box>{params.row.customerRFID ? params.row.customerRFID[0].Customer.firstname : 'N/A'}</Box>
+    },
+    {
       field: 'updatedAt',
       headerName: 'Last Updated',
       flex: 1,
       renderCell: params => <Box>{format(params.row.updatedAt, 'MMMM dd, yyyy')}</Box>
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      renderCell: params => (
-        <Box>
-          <Button
-            variant='outlined'
-            color='info'
-            size='small'
-            sx={{ marginRight: 2 }}
-            onClick={() => {
-              setOpen(true)
-              setUpdateRFIDData(params.row)
-              setDrawerType('update')
-            }}
-          >
-            Edit
-          </Button>
-
-          <Button
-            variant='outlined'
-            color='error'
-            size='small'
-            sx={{ marginLeft: 2 }}
-            onClick={() => {
-              setDeleteRFIDsData(params.row)
-              setOpenDeleteDialog(true)
-            }}
-          >
-            Delete
-          </Button>
-        </Box>
-      ),
-      sortable: false
     }
   ]
 
@@ -200,17 +125,6 @@ export default function Page() {
               setSearch(e.target.value)
             }}
           />
-          <Button
-            variant='contained'
-            size='medium'
-            startIcon={<i className='tabler-text-plus' />}
-            onClick={() => {
-              setOpen(true)
-              setDrawerType('create')
-            }}
-          >
-            Add New RFID
-          </Button>
         </Box>
       </Card>
 
@@ -243,28 +157,6 @@ export default function Page() {
           </>
         )}
       </Box>
-
-      <AddRFIDDrawer
-        open={open}
-        drawerType={drawerType}
-        onClose={toggleDrawer(false)}
-        toggleDrawer={toggleDrawer}
-        GetRFIDs={GetRFIDs}
-        setDrawerType={setDrawerType}
-        updateRFIDData={updateRFIDData}
-        setUpdateRFIDData={setUpdateRFIDData}
-      />
-
-      <ConfirmDelete
-        openDeleteDialog={openDeleteDialog}
-        setOpenDeleteDialog={setOpenDeleteDialog}
-        deleteRFIDsData={deleteRFIDsData}
-        setDeleteRFIDsData={setDeleteRFIDsData}
-        DeleteFunction={DeleteRFIDs}
-        isLoading={deleting}
-      />
-
-      <ViewCafeModal open={showCafes} setOpen={setShowCafes} cafes={cafes} />
     </div>
   )
 }

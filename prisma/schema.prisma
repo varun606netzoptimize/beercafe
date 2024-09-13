@@ -28,9 +28,7 @@ model Cafe {
   CafeCustomers CafeCustomers[]
   CafeBrands    CafeBrands[]
   MachineMaster MachineMaster[]
-
-  // @@map("cafes")
-  RFIDMaster RFIDMaster[]
+  RFIDMaster    RFIDMaster[]
 }
 
 model CafeUser {
@@ -135,13 +133,13 @@ model RFIDMaster {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   rfidNumber   String         @map("rfid_number")
   expiry       DateTime       @map("expiry")
+  cafeId       String         @db.ObjectId
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
   deletedAt    DateTime?      @map("deleted_at")
-  cafeId       String         @db.ObjectId
   customerRFID CustomerRFID[]
 
-  Cafe Cafe @relation(fields: [cafeId], references: [id])
+  Cafe Cafe? @relation(fields: [cafeId], references: [id])
 }
 
 model CustomerRFID {
