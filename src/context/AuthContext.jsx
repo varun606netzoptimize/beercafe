@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   const [users, setUsers] = useState({ users: [], pagination: null })
   const [currentUser, setCurrentUser] = useState(null)
   const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
+  const [products, setProducts] = useState(null)
   const [brands, setBrands] = useState(null)
   const [cartItem, setCartItem] = useState([])
   const [beerProducts, setBeerProducts] = useState(null)
@@ -56,6 +57,7 @@ export const AuthProvider = ({ children }) => {
 
   const VerifyUser = () => {
     const url = ENDPOINT.VERIFY
+    let userData = null
 
     axios
       .get(url, {
@@ -68,6 +70,7 @@ export const AuthProvider = ({ children }) => {
 
         setCurrentUser(res.data.user)
 
+        userData = res.data.user
         toast.success(
           res.data.userType == 'Unknown' ? '👋 Welcome to BeerCafe ' : '👋 Welcome to BeerCafe ' + res.data.userType
         )
@@ -86,14 +89,18 @@ export const AuthProvider = ({ children }) => {
       })
       .finally(() => {
         setTokenCheck(true)
-        GetCafe()
+        GetCafe(userData)
         GetUsers()
         GetBrands()
       })
   }
 
-  const GetCafe = async () => {
-    const url = ENDPOINT.GET_CAFES
+  const GetCafe = async userData => {
+    let url = ENDPOINT.GET_CAFES
+
+    if (userData.role != 'admin') {
+      url += '?ownerId=' + userData.id
+    }
 
     await axios
       .get(url, {
@@ -212,6 +219,8 @@ export const AuthProvider = ({ children }) => {
         pageTitle,
         cafeProducts,
         setCafeProducts,
+        products,
+        setProducts,
         brands,
         setBrands,
         cartItem,

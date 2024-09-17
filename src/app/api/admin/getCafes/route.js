@@ -25,7 +25,12 @@ export async function GET(req) {
     // Build the filter object based on ownerId, parentId, and search
     const filters = {}
 
-    if (ownerId) filters.ownerId = ownerId
+    if (ownerId)
+      filters.cafeUsers = {
+        some: {
+          userId: ownerId // Filter cafes by the user's ID
+        }
+      }
     if (parentId) filters.parentId = parentId
 
     if (search) {
@@ -52,6 +57,7 @@ export async function GET(req) {
             }
           }
         },
+        children: true,
         parent: {
           include: {
             cafeUsers: {
@@ -127,6 +133,7 @@ export async function GET(req) {
         priceConversionRate: cafe.priceConversionRate,
         parentId: cafe.parentId,
         owners: owners,
+        children: cafe.children,
         createdAt: cafe.createdAt,
         updatedAt: cafe.updatedAt,
         deletedAt: cafe.deletedAt,

@@ -25,6 +25,7 @@ export const ENDPOINT = {
   VERIFY_OTP: baseURL + '/api/auth/verifyOTP',
   GET_CAFE_PRODUCTS: baseURL + '/api/admin/cafeProducts',
   GET_BRANDS: baseURL + '/api/admin/getBrands',
+  GET_PRODUCT: baseURL + '/api/admin/getProducts',
   CREATE_PRODUCT: baseURL + '/api/admin/createProduct',
   UPDATE_PRODUCT: baseURL + '/api/admin/updateProduct',
   DELETE_PRODUCT: baseURL + '/api/admin/deleteProduct',

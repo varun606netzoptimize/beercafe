@@ -88,6 +88,9 @@ const VerticalMenu = ({ scrollMenu }) => {
             <MenuItem href='/myCafes' icon={<i className='tabler-beer' />}>
               Manage My Cafes
             </MenuItem>
+            <MenuItem href='/products' icon={<i className='tabler-beer' />}>
+              Manage Products
+            </MenuItem>
           </>
         ) : (
           <></>

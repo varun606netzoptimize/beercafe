@@ -29,6 +29,7 @@ model Cafe {
   CafeBrands    CafeBrands[]
   MachineMaster MachineMaster[]
   RFIDMaster    RFIDMaster[]
+  Product       Product[]
 }
 
 model CafeUser {
@@ -174,7 +175,7 @@ model CafeBrands {
 model Product {
   id          String             @id @default(auto()) @map("_id") @db.ObjectId
   brandId     String             @db.ObjectId
-  cafeId      String?
+  cafeId      String?            @db.ObjectId
   name        String
   SKU         String             @unique
   description String?
@@ -185,6 +186,7 @@ model Product {
   deletedAt   DateTime?
   variations  ProductVariation[]
   Brand       Brands             @relation(fields: [brandId], references: [id])
+  Cafe        Cafe?              @relation(fields: [cafeId], references: [id])
 }
 
 model ProductVariation {
