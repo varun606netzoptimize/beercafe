@@ -97,18 +97,25 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
                 label='Select Cafe'
                 onChange={e => field.onChange(e.target.value)}
                 value={field.value || ''}
+                renderValue={selected => {
+                  const selectedCafe = cafes.cafes?.find(
+                    data => data.id === selected || data.children?.find(child => child.id === selected)
+                  )
+                  const selectedChild = selectedCafe?.children?.find(child => child.id === selected)
+                  return selectedChild ? selectedChild.name : selectedCafe?.name
+                }}
               >
-                {cafes.cafes?.map(data => (
-                  <>
-                    <MenuItem value={data.id}>{data.name}</MenuItem>
-                    {data.children?.map(child => (
-                      <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
-                        <CornerDownRight size={16} />
-                        {`${child.name}`}
-                      </MenuItem>
-                    ))}
-                  </>
-                ))}
+                {cafes.cafes?.map(data => [
+                  <MenuItem key={data.id} value={data.id}>
+                    {data.name}
+                  </MenuItem>,
+                  data.children?.map(child => (
+                    <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
+                      <CornerDownRight size={16} />
+                      {child.name}
+                    </MenuItem>
+                  ))
+                ])}
               </Select>
             </FormControl>
           )}
