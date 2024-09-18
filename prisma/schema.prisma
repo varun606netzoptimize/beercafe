@@ -40,8 +40,8 @@ model CafeUser {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
-  cafe Cafe @relation(fields: [cafeId], references: [id])
+  user User  @relation(fields: [userId], references: [id])
+  cafe Cafe? @relation(fields: [cafeId], references: [id])
 
   // @@map("cafe_users")
 }

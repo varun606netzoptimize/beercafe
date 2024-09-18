@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { getUserIdFromToken } from '../../utils/jwt'
+import { includes } from 'valibot'
+import { Children } from 'react'
 
 const prisma = new PrismaClient()
 
@@ -18,17 +20,22 @@ export async function GET(req) {
 
     const userCafes = await prisma.cafeUser.findMany({
       where: { userId: userId },
-      select: { cafeId: true }
+      // select: { cafeId: true },
+      include: {
+        cafe: {
+          include: {
+            children: true
+          }
+        }
+      }
     })
 
     if (userCafes.length === 0) {
       return NextResponse.json({ products: [] })
     }
 
-    // Extract cafe IDs
-    const cafeIds = userCafes.map(cafeUser => cafeUser.cafeId)
+    const cafeIds = extractCafeIds(userCafes)
 
-    // Fetch products for those cafes
     const products = await prisma.product.findMany({
       where: {
         cafeId: { in: cafeIds }
@@ -45,4 +52,17 @@ export async function GET(req) {
     console.error('Error fetching products:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
+}
+
+const extractCafeIds = userCafes => {
+  const ids = []
+
+  userCafes.forEach(item => {
+    if (item.cafe) {
+      ids.push(item.cafe.id)
+      item.cafe.children?.forEach(child => ids.push(child.id))
+    }
+  })
+
+  return ids
 }

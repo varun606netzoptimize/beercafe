@@ -14,7 +14,7 @@ import AddProductDrawer from './AddProductDrawer'
 import { ENDPOINT } from '@/endpoints'
 import DeleteProduct from './DeleteProduct'
 import ViewProductVariation from './ViewProductVariation'
-import AddVariationDrawer from './AddVairationDrawer'
+import AddVariationDrawer from './AddVariationDrawer'
 
 export default function Page() {
   const { authToken, tokenCheck, currentUser, setPageTitle, setProducts, products } = useContext(AuthContext)

@@ -28,7 +28,7 @@ export default function AddVariationDrawer({
   onClose,
   setDialogOpen = null,
   productData,
-  GetCafeProducts,
+  getProducts,
   myProductVariationData = null,
   updateData = null,
   type
@@ -66,6 +66,7 @@ export default function AddVariationDrawer({
 
   // Form submit handler
   const onSubmit = async data => {
+    console.log('onSubmit function called')
     setIsLoading(true)
 
     const url = ENDPOINT.ADD_PRODUCT_VARIATION
@@ -82,22 +83,23 @@ export default function AddVariationDrawer({
         }
       })
 
-      GetCafeProducts()
-      onClose()
-
       if (myProductVariationData) {
         myProductVariationData.push(response.data)
         setDialogOpen(true)
       }
+
+      getProducts()
+      onClose()
     } catch (err) {
+      console.error('Error adding product:', err.response ? err.response.data : err.message)
       toast.error('Failed to add product variation')
-      console.error('Error adding product:', err)
     } finally {
       setIsLoading(false)
     }
   }
 
   const onUpdate = async data => {
+    console.log('onSubmit function called')
     setIsLoading(true)
 
     const url = ENDPOINT.UPDATE_PRODUCT_VARIATION
@@ -114,7 +116,7 @@ export default function AddVariationDrawer({
         }
       })
 
-      GetCafeProducts()
+      getProducts()
       onClose()
 
       if (myProductVariationData) {
@@ -127,8 +129,8 @@ export default function AddVariationDrawer({
         setDialogOpen(true)
       }
     } catch (err) {
-      toast.error('Failed to add product variation')
-      console.error('Error adding product:', err)
+      console.error('Error updating product:', err.response ? err.response.data : err.message)
+      toast.error('Failed to update product variation')
     } finally {
       setIsLoading(false)
     }
