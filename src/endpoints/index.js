@@ -31,6 +31,7 @@ export const ENDPOINT = {
   DELETE_PRODUCT: baseURL + '/api/admin/deleteProduct',
   ADD_PRODUCT_VARIATION: baseURL + '/api/admin/addProductVariation',
   UPDATE_PRODUCT_VARIATION: baseURL + '/api/admin/updateProductVariation',
+  DELETE_PRODUCT_VARIATION: baseURL + '/api/admin/deleteProductVariation',
   GET_ALL_PRODUCTS: baseURL + '/api/admin/getAllProducts',
   GENERATE_SLUG: baseURL + '/api/admin/generateSlug',
   SLUG_CAFE: baseURL + '/api',

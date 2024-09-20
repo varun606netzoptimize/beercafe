@@ -10,6 +10,10 @@ import { Box, Button } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import AddVariationDrawer from './AddVariationDrawer'
+import DeleteProduct from './DeleteProduct'
+import { useState } from 'react'
+import { ENDPOINT } from '@/endpoints'
+import axios from 'axios'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
@@ -34,9 +38,40 @@ export default function ViewProductVariation({
   const [addVariationVisible, setAddVariationVisible] = React.useState(false)
 
   const [updateData, setUpdateData] = React.useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [showDeletePop, setShowDeletePop] = useState(false)
+  const [deleteItem, setDeleteItem] = useState(null)
 
   const handleClose = () => {
     setOpen(false)
+  }
+
+  const DeleteCafeProducts = () => {
+    const url = `${ENDPOINT.DELETE_PRODUCT_VARIATION}`
+
+    const data = {
+      id: deleteItem.id
+    }
+
+    setIsDeleting(true)
+
+    axios
+      .request({
+        url,
+        method: 'DELETE',
+        data
+      })
+      .then(res => {
+        GetCafeProducts()
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+      .finally(() => {
+        setIsDeleting(false)
+        setShowDeletePop(false)
+        setDeleteItem(null)
+      })
   }
 
   const columns = [
@@ -74,7 +109,16 @@ export default function ViewProductVariation({
           >
             Edit
           </Button>
-          <Button variant='outlined' color='error' size='small' sx={{ marginLeft: 2 }}>
+          <Button
+            onClick={() => {
+              setDeleteItem(params?.row)
+              setShowDeletePop(true)
+            }}
+            variant='outlined'
+            color='error'
+            size='small'
+            sx={{ marginLeft: 2 }}
+          >
             Delete
           </Button>
         </Box>
@@ -149,6 +193,14 @@ export default function ViewProductVariation({
         myProductVariationData={myProductVariationData}
         updateData={updateData}
         type={drawerType}
+      />
+
+      <DeleteProduct
+        open={showDeletePop}
+        handleClose={() => setShowDeletePop(false)}
+        deleteData={deleteItem}
+        DeleteFunction={DeleteCafeProducts}
+        isLoading={isDeleting}
       />
     </>
   )
