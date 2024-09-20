@@ -6,12 +6,10 @@ export async function DELETE(req) {
   try {
     const { variationId } = await req.json()
 
-    // Validate input: 'variationId' is required to delete a product variation
     if (!variationId) {
       return new Response(JSON.stringify({ message: 'Missing required variation ID' }), { status: 400 })
     }
 
-    // Find the existing product variation by ID
     const existingVariation = await prisma.productVariation.findUnique({
       where: { id: variationId }
     })
@@ -20,15 +18,15 @@ export async function DELETE(req) {
       return new Response(JSON.stringify({ message: 'Product variation not found' }), { status: 404 })
     }
 
-    // Delete the product variation from the database
-    await prisma.productVariation.delete({
-      where: { id: variationId }
+    // Perform a "soft delete" by setting the 'deletedAt' timestamp
+    await prisma.productVariation.update({
+      where: { id: variationId },
+      data: { deletedAt: new Date() }
     })
 
-    return new Response(JSON.stringify({ message: 'Product variation deleted successfully' }), { status: 200 })
+    return new Response(JSON.stringify({ message: 'Product variation soft deleted successfully' }), { status: 200 })
   } catch (error) {
-    console.error('Error deleting product variation:', error)
-
-    return new Response('Error deleting product variation', { status: 500 })
+    console.error('Error soft deleting product variation:', error)
+    return new Response('Error soft deleting product variation', { status: 500 })
   }
 }
