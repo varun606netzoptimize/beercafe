@@ -50,7 +50,7 @@ export default function ViewProductVariation({
     const url = `${ENDPOINT.DELETE_PRODUCT_VARIATION}`
 
     const data = {
-      id: deleteItem.id
+      variationId: deleteItem.id
     }
 
     setIsDeleting(true)
