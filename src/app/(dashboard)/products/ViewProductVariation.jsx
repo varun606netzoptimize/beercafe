@@ -145,7 +145,7 @@ export default function ViewProductVariation({
         }}
         setDialogOpen={setOpen}
         productData={productData}
-        GetCafeProducts={GetCafeProducts}
+        getProducts={GetCafeProducts}
         myProductVariationData={myProductVariationData}
         updateData={updateData}
         type={drawerType}

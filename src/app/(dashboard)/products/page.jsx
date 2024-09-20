@@ -256,7 +256,7 @@ export default function Page() {
         setOpen={setViewPrice}
         ProductVariationData={variations}
         productData={productData}
-        getProducts={getProducts}
+        GetCafeProducts={getProducts}
         drawerType={drawerType}
         setDrawerType={setDrawerType}
       />
