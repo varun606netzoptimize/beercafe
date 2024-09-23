@@ -30,6 +30,7 @@ model Cafe {
   MachineMaster MachineMaster[]
   RFIDMaster    RFIDMaster[]
   Product       Product[]
+  Order         Order[]
 }
 
 model CafeUser {
@@ -207,6 +208,7 @@ model ProductVariation {
 model Order {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   customerId    String?       @db.ObjectId
+  cafeId        String        @db.ObjectId
   amount        Float
   rfidMasterId  String?
   paymentMode   String
@@ -216,8 +218,8 @@ model Order {
   deletedAt     DateTime?
   details       OrderDetail[]
 
-  Customer Customer? @relation(fields: [customerId], references: [id])
-
+  Customer              Customer?               @relation(fields: [customerId], references: [id])
+  Cafe                  Cafe?                   @relation(fields: [cafeId], references: [id])
   CustomerPointsHistory CustomerPointsHistory[]
 }
 

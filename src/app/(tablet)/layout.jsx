@@ -9,17 +9,17 @@ const museoSlab = localFont({
     {
       path: '../../../public/fonts/MuseoSlab-700.woff2',
       weight: '700',
-      style: 'normal',
+      style: 'normal'
     },
     {
       path: '../../../public/fonts/MuseoSlab-900.woff2',
       weight: '900',
-      style: 'normal',
+      style: 'normal'
     },
     {
       path: '../../../public/fonts/MuseoSlab-100.woff2',
       weight: '100',
-      style: 'normal',
+      style: 'normal'
     }
   ]
 })
