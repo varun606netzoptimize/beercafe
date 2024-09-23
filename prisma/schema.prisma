@@ -201,6 +201,7 @@ model ProductVariation {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   deletedAt    DateTime?
+  isDeleted    Boolean?      @default(false)
   product      Product?      @relation(fields: [productId], references: [id])
   OrderDetail  OrderDetail[]
 }

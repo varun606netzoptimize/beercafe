@@ -50,18 +50,30 @@ export async function GET(req) {
       include: {
         Brand: true,
         Cafe: true,
-        variations: true
+        variations: {
+          where:{
+               isDeleted: false
+          }
+        }
+
+        // variations: {
+        //   where: {
+        //     OR: [
+        //       { isDeleted: false },
+        //       { isDeleted: null }
+        //     ]
+        //   }}
       }
     })
 
-    products = products.map(product => {
-      return {
-        ...product,
-        variations: product.variations.filter(variation => {
-          return variation.deletedAt == null
-        })
-      }
-    })
+    // products = products.map(product => {
+    //   return {
+    //     ...product,
+    //     variations: product.variations.filter(variation => {
+    //       return variation.deletedAt == null
+    //     })
+    //   }
+    // })
 
     return NextResponse.json(products)
   } catch (error) {

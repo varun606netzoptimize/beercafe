@@ -21,7 +21,7 @@ export async function DELETE(req) {
     // Perform a "soft delete" by setting the 'deletedAt' timestamp
     await prisma.productVariation.update({
       where: { id: variationId },
-      data: { deletedAt: new Date() }
+      data: { deletedAt: new Date(), isDeleted: true },
     })
 
     return new Response(JSON.stringify({ message: 'Product variation soft deleted successfully' }), { status: 200 })
