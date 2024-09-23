@@ -21,7 +21,7 @@ const Page = ({ params }) => {
   const currentOrder = JSON.parse(window.localStorage.getItem('currentOrder'))
 
   const handleComplete = () => {
-    router.push(`/tablet/cafe/${slug}/drinks`)
+    router.push(`/cafe/${slug}/drinks`)
   }
 
   return (
@@ -60,7 +60,7 @@ const Page = ({ params }) => {
           <div className='w-full flex flex-col gap-10 justify-center px-16 pt-10'>
             <p className='text-xl max-w-[650px] font-bold mt-6'>Your Balance: ${Math.round(remainingBalance)}</p>
             <div className='flex items-center gap-2'>
-              <Link href={`/tablet/cafe/${slug}/drinks`}>
+              <Link href={`/cafe/${slug}/drinks`}>
                 <button className='bg-yellow-500 cursor-pointer text-white font-bold text-lg py-3 px-5 rounded'>
                   Explore More Drinks
                 </button>

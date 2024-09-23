@@ -66,7 +66,7 @@ const Page = ({ params }) => {
 
       {/* Button to navigate, only shown after data is loaded */}
       {!isLoading && data && (
-        <Link href={`/tablet/cafe/${slug}/drinks`}>
+        <Link href={`/cafe/${slug}/drinks`}>
           <div className='absolute bottom-8 right-8 z-20 bg-posPrimaryColor rounded-posButtonRadius py-3 px-5 cursor-pointer text-white drop-shadow-lg hover:drop-shadow-2xl'>
             <div className='flex items-center gap-3 font-bold'>
               <p>Order Now</p>

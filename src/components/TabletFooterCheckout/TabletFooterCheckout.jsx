@@ -48,8 +48,7 @@ const TabletFooterCheckout = ({ slug }) => {
         // Save the orderId in localStorage
         window.localStorage.setItem('currentOrder', JSON.stringify({ orderId, amount }))
 
-        // router.push('/tablet/craft-keg/membership-card')
-        router.push(`/tablet/${slug}/membership-card`)
+        router.push(`/${slug}/membership-card`)
       }
 
       setIsLoading(false)
@@ -69,7 +68,6 @@ const TabletFooterCheckout = ({ slug }) => {
   }
 
   const imageSrc = productImages[cartItem.name] || '/images/mobile/Tuborg-Logo.png' // Fallback image
-
 
   return (
     <div className='fixed p-5 bg-white bottom-0 w-full max-w-[1020px] drop-shadow-md'>

@@ -30,6 +30,7 @@ import { toast } from 'react-toastify'
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
+import Link from 'next/link'
 
 // Validation schemas
 const mainCafeSchema = yup.object().shape({
@@ -337,14 +338,11 @@ export default function AddMyCafeDrawer({
         />
 
         <div style={{ marginTop: '-20px', display: 'flex', alignItems: 'center' }}>
-          <Typography
-            variant='p'
-            color={'secondary'}
-            sx={{ fontWeight: '600', fontSize: '14px' }}
-          >{`${baseURL}/cafe/`}</Typography>
-          <Typography variant='p' color={'primary'} sx={{ fontWeight: '600', fontSize: '14px' }}>
-            {slug}
-          </Typography>
+          <Link href={`${baseURL}/cafe/${slug}`}>
+            <Typography variant='p' color={'primary'} sx={{ fontWeight: '600', fontSize: '14px' }}>
+              {`${baseURL}/cafe/${slug}`}
+            </Typography>
+          </Link>
 
           {loadingSlug ? (
             <CircularProgress size={14} style={{ marginLeft: '2px' }} />

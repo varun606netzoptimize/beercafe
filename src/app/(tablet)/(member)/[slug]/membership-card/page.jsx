@@ -39,7 +39,7 @@ const Page = ({ params }) => {
           setOrderStatus(response.data.paymentStatus) // Set order status data
 
           if (response.data.paymentStatus == 'PAID') {
-            router.push('/tablet/success')
+            router.push('/success')
           }
         } catch (err) {
           console.error('Failed to fetch order status:', err)
@@ -68,8 +68,8 @@ const Page = ({ params }) => {
           ProcessPayment(rfidNumber, currentOrder.orderId)
         } else {
           window.localStorage.setItem('rfidNumber', res.data.rfidDetails.rfidNumber)
-          setUserBalanceData(cutomerPoints);
-          router.push(`/tablet/${slug}/add-balance`);
+          setUserBalanceData(cutomerPoints)
+          router.push(`/${slug}/add-balance`)
 
           setTimeout(() => {
             setLoading(false)
@@ -77,8 +77,8 @@ const Page = ({ params }) => {
         }
       })
       .catch(err => {
-        console.log('failed to verify rfid', err.response.data.message);
-        toast.error(err.response.data.message);
+        console.log('failed to verify rfid', err.response.data.message)
+        toast.error(err.response.data.message)
         setLoading(false)
       })
   }
@@ -98,7 +98,7 @@ const Page = ({ params }) => {
         console.log('successfully paid')
         setRemainingBalance(res.data.remainingBalance)
 
-        router.push(`/tablet/${slug}/success`)
+        router.push(`/${slug}/success`)
       })
       .catch(err => {
         console.log('failed to process', err.response.data)

@@ -52,8 +52,8 @@ const Page = ({ params }) => {
         console.log(res.data.status, 'TRANSACTION_GET data')
 
         if (res.data.status == 'COMPLETED') {
-          toast.success('Transaction completed successfully');
-          router.push(`/tablet/${slug}/success`)
+          toast.success('Transaction completed successfully')
+          router.push(`/${slug}/success`)
         }
       })
       .catch(err => {
@@ -73,7 +73,7 @@ const Page = ({ params }) => {
           return prevTime - 1
         } else {
           clearInterval(timerInterval)
-          router.push(`/tablet/cafe/${slug}/drinks`) // Redirect when timer is finished
+          router.push(`/cafe/${slug}/drinks`) // Redirect when timer is finished
 
           return 0
         }
@@ -94,7 +94,7 @@ const Page = ({ params }) => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
-  const redirectUrl = `/tablet/${slug}/qr-reader?amount=${amountToAdd}&orderId=${currentOrder.orderId}&rfidNumber=${rfidNumber}&id=${transactionId}`
+  const redirectUrl = `/${slug}/qr-reader?amount=${amountToAdd}&orderId=${currentOrder.orderId}&rfidNumber=${rfidNumber}&id=${transactionId}`
 
   console.log(redirectUrl, 'redirectUrl')
 
@@ -115,7 +115,6 @@ const Page = ({ params }) => {
           <div
             className='flex flex-col justify-center items-center gap-10 border p-5'
             style={{ cursor: 'pointer' }}
-
             // onClick={handleAddBalance}
             onClick={() => {
               router.push(redirectUrl)

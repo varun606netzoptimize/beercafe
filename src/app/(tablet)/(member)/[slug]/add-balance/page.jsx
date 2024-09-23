@@ -22,10 +22,10 @@ const Page = ({ params }) => {
 
   const amounts = [(currentOrder.amount - Number(userBalanceData)).toFixed(2), 800, 1000, 1200, 1500]
 
-  const initiateTransaction = ({amount}) => {
+  const initiateTransaction = ({ amount }) => {
     const url = ENDPOINT.TRANSACTION_INITIATE
 
-    console.log('url', url);
+    console.log('url', url)
 
     const data = {
       RFID: rfidNumber,
@@ -33,21 +33,22 @@ const Page = ({ params }) => {
       action: 'credit'
     }
 
-    axios.post(url, data)
-    .then(res => {
-      console.log('successfully paid', res)
+    axios
+      .post(url, data)
+      .then(res => {
+        console.log('successfully paid', res)
 
-      if(res.data.id){
-        router.push(`/tablet/${slug}/scanner?amount=${amount}&transactionId=${res.data.id}`);
-      }
-    })
-    .catch(err => {
-      console.log('failed to process', err.response.data)
-    })
+        if (res.data.id) {
+          router.push(`/${slug}/scanner?amount=${amount}&transactionId=${res.data.id}`)
+        }
+      })
+      .catch(err => {
+        console.log('failed to process', err.response.data)
+      })
   }
 
   const handleAddBalance = amount => {
-    initiateTransaction({ amount });
+    initiateTransaction({ amount })
   }
 
   return (

@@ -1,4 +1,5 @@
 'use client'
+
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
@@ -104,7 +105,7 @@ export default function Page() {
       field: 'updatedAt',
       headerName: 'Last Updated',
       flex: 1,
-      renderCell: params => <Box>{format(params.row.updatedAt, 'MMMM dd, yyyy')}</Box>
+      renderCell: params => <Box>{(params.row.updatedAt, 'MMMM dd, yyyy')}</Box>
     }
   ]
 
