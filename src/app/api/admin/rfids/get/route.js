@@ -45,7 +45,9 @@ export async function GET(req) {
       skip: (page - 1) * pageSize,
       take: pageSize
     })
-    return NextResponse.json(rfids)
+
+
+return NextResponse.json(rfids)
   } catch (error) {
     console.error('Error fetching users:', error)
 

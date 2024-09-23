@@ -115,6 +115,7 @@ const Page = ({ params }) => {
           <div
             className='flex flex-col justify-center items-center gap-10 border p-5'
             style={{ cursor: 'pointer' }}
+
             // onClick={handleAddBalance}
             onClick={() => {
               router.push(redirectUrl)
