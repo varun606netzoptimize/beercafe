@@ -36,7 +36,7 @@ export async function GET(req) {
 
     const cafeIds = extractCafeIds(userCafes)
 
-    const products = await prisma.product.findMany({
+    let products = await prisma.product.findMany({
       where: {
         cafeId: { in: cafeIds }
       },
@@ -44,6 +44,15 @@ export async function GET(req) {
         Brand: true,
         Cafe: true,
         variations: true
+      }
+    })
+
+    products = products.map(product => {
+      return {
+        ...product,
+        variations: product.variations.filter(variation => {
+          return variation.deletedAt == null
+        })
       }
     })
 

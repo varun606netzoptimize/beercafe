@@ -24,7 +24,7 @@ export default function ViewProductVariation({
   setOpen,
   ProductVariationData,
   productData,
-  GetCafeProducts,
+  getProducts,
   drawerType,
   setDrawerType
 }) {
@@ -62,7 +62,7 @@ export default function ViewProductVariation({
         data
       })
       .then(res => {
-        GetCafeProducts()
+        getProducts()
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -71,6 +71,7 @@ export default function ViewProductVariation({
         setIsDeleting(false)
         setShowDeletePop(false)
         setDeleteItem(null)
+        handleClose()
       })
   }
 
@@ -189,7 +190,7 @@ export default function ViewProductVariation({
         }}
         setDialogOpen={setOpen}
         productData={productData}
-        getProducts={GetCafeProducts}
+        getProducts={getProducts}
         myProductVariationData={myProductVariationData}
         updateData={updateData}
         type={drawerType}
