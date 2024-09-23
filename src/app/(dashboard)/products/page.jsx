@@ -237,6 +237,7 @@ export default function Page() {
           columns={columns}
           pagination
           rowCount={products?.length}
+
           // getRowHeight={() => 'auto'}
         />
       )}

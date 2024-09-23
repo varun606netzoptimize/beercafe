@@ -20,10 +20,11 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+import { CornerDownRight } from 'lucide-react'
+
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
-import { CornerDownRight } from 'lucide-react'
 
 // Validation schema
 const productSchema = yup.object().shape({
@@ -101,8 +102,11 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
                   const selectedCafe = cafes.cafes?.find(
                     data => data.id === selected || data.children?.find(child => child.id === selected)
                   )
+
                   const selectedChild = selectedCafe?.children?.find(child => child.id === selected)
-                  return selectedChild ? selectedChild.name : selectedCafe?.name
+
+
+return selectedChild ? selectedChild.name : selectedCafe?.name
                 }}
               >
                 {cafes.cafes?.map(data => [

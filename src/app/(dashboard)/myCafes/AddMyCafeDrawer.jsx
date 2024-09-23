@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 
 const baseURL = process.env.NEXT_PUBLIC_APP_URL
 
+import Link from 'next/link'
+
 import {
   Box,
   Button,
@@ -30,7 +32,6 @@ import { toast } from 'react-toastify'
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
-import Link from 'next/link'
 
 // Validation schemas
 const mainCafeSchema = yup.object().shape({

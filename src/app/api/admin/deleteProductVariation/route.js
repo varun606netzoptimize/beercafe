@@ -27,6 +27,7 @@ export async function DELETE(req) {
     return new Response(JSON.stringify({ message: 'Product variation soft deleted successfully' }), { status: 200 })
   } catch (error) {
     console.error('Error soft deleting product variation:', error)
-    return new Response('Error soft deleting product variation', { status: 500 })
+
+return new Response('Error soft deleting product variation', { status: 500 })
   }
 }
