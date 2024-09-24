@@ -92,7 +92,7 @@ const VerticalMenu = ({ scrollMenu }) => {
               Manage Products
             </MenuItem>
             <MenuItem href='/orders' icon={<i className='tabler-square' />}>
-              Orders
+              Manage Orders
             </MenuItem>
           </>
         ) : (
