@@ -226,7 +226,7 @@ export default function Page() {
         </Box>
       </Card>
 
-      {isTableRendering && products?.length ? (
+      {isTableRendering ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <CircularProgress size={32} />
         </Box>

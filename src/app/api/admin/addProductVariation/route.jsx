@@ -19,7 +19,8 @@ export async function POST(req) {
         value,
         salePrice,
         regularPrice,
-        points
+        points,
+        deletedAt: null
       }
     })
 
