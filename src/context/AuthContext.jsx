@@ -31,8 +31,10 @@ export const AuthProvider = ({ children }) => {
   const [isProductsLoading, setIsProductsLoading] = useState(false)
   const [orderId, setOrderId] = useState(null)
   const [remainingBalance, setRemainingBalance] = useState('')
-
   const [userBalanceData, setUserBalanceData] = useState('')
+  const [cafeId, setCafeId] = useState(null);
+
+  const [orders, setOrders] = useState(null);
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -236,7 +238,11 @@ export const AuthProvider = ({ children }) => {
         userBalanceData,
         setUserBalanceData,
         remainingBalance,
-        setRemainingBalance
+        setRemainingBalance,
+        setOrders,
+        orders,
+        setCafeId,
+        cafeId
       }}
     >
       {children}

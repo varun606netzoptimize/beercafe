@@ -21,6 +21,7 @@ const Page = ({ params }) => {
   const { slug } = params
   const [data, setData] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const  { setCafeId } = useContext(AuthContext);
 
   // Fetch the cafe data based on slug
   const fetchData = async () => {
@@ -30,7 +31,8 @@ const Page = ({ params }) => {
       const response = await axios.get(`${ENDPOINT.SLUG_CAFE}/${slug}`)
 
       if (response.data) {
-        console.log('API Response:', response.data)
+        console.log('API Response:', response.data);
+        setCafeId(response.data.id)
         setData(response.data)
 
         // toast.success(`Data for ${slug} fetched successfully!`)

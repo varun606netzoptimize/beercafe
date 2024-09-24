@@ -47,7 +47,9 @@ export const ENDPOINT = {
   GET_RFIDS: baseURL + '/api/admin/rfids/get',
   CREATE_RFIDS: baseURL + '/api/admin/rfids/create',
   UPDATE_RFIDS: baseURL + '/api/admin/rfids/update',
-  DELETE_RFIDS: baseURL + '/api/admin/rfids/delete'
+  DELETE_RFIDS: baseURL + '/api/admin/rfids/delete',
+
+  GET_ALL_ORDERS: baseURL + '/api/admin/getAllOrders',
 }
 
 export const POS_ENDPOINTS = {

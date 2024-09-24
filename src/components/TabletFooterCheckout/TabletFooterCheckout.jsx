@@ -14,7 +14,7 @@ import BeerIcon from '@/@menu/svg/BeerIcon'
 import { ENDPOINT } from '@/endpoints'
 
 const TabletFooterCheckout = ({ slug }) => {
-  const { cartItem, setOrderId } = useContext(AuthContext)
+  const { cartItem, setOrderId, cafeId } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -27,6 +27,7 @@ const TabletFooterCheckout = ({ slug }) => {
         amount: Number((cartItem.regularPrice * cartItem.quantity).toFixed(2)),
         paymentMode: 'Credit Card',
         paymentStatus: 'PENDING',
+        cafeId: cafeId,
         details: [
           {
             quantity: cartItem.value, // Update if necessary

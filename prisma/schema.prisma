@@ -208,7 +208,7 @@ model ProductVariation {
 model Order {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   customerId    String?       @db.ObjectId
-  cafeId        String        @db.ObjectId
+  cafeId        String?       @db.ObjectId
   amount        Float
   rfidMasterId  String?
   paymentMode   String
