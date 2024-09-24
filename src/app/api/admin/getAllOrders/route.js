@@ -17,10 +17,19 @@ export async function GET(req){
         }
       },
       include: {
-        details: true,
         Customer: true,
         Cafe: true,
-        CustomerPointsHistory: true
+        CustomerPointsHistory: true,
+        details: {
+          include: {
+            productVariation : {
+              include: {
+                product: true,
+              }
+            }
+          }
+        },
+
       }
     });
 
