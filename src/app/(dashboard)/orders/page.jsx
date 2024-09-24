@@ -12,11 +12,14 @@ import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
+import OrderDetails from './OrderDeatils'
 
 const Page = () => {
   const { authToken, tokenCheck, setPageTitle, setOrders, orders } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
+  const [orderDeatilsOpen, setOrderDeatilsOpen] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     if (tokenCheck) {
@@ -54,6 +57,16 @@ const Page = () => {
       })
   }
 
+  const handleOpenModal = (order) => {
+    setSelectedOrder(order);
+    setOrderDeatilsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedOrder(null);
+    setOrderDeatilsOpen(false);
+  };
+
   const columns = [
     // {
     //   field: 'id',
@@ -71,7 +84,7 @@ const Page = () => {
       field: 'customer',
       headerName: 'Customer Name',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: params => (
         <Box>
           <p>
             <strong>
@@ -85,7 +98,7 @@ const Page = () => {
       field: 'cafe',
       headerName: 'Cafe',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: params => (
         <Box>
           <Typography>
             <strong>
@@ -102,9 +115,9 @@ const Page = () => {
       field: 'amount',
       headerName: 'Amount',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: params => (
         <Box>
-          <p >
+          <p>
             <strong>${params?.row?.amount.toFixed(2)}</strong>
           </p>
         </Box>
@@ -114,7 +127,7 @@ const Page = () => {
       field: 'paymentMode',
       headerName: 'Payment Mode',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: params => (
         <Box>
           <p>
             <strong>{params?.row?.paymentMode}</strong>
@@ -126,7 +139,7 @@ const Page = () => {
       field: 'paymentStatus',
       headerName: 'Payment Status',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: params => (
         <Box>
           <p>
             <strong>{params?.row?.paymentStatus}</strong>
@@ -136,13 +149,11 @@ const Page = () => {
     },
     {
       field: 'createdAt',
-      headerName: 'Created At',
+      headerName: 'Placed At',
       flex: 1,
-      renderCell: (params) => (
+      renderCell: params => (
         <Box>
-          <p>
-            {new Date(params?.row?.createdAt).toLocaleString()}
-          </p>
+          <p>{new Date(params?.row?.createdAt).toLocaleString()}</p>
         </Box>
       )
     },
@@ -152,15 +163,20 @@ const Page = () => {
       flex: 1,
       renderCell: params => (
         <Box>
-          <Button variant='outlined' color='info' size='small' sx={{ marginRight: 2 }} onClick={() => {}}>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => handleOpenModal(params.row)}
+          >
             Details
           </Button>
         </Box>
       ),
       sortable: false
     }
-  ];
-
+  ]
 
   return (
     <div className='flex flex-col gap-6'>
@@ -179,6 +195,8 @@ const Page = () => {
           // getRowHeight={() => 'auto'}
         />
       )}
+
+      <OrderDetails setOpen={setOrderDeatilsOpen} open={orderDeatilsOpen} order={selectedOrder} />
     </div>
   )
 }
