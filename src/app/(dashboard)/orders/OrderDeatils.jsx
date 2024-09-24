@@ -18,7 +18,7 @@ export default function OrderDetails({ open, setOpen, order }) {
       <Dialog
         open={open}
         fullWidth={'true'}
-        maxWidth={'lg'}
+        maxWidth={'sm'}
         TransitionComponent={Transition}
         keepMounted
         onClose={handleClose}
@@ -141,31 +141,11 @@ export default function OrderDetails({ open, setOpen, order }) {
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                 <Typography variant='subtitle1' sx={{ fontWeight: 'medium', color: 'gray' }}>
-                  Sale Price:
-                </Typography>
-                <Typography variant='body1'>${detail?.productVariation?.salePrice.toFixed(2)}</Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                <Typography variant='subtitle1' sx={{ fontWeight: 'medium', color: 'gray' }}>
-                  Regular Price:
-                </Typography>
-                <Typography variant='body1'>${detail?.productVariation?.regularPrice.toFixed(2)}</Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                <Typography variant='subtitle1' sx={{ fontWeight: 'medium', color: 'gray' }}>
                   Quantity:
                 </Typography>
                 <Typography variant='body1'>{detail.quantity}</Typography>
               </Box>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                <Typography variant='subtitle1' sx={{ fontWeight: 'medium', color: 'gray' }}>
-                  Amount:
-                </Typography>
-                <Typography variant='body1'>${detail.amount.toFixed(2)}</Typography>
-              </Box>
             </Box>
           ))}
         </Box>
