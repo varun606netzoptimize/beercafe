@@ -18,6 +18,14 @@ import OrderDetails from './OrderDeatils'
 import AppReactDatepicker from '@/@core/components/date-picker'
 import CustomTextField from '@/@core/components/mui/TextField'
 
+const NoRowsOverlay = () => (
+  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Typography variant='body1' color='textSecondary'>
+      No orders found for this date range.
+    </Typography>
+  </Box>
+)
+
 const Page = () => {
   const { authToken, tokenCheck, setPageTitle, setOrders, orders } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
@@ -25,7 +33,7 @@ const Page = () => {
   const [orderDeatilsOpen, setOrderDeatilsOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [startDateRange, setStartDateRange] = useState(new Date())
-  const [endDateRange, setEndDateRange] = useState(addDays(new Date(), 45))
+  const [endDateRange, setEndDateRange] = useState(null)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -51,7 +59,6 @@ const Page = () => {
         }
       })
       .then(res => {
-        console.log(res.data, 'orders')
         setOrders(res.data)
       })
       .catch(err => {
@@ -75,14 +82,11 @@ const Page = () => {
         }
       })
       .then(response => {
-        // Handle successful response
         const orders = response.data
 
         setOrders(orders)
-        console.log(orders) // Replace with actual state update, e.g., setOrders(orders)
       })
       .catch(error => {
-        // Handle error
         console.error('Error fetching orders:', error)
       })
       .finally(() => {
@@ -100,19 +104,28 @@ const Page = () => {
     setOrderDeatilsOpen(false)
   }
 
+  const handleOnChangeRange = dates => {
+    const [start, end] = dates
+
+    setStartDateRange(start)
+    setEndDateRange(end)
+
+    if (start && end) {
+      const formattedStartDate = format(start, 'yyyy-MM-dd')
+      const formattedEndDate = format(end, 'yyyy-MM-dd')
+
+      // Call the getOrderByDate function with the formatted dates
+      getOrderByDate(formattedStartDate, formattedEndDate)
+    }
+  }
+
+  const handleRemoveFilters = () => {
+    setStartDateRange(null)
+    setEndDateRange(null)
+    getOrders() // Fetch all orders when filters are removed
+  }
+
   const columns = [
-    // {
-    //   field: 'id',
-    //   headerName: 'Order ID',
-    //   flex: 1,
-    //   renderCell: (params) => (
-    //     <Box>
-    //       <Typography>
-    //         <strong>{params?.row?.id}</strong>
-    //       </Typography>
-    //     </Box>
-    //   )
-    // },
     {
       field: 'customer',
       headerName: 'Customer Name',
@@ -211,28 +224,13 @@ const Page = () => {
     }
   ]
 
-  const handleOnChangeRange = dates => {
-    const [start, end] = dates
-
-    setStartDateRange(start)
-    setEndDateRange(end)
-
-    if (start && end) {
-      const formattedStartDate = format(start, 'yyyy-MM-dd')
-      const formattedEndDate = format(end, 'yyyy-MM-dd')
-
-      // Call the getOrderByDate function with the formatted dates
-      getOrderByDate(formattedStartDate, formattedEndDate)
-    }
-  }
-
   const CustomInput = forwardRef((props, ref) => {
     const { label, start, end, ...rest } = props
 
-    const startDate = format(start, 'MM/dd/yyyy')
-    const endDate = end !== null ? ` - ${format(end, 'MM/dd/yyyy')}` : null
+    const startDate = start ? format(start, 'MM/dd/yyyy') : ''
+    const endDate = end ? ` - ${format(end, 'MM/dd/yyyy')}` : ''
 
-    const value = `${startDate}${endDate !== null ? endDate : ''}`
+    const value = `${startDate}${endDate}`
 
     return <CustomTextField fullWidth inputRef={ref} {...rest} label={label} value={value} />
   })
@@ -245,7 +243,7 @@ const Page = () => {
         </Box>
       ) : (
         <>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', width: '100%' }}>
             <AppReactDatepicker
               selectsRange
               monthsShown={2}
@@ -255,8 +253,17 @@ const Page = () => {
               shouldCloseOnSelect={false}
               id='date-range-picker-months'
               onChange={handleOnChangeRange}
-              customInput={<CustomInput label='Multiple Months' end={endDateRange} start={startDateRange} />}
+              customInput={<CustomInput label='Search Orders by Date' end={endDateRange} start={startDateRange} />}
             />
+            <Button
+              variant='outlined'
+              color='secondary'
+              size='small'
+              onClick={handleRemoveFilters}
+              sx={{ marginLeft: 2, marginBottom: 1 }}
+            >
+              Remove Filters
+            </Button>
           </Box>
           <DataGrid
             loading={isLoading}
@@ -264,8 +271,9 @@ const Page = () => {
             columns={columns}
             pagination
             rowCount={orders?.length}
-
-            // getRowHeight={() => 'auto'}
+            components={{
+              NoRowsOverlay
+            }}
           />
         </>
       )}
