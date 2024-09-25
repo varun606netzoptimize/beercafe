@@ -32,9 +32,9 @@ export const AuthProvider = ({ children }) => {
   const [orderId, setOrderId] = useState(null)
   const [remainingBalance, setRemainingBalance] = useState('')
   const [userBalanceData, setUserBalanceData] = useState('')
-  const [cafeId, setCafeId] = useState(null);
+  const [cafeId, setCafeId] = useState(null)
 
-  const [orders, setOrders] = useState(null);
+  const [orders, setOrders] = useState(null)
 
   useEffect(() => {
     // window.localStorage.removeItem('authToken')
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
   const GetCafe = async userData => {
     let url = ENDPOINT.GET_CAFES
 
-    if (userData.role != 'admin') {
+    if (userData?.role != 'admin') {
       url += '?ownerId=' + userData.id
     }
 
