@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { forwardRef, useContext, useEffect, useState } from 'react'
 
 import { redirect } from 'next/navigation'
 
@@ -10,16 +10,22 @@ import { Box, Button, CircularProgress, Typography } from '@mui/material'
 
 import { DataGrid } from '@mui/x-data-grid'
 
+import { format, addDays } from 'date-fns'
+
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
 import OrderDetails from './OrderDeatils'
+import AppReactDatepicker from '@/@core/components/date-picker'
+import CustomTextField from '@/@core/components/mui/TextField'
 
 const Page = () => {
   const { authToken, tokenCheck, setPageTitle, setOrders, orders } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [orderDeatilsOpen, setOrderDeatilsOpen] = useState(false)
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null)
+  const [startDateRange, setStartDateRange] = useState(new Date())
+  const [endDateRange, setEndDateRange] = useState(addDays(new Date(), 45))
 
   useEffect(() => {
     if (tokenCheck) {
@@ -57,15 +63,15 @@ const Page = () => {
       })
   }
 
-  const handleOpenModal = (order) => {
-    setSelectedOrder(order);
-    setOrderDeatilsOpen(true);
-  };
+  const handleOpenModal = order => {
+    setSelectedOrder(order)
+    setOrderDeatilsOpen(true)
+  }
 
   const handleCloseModal = () => {
-    setSelectedOrder(null);
-    setOrderDeatilsOpen(false);
-  };
+    setSelectedOrder(null)
+    setOrderDeatilsOpen(false)
+  }
 
   const columns = [
     // {
@@ -178,6 +184,24 @@ const Page = () => {
     }
   ]
 
+  const handleOnChangeRange = dates => {
+    const [start, end] = dates
+
+    setStartDateRange(start)
+    setEndDateRange(end)
+  }
+
+  const CustomInput = forwardRef((props, ref) => {
+    const { label, start, end, ...rest } = props
+
+    const startDate = format(start, 'MM/dd/yyyy')
+    const endDate = end !== null ? ` - ${format(end, 'MM/dd/yyyy')}` : null
+
+    const value = `${startDate}${endDate !== null ? endDate : ''}`
+
+    return <CustomTextField fullWidth inputRef={ref} {...rest} label={label} value={value} />
+  })
+
   return (
     <div className='flex flex-col gap-6'>
       {isTableRendering ? (
@@ -185,15 +209,30 @@ const Page = () => {
           <CircularProgress size={32} />
         </Box>
       ) : (
-        <DataGrid
-          loading={isLoading}
-          rows={orders}
-          columns={columns}
-          pagination
-          rowCount={orders?.length}
+        <>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <AppReactDatepicker
+              selectsRange
+              monthsShown={2}
+              endDate={endDateRange}
+              selected={startDateRange}
+              startDate={startDateRange}
+              shouldCloseOnSelect={false}
+              id='date-range-picker-months'
+              onChange={handleOnChangeRange}
+              customInput={<CustomInput label='Multiple Months' end={endDateRange} start={startDateRange} />}
+            />
+          </Box>
+          <DataGrid
+            loading={isLoading}
+            rows={orders}
+            columns={columns}
+            pagination
+            rowCount={orders?.length}
 
-          // getRowHeight={() => 'auto'}
-        />
+            // getRowHeight={() => 'auto'}
+          />
+        </>
       )}
 
       <OrderDetails setOpen={setOrderDeatilsOpen} open={orderDeatilsOpen} order={selectedOrder} />
