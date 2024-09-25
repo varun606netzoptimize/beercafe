@@ -5,12 +5,9 @@ import { forwardRef, useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-
-import { Box, Button, CircularProgress, Typography } from '@mui/material'
-
+import { Box, Button, CircularProgress, Typography, Select, MenuItem, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-
-import { format, addDays } from 'date-fns'
+import { format } from 'date-fns'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -34,6 +31,8 @@ const Page = () => {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [startDateRange, setStartDateRange] = useState(new Date())
   const [endDateRange, setEndDateRange] = useState(null)
+  const [paymentStatus, setPaymentStatus] = useState('') // Payment Status dropdown value
+  const [customerName, setCustomerName] = useState('') // Customer Name search input value
 
   useEffect(() => {
     if (tokenCheck) {
@@ -70,8 +69,13 @@ const Page = () => {
       })
   }
 
-  const getOrderByDate = (startDate, endDate) => {
-    const url = `${ENDPOINT.GET_ORDER_BY_DATE}?startDate=${startDate}&endDate=${endDate}`
+  // Updated function to get orders by filters
+  const getOrderByDate = (startDate, endDate, paymentStatus, customerName) => {
+    let url = `${ENDPOINT.GET_ORDER_BY_DATE}?startDate=${startDate}&endDate=${endDate}`
+
+    // Add filters if provided
+    if (paymentStatus) url += `&paymentStatus=${paymentStatus}`
+    if (customerName) url += `&query=${customerName}`
 
     setIsLoading(true) // Start loading state
 
@@ -114,17 +118,20 @@ const Page = () => {
       const formattedStartDate = format(start, 'yyyy-MM-dd')
       const formattedEndDate = format(end, 'yyyy-MM-dd')
 
-      // Call the getOrderByDate function with the formatted dates
-      getOrderByDate(formattedStartDate, formattedEndDate)
+      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, customerName)
     }
   }
 
+  // Handler for removing all filters
   const handleRemoveFilters = () => {
     setStartDateRange(null)
     setEndDateRange(null)
-    getOrders() // Fetch all orders when filters are removed
+    setPaymentStatus('')
+    setCustomerName('')
+    getOrders() // Fetch all orders without filters
   }
 
+  // Columns for the DataGrid
   const columns = [
     {
       field: 'customer',
@@ -226,10 +233,8 @@ const Page = () => {
 
   const CustomInput = forwardRef((props, ref) => {
     const { label, start, end, ...rest } = props
-
     const startDate = start ? format(start, 'MM/dd/yyyy') : ''
     const endDate = end ? ` - ${format(end, 'MM/dd/yyyy')}` : ''
-
     const value = `${startDate}${endDate}`
 
     return <CustomTextField fullWidth inputRef={ref} {...rest} label={label} value={value} />
@@ -244,6 +249,7 @@ const Page = () => {
       ) : (
         <>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', width: '100%' }}>
+            {/* Date Picker */}
             <AppReactDatepicker
               selectsRange
               monthsShown={2}
@@ -255,6 +261,27 @@ const Page = () => {
               onChange={handleOnChangeRange}
               customInput={<CustomInput label='Search Orders by Date' end={endDateRange} start={startDateRange} />}
             />
+            {/* Payment Status Dropdown */}
+            <Select
+              label='Payment Status'
+              value={paymentStatus}
+              onChange={e => setPaymentStatus(e.target.value)}
+              displayEmpty
+              sx={{ marginLeft: 2, marginBottom: 1, minWidth: 150 }}
+            >
+              <MenuItem value=''>All</MenuItem>
+              <MenuItem value='PAID'>Paid</MenuItem>
+              <MenuItem value='PENDING'>Pending</MenuItem>
+            </Select>
+            {/* Customer Name Search */}
+            <TextField
+              label='Search by Customer Name'
+              value={customerName}
+              onChange={e => setCustomerName(e.target.value)}
+              variant='outlined'
+              sx={{ marginLeft: 2, marginBottom: 1 }}
+            />
+            {/* Remove Filters Button */}
             <Button
               variant='outlined'
               color='secondary'
@@ -265,6 +292,7 @@ const Page = () => {
               Remove Filters
             </Button>
           </Box>
+          {/* DataGrid Table */}
           <DataGrid
             loading={isLoading}
             rows={orders}
