@@ -30,9 +30,9 @@ const Page = () => {
   const [orderDeatilsOpen, setOrderDeatilsOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [startDateRange, setStartDateRange] = useState(new Date())
-  const [endDateRange, setEndDateRange] = useState(null)
-  const [paymentStatus, setPaymentStatus] = useState('') // Payment Status dropdown value
-  const [customerName, setCustomerName] = useState('') // Customer Name search input value
+  const [endDateRange, setEndDateRange] = useState(new Date())
+  const [paymentStatus, setPaymentStatus] = useState('')
+  const [customerName, setCustomerName] = useState('')
 
   useEffect(() => {
     if (tokenCheck) {
@@ -69,15 +69,17 @@ const Page = () => {
       })
   }
 
-  // Updated function to get orders by filters
   const getOrderByDate = (startDate, endDate, paymentStatus, customerName) => {
-    let url = `${ENDPOINT.GET_ORDER_BY_DATE}?startDate=${startDate}&endDate=${endDate}`
+    let url = `${ENDPOINT.GET_ORDER_BY_DATE}`
 
-    // Add filters if provided
-    if (paymentStatus) url += `&paymentStatus=${paymentStatus}`
-    if (customerName) url += `&query=${customerName}`
+    // Append date parameters if they are provided
+    if (startDate) url += `?startDate=${startDate}`
+    if (endDate) url += startDate ? `&endDate=${endDate}` : `?endDate=${endDate}`
+    if (paymentStatus)
+      url += startDate || endDate ? `&paymentStatus=${paymentStatus}` : `?paymentStatus=${paymentStatus}`
+    if (customerName) url += startDate || endDate || paymentStatus ? `&query=${customerName}` : `?query=${customerName}`
 
-    setIsLoading(true) // Start loading state
+    setIsLoading(true)
 
     axios
       .get(url, {
@@ -94,7 +96,7 @@ const Page = () => {
         console.error('Error fetching orders:', error)
       })
       .finally(() => {
-        setIsLoading(false) // Reset loading state
+        setIsLoading(false)
       })
   }
 
@@ -111,27 +113,50 @@ const Page = () => {
   const handleOnChangeRange = dates => {
     const [start, end] = dates
 
-    setStartDateRange(start)
-    setEndDateRange(end)
+    setStartDateRange(start || null) // Allow start date to be null
+    setEndDateRange(end || null) // Allow end date to be null
 
-    if (start && end) {
-      const formattedStartDate = format(start, 'yyyy-MM-dd')
-      const formattedEndDate = format(end, 'yyyy-MM-dd')
+    // Call getOrderByDate only if at least one of the dates is selected
+    if (start || end) {
+      const formattedStartDate = start ? format(start, 'yyyy-MM-dd') : null
+      const formattedEndDate = end ? format(end, 'yyyy-MM-dd') : null
 
       getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, customerName)
     }
   }
 
-  // Handler for removing all filters
   const handleRemoveFilters = () => {
-    setStartDateRange(null)
-    setEndDateRange(null)
+    setStartDateRange(new Date())
+    setEndDateRange(new Date())
     setPaymentStatus('')
     setCustomerName('')
-    getOrders() // Fetch all orders without filters
+    getOrders()
   }
 
-  // Columns for the DataGrid
+  const handlePaymentStatusChange = event => {
+    const selectedStatus = event.target.value
+
+    setPaymentStatus(selectedStatus)
+
+    if (startDateRange && endDateRange) {
+      const formattedStartDate = format(startDateRange, 'yyyy-MM-dd')
+      const formattedEndDate = format(endDateRange, 'yyyy-MM-dd')
+
+      getOrderByDate(formattedStartDate, formattedEndDate, selectedStatus, customerName)
+    }
+  }
+
+  const handleCustomerNameSubmit = event => {
+    event.preventDefault()
+
+    if (startDateRange && endDateRange) {
+      const formattedStartDate = format(startDateRange, 'yyyy-MM-dd')
+      const formattedEndDate = format(endDateRange, 'yyyy-MM-dd')
+
+      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, customerName)
+    }
+  }
+
   const columns = [
     {
       field: 'customer',
@@ -249,64 +274,60 @@ const Page = () => {
       ) : (
         <>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', width: '100%' }}>
-            {/* Date Picker */}
-            <AppReactDatepicker
-              selectsRange
-              monthsShown={2}
-              endDate={endDateRange}
-              selected={startDateRange}
-              startDate={startDateRange}
-              shouldCloseOnSelect={false}
-              id='date-range-picker-months'
-              onChange={handleOnChangeRange}
-              customInput={<CustomInput label='Search Orders by Date' end={endDateRange} start={startDateRange} />}
-            />
-            {/* Payment Status Dropdown */}
-            <Select
-              label='Payment Status'
-              value={paymentStatus}
-              onChange={e => setPaymentStatus(e.target.value)}
-              displayEmpty
-              sx={{ marginLeft: 2, marginBottom: 1, minWidth: 150 }}
-            >
-              <MenuItem value=''>All</MenuItem>
-              <MenuItem value='PAID'>Paid</MenuItem>
-              <MenuItem value='PENDING'>Pending</MenuItem>
-            </Select>
-            {/* Customer Name Search */}
-            <TextField
-              label='Search by Customer Name'
-              value={customerName}
-              onChange={e => setCustomerName(e.target.value)}
-              variant='outlined'
-              sx={{ marginLeft: 2, marginBottom: 1 }}
-            />
-            {/* Remove Filters Button */}
-            <Button
-              variant='outlined'
-              color='secondary'
-              size='small'
-              onClick={handleRemoveFilters}
-              sx={{ marginLeft: 2, marginBottom: 1 }}
-            >
-              Remove Filters
-            </Button>
+            <form onSubmit={handleCustomerNameSubmit} style={{ display: 'flex', alignItems: 'end' }}>
+              {/* Date Picker */}
+              <AppReactDatepicker
+                selectsRange
+                monthsShown={2}
+                endDate={endDateRange}
+                selected={startDateRange}
+                startDate={startDateRange}
+                shouldCloseOnSelect={false}
+                id='date-range-picker-months'
+                onChange={handleOnChangeRange}
+                customInput={<CustomInput label='Search Orders by Date' end={endDateRange} start={startDateRange} />}
+              />
+              {/* Payment Status Dropdown */}
+              <Select
+                label='Payment Status'
+                value={paymentStatus}
+                onChange={handlePaymentStatusChange}
+                displayEmpty
+                sx={{ marginLeft: 2, marginBottom: 1, minWidth: 150 }}
+              >
+                <MenuItem value=''>All Payment Status</MenuItem>
+                <MenuItem value='PAID'>Paid</MenuItem>
+                <MenuItem value='PENDING'>Unpaid</MenuItem>
+              </Select>
+              {/* Customer Name Input */}
+              <TextField
+                label='Customer Name'
+                value={customerName}
+                onChange={e => setCustomerName(e.target.value)}
+                sx={{ marginLeft: 2, marginBottom: 1 }}
+              />
+              <Button type='submit' variant='contained' color='primary' sx={{ marginLeft: 2 }}>
+                Search
+              </Button>
+              <Button variant='outlined' color='error' sx={{ marginLeft: 2 }} onClick={handleRemoveFilters}>
+                Remove Filters
+              </Button>
+            </form>
           </Box>
-          {/* DataGrid Table */}
-          <DataGrid
-            loading={isLoading}
-            rows={orders}
-            columns={columns}
-            pagination
-            rowCount={orders?.length}
-            components={{
-              NoRowsOverlay
-            }}
-          />
+          <Box sx={{ height: 400, width: '100%' }}>
+            <DataGrid
+              rows={orders}
+              columns={columns}
+              disableSelectionOnClick
+              components={{ NoRowsOverlay }}
+              pageSizeOptions={[5, 10, 25]}
+              autoHeight
+              getRowId={row => row.id}
+            />
+          </Box>
+          <OrderDetails open={orderDeatilsOpen} order={selectedOrder} handleClose={handleCloseModal} />
         </>
       )}
-
-      <OrderDetails setOpen={setOrderDeatilsOpen} open={orderDeatilsOpen} order={selectedOrder} />
     </div>
   )
 }
