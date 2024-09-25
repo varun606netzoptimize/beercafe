@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }) => {
     let url = ENDPOINT.GET_CAFES
 
     if (userData?.role != 'admin') {
-      url += '?ownerId=' + userData.id
+      url += '?ownerId=' + userData?.id
     }
 
     await axios
