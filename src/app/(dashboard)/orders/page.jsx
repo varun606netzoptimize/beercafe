@@ -33,6 +33,7 @@ const Page = () => {
         redirect('/login')
       } else {
         getOrders()
+        getOrderByDate('2024-09-24', '2024-09-25')
       }
 
       setPageTitle('Orders')
@@ -60,6 +61,32 @@ const Page = () => {
       .finally(() => {
         setIsLoading(false)
         setIsTableRendering(false)
+      })
+  }
+
+  const getOrderByDate = (startDate, endDate) => {
+    const url = `${ENDPOINT.GET_ORDER_BY_DATE}?startDate=${startDate}&endDate=${endDate}`
+
+    setIsLoading(true) // Start loading state
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+      .then(response => {
+        // Handle successful response
+        const orders = response.data
+
+        console.log(orders) // Replace with actual state update, e.g., setOrders(orders)
+      })
+      .catch(error => {
+        // Handle error
+        console.error('Error fetching orders:', error)
+      })
+      .finally(() => {
+        setIsLoading(false) // Reset loading state
       })
   }
 
