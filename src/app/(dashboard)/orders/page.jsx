@@ -33,7 +33,6 @@ const Page = () => {
         redirect('/login')
       } else {
         getOrders()
-        getOrderByDate('2024-09-24', '2024-09-25')
       }
 
       setPageTitle('Orders')
@@ -79,6 +78,7 @@ const Page = () => {
         // Handle successful response
         const orders = response.data
 
+        setOrders(orders)
         console.log(orders) // Replace with actual state update, e.g., setOrders(orders)
       })
       .catch(error => {
@@ -216,6 +216,14 @@ const Page = () => {
 
     setStartDateRange(start)
     setEndDateRange(end)
+
+    if (start && end) {
+      const formattedStartDate = format(start, 'yyyy-MM-dd')
+      const formattedEndDate = format(end, 'yyyy-MM-dd')
+
+      // Call the getOrderByDate function with the formatted dates
+      getOrderByDate(formattedStartDate, formattedEndDate)
+    }
   }
 
   const CustomInput = forwardRef((props, ref) => {
