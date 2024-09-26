@@ -14,7 +14,9 @@ import {
   MenuItem,
   TextField,
   Card,
-  CardContent
+  CardContent,
+  IconButton,
+  Chip
 } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { format } from 'date-fns'
@@ -172,7 +174,13 @@ const Page = () => {
         >
           <p>
             <strong>
-              {params?.row?.Customer?.firstname} {params?.row?.Customer?.lastname}
+              {params?.row?.Customer ? (
+                <>
+                  {params?.row?.Customer?.firstname} {params?.row?.Customer?.lastname}{' '}
+                </>
+              ) : (
+                'N/A'
+              )}
             </strong>
           </p>
         </Box>
@@ -231,9 +239,12 @@ const Page = () => {
       flex: 1,
       renderCell: params => (
         <Box>
-          <p>
-            <strong>{params?.row?.paymentStatus}</strong>
-          </p>
+          <Chip
+            size='small'
+            variant='tonal'
+            color={params?.row?.paymentStatus == 'PAID' ? 'success' : 'warning'}
+            label={params?.row?.paymentStatus}
+          />
         </Box>
       ),
       filterable: false,
@@ -245,7 +256,17 @@ const Page = () => {
       flex: 1,
       renderCell: params => (
         <Box>
-          <p>{new Date(params?.row?.createdAt).toLocaleString()}</p>
+          <p>
+            {' '}
+            {new Intl.DateTimeFormat('en-GB', {
+              day: '2-digit',
+              month: 'short', // For "May", use 'long' for full month names
+              year: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true
+            }).format(new Date(params?.row?.createdAt))}
+          </p>
         </Box>
       ),
       filterable: false
@@ -257,13 +278,13 @@ const Page = () => {
       renderCell: params => (
         <Box>
           <Button
-            variant='outlined'
+            variant='none'
             color='info'
             size='small'
-            sx={{ marginRight: 2 }}
+            sx={{ padding: 0, minWidth: '40px', minHeight: '40px', borderRadius: '50%' }}
             onClick={() => handleOpenModal(params.row)}
           >
-            Details
+            <i className='tabler-eye text-[22px] text-textSecondary border-none' />
           </Button>
         </Box>
       ),
@@ -339,7 +360,39 @@ const Page = () => {
                   gap: 16 // Adding consistent spacing between items
                 }}
               >
+                {/* Search Input */}
+                <CustomTextField
+                  value={queryValue}
+                  onChange={e => handleQueryValueChange(e.target.value)}
+                  sx={{
+                    minWidth: 300,
+                    marginBottom: 1
+                  }}
+                  placeholder='Search by Customer Name or Cafe'
+                />
+
+                {/* Payment Status Dropdown */}
+
                 {/* Date Picker */}
+
+                <CustomTextField
+                  select
+                  label='Payment Status'
+                  id='payment-status'
+                  value={paymentStatus}
+                  onChange={handlePaymentStatusChange}
+                  sx={{
+                    minWidth: 150,
+                    marginLeft: 'auto',
+                    marginBottom: 1 // Margin adjustments for consistency
+                  }}
+                  SelectProps={{ displayEmpty: true }}
+                >
+                  <MenuItem value=''>All</MenuItem>
+                  <MenuItem value='PAID'>Paid</MenuItem>
+                  <MenuItem value='PENDING'>Unpaid</MenuItem>
+                </CustomTextField>
+
                 <AppReactDatepicker
                   selectsRange
                   monthsShown={2}
@@ -353,41 +406,9 @@ const Page = () => {
                   sx={{
                     minWidth: 200,
                     maxWidth: 250,
-                    paddingBottom: 3 // Control width to ensure it fits well
+                    paddingBottom: 3,
+                    marginLeft: 'auto'
                   }}
-                />
-
-                {/* Payment Status Dropdown */}
-                <CustomTextField
-                  select
-                  label='Payment Status'
-                  id='payment-status'
-                  value={paymentStatus}
-                  onChange={handlePaymentStatusChange}
-                  sx={{
-                    minWidth: 200,
-                    marginLeft: 2,
-                    marginBottom: 1 // Margin adjustments for consistency
-                  }}
-                  SelectProps={{ displayEmpty: true }}
-                >
-                  <MenuItem value=''>All Payment Status</MenuItem>
-                  <MenuItem value='PAID'>Paid</MenuItem>
-                  <MenuItem value='PENDING'>Unpaid</MenuItem>
-                </CustomTextField>
-
-                {/* Search Input */}
-                <CustomTextField
-                  value={queryValue}
-                  onChange={e => handleQueryValueChange(e.target.value)}
-                  sx={{
-                    minWidth: 300,
-                    marginLeft: 'auto',
-                    marginBottom: 1
-
-                    // flexGrow: 1
-                  }}
-                  placeholder='Search by Customer Name or Cafe'
                 />
 
                 {/* Remove Filters Button */}
