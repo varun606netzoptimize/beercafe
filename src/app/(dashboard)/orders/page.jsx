@@ -121,8 +121,6 @@ const Page = () => {
     setPaymentStatus('')
     setQueryValue('')
     getOrder()
-
-    // getOrder({sortBy:'amount', sortOrder: 'desc'})
   }
 
   const handlePaymentStatusChange = event => {
@@ -151,7 +149,7 @@ const Page = () => {
 
   const columns = [
     {
-      field: 'customer',
+      field: 'customerName',
       headerName: 'Customer Name',
       flex: 1,
       renderCell: params => (
@@ -163,10 +161,11 @@ const Page = () => {
           </p>
         </Box>
       ),
-      filterable: false
+      filterable: false,
+      sortComparator: (v1, v2) => {}
     },
     {
-      field: 'cafe',
+      field: 'cafeName',
       headerName: 'Cafe',
       flex: 1,
       renderCell: params => (
@@ -207,7 +206,8 @@ const Page = () => {
           </p>
         </Box>
       ),
-      filterable: false
+      filterable: false,
+      sortable: false
     },
     {
       field: 'paymentStatus',
@@ -220,7 +220,8 @@ const Page = () => {
           </p>
         </Box>
       ),
-      filterable: false
+      filterable: false,
+      sortable: false
     },
     {
       field: 'createdAt',
@@ -254,6 +255,16 @@ const Page = () => {
       sortable: false
     }
   ]
+
+  const handleSortChange = sortModel => {
+    if (sortModel?.length > 0) {
+      const { field, sort } = sortModel[0]
+
+      getOrder({ sortBy: field, sortOrder: sort })
+    } else {
+      getOrder()
+    }
+  }
 
   const CustomInput = forwardRef((props, ref) => {
     const { label, start, end, ...rest } = props
@@ -322,6 +333,7 @@ const Page = () => {
               pageSizeOptions={[5, 10, 25]}
               autoHeight
               getRowId={row => row.id}
+              onSortModelChange={handleSortChange}
             />
           </Box>
           <OrderDetails open={orderDeatilsOpen} order={selectedOrder} setOpen={setOrderDeatilsOpen} />
