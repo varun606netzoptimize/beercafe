@@ -46,7 +46,7 @@ const Page = () => {
     }
   }, [authToken])
 
-  const getOrder = ({ startDate, endDate, paymentStatus, queryValue } = {}) => {
+  const getOrder = ({ startDate, endDate, paymentStatus, queryValue, sortBy, sortOrder } = {}) => {
     let url = `${ENDPOINT.GET_ORDERS}`
     const params = []
 
@@ -55,6 +55,8 @@ const Page = () => {
     if (endDate) params.push(`endDate=${endDate}`)
     if (paymentStatus) params.push(`paymentStatus=${paymentStatus}`)
     if (queryValue) params.push(`query=${queryValue}`)
+    if (sortBy) params.push(`sortBy=${sortBy}`)
+    if (sortOrder) params.push(`sortOrder=${sortOrder}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
@@ -119,6 +121,8 @@ const Page = () => {
     setPaymentStatus('')
     setQueryValue('')
     getOrder()
+
+    // getOrder({sortBy:'amount', sortOrder: 'desc'})
   }
 
   const handlePaymentStatusChange = event => {
@@ -158,7 +162,8 @@ const Page = () => {
             </strong>
           </p>
         </Box>
-      )
+      ),
+      filterable: false
     },
     {
       field: 'cafe',
@@ -175,7 +180,8 @@ const Page = () => {
             <small>{params?.row?.Cafe.address}</small>
           </Typography>
         </Box>
-      )
+      ),
+      filterable: false
     },
     {
       field: 'amount',
@@ -187,7 +193,8 @@ const Page = () => {
             <strong>${params?.row?.amount.toFixed(2)}</strong>
           </p>
         </Box>
-      )
+      ),
+      filterable: false
     },
     {
       field: 'paymentMode',
@@ -199,7 +206,8 @@ const Page = () => {
             <strong>{params?.row?.paymentMode}</strong>
           </p>
         </Box>
-      )
+      ),
+      filterable: false
     },
     {
       field: 'paymentStatus',
@@ -211,7 +219,8 @@ const Page = () => {
             <strong>{params?.row?.paymentStatus}</strong>
           </p>
         </Box>
-      )
+      ),
+      filterable: false
     },
     {
       field: 'createdAt',
@@ -221,7 +230,8 @@ const Page = () => {
         <Box>
           <p>{new Date(params?.row?.createdAt).toLocaleString()}</p>
         </Box>
-      )
+      ),
+      filterable: false
     },
     {
       field: 'actions',
@@ -240,6 +250,7 @@ const Page = () => {
           </Button>
         </Box>
       ),
+      filterable: false,
       sortable: false
     }
   ]

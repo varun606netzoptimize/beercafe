@@ -48,7 +48,11 @@ export async function GET(req) {
     endDate: searchParams.get('endDate'),
     search: searchParams.get('query'), // General search for customer or cafe
     paymentStatus: searchParams.get('paymentStatus'),
-    paymentMode: searchParams.get('paymentMode')
+    paymentMode: searchParams.get('paymentMode'),
+    sortBy: searchParams.get('sortBy'),
+    sortOrder: searchParams.get('sortOrder'),
+    page: Number(searchParams.get('page')),
+    pageSize: Number(searchParams.get('pageSize'))
   }
 
   // Validate filters
@@ -110,6 +114,7 @@ export async function GET(req) {
     // Fetch orders based on the where clause
     const orders = await prisma.order.findMany({
       where: whereClause,
+      orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
       include: {
         Customer: true,
         Cafe: true,
@@ -130,4 +135,24 @@ export async function GET(req) {
 
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
   }
+}
+
+function getOrderBy(sortBy, sortOrder) {
+  const validSortFields = {
+    customerName: {
+      Customer: { firstname: sortOrder || 'asc' }, // Default to ascending if no order provided
+    },
+    cafeName: {
+      Cafe: { name: sortOrder || 'asc' },
+    },
+    amount: {
+      amount: sortOrder || 'asc',
+    },
+    createdAt: {
+      createdAt: sortOrder || 'asc',
+    },
+  };
+
+  // Return the appropriate orderBy field
+  return validSortFields[sortBy] || { createdAt: 'asc' }; // Default sort by createdAt if invalid
 }
