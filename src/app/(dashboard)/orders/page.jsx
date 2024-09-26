@@ -47,43 +47,41 @@ const Page = () => {
   }, [authToken])
 
   const getOrder = ({ startDate, endDate, paymentStatus, queryValue } = {}) => {
-    let url = `${ENDPOINT.GET_ORDERS}`;
-    const params = [];
+    let url = `${ENDPOINT.GET_ORDERS}`
+    const params = []
 
     // Conditionally append query parameters
-    if (startDate) params.push(`startDate=${startDate}`);
-    if (endDate) params.push(`endDate=${endDate}`);
-    if (paymentStatus) params.push(`paymentStatus=${paymentStatus}`);
-    if (queryValue) params.push(`query=${queryValue}`);
+    if (startDate) params.push(`startDate=${startDate}`)
+    if (endDate) params.push(`endDate=${endDate}`)
+    if (paymentStatus) params.push(`paymentStatus=${paymentStatus}`)
+    if (queryValue) params.push(`query=${queryValue}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
-      url += `?${params.join('&')}`;
+      url += `?${params.join('&')}`
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     axios
       .get(url, {
         headers: {
-          Authorization: `Bearer ${authToken.token}`,
-        },
+          Authorization: `Bearer ${authToken.token}`
+        }
       })
-      .then((response) => {
-        const orders = response.data;
+      .then(response => {
+        const orders = response.data
 
-        setOrders(orders);
+        setOrders(orders)
       })
-      .catch((error) => {
-        console.error('Error fetching orders:', error);
+      .catch(error => {
+        console.error('Error fetching orders:', error)
       })
       .finally(() => {
         setIsLoading(false)
         setIsTableRendering(false)
-      });
-  };
-
-
+      })
+  }
 
   const handleOpenModal = order => {
     setSelectedOrder(order)
@@ -115,7 +113,6 @@ const Page = () => {
     }
   }
 
-
   const handleRemoveFilters = () => {
     setStartDateRange(null)
     setEndDateRange(null)
@@ -137,7 +134,6 @@ const Page = () => {
     })
   }
 
-
   const handleQueryValueSubmit = event => {
     event.preventDefault()
 
@@ -148,7 +144,6 @@ const Page = () => {
       queryValue
     })
   }
-
 
   const columns = [
     {
