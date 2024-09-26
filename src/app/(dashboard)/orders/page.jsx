@@ -165,7 +165,11 @@ const Page = () => {
       headerName: 'Customer Name',
       flex: 1,
       renderCell: params => (
-        <Box>
+        <Box
+          sx={{
+            paddingLeft: '16px'
+          }}
+        >
           <p>
             <strong>
               {params?.row?.Customer?.firstname} {params?.row?.Customer?.lastname}
@@ -174,7 +178,7 @@ const Page = () => {
         </Box>
       ),
       filterable: false,
-      sortComparator: (v1, v2) => {}
+      headerClassName: 'first-column-header'
     },
     {
       field: 'cafeName',
@@ -307,7 +311,11 @@ const Page = () => {
         </Box>
       ) : (
         <Card>
-          <CardContent>
+          <CardContent
+            sx={{
+              padding: '16px' // Add padding for better separation from the table
+            }}
+          >
             <Box
               sx={{
                 display: 'flex',
@@ -318,7 +326,7 @@ const Page = () => {
                 gap: 2, // Add some space between items on small screens
                 padding: 2, // Add padding for better separation from the table
                 backgroundColor: 'background.paper', // Change background color for distinction
-                borderRadius: 2, // Make the container rounded for a softer look
+                borderRadius: 2 // Make the container rounded for a softer look
               }}
             >
               <form
@@ -375,7 +383,7 @@ const Page = () => {
                   sx={{
                     minWidth: 300,
                     marginLeft: 'auto',
-                    marginBottom: 1,
+                    marginBottom: 1
 
                     // flexGrow: 1
                   }}
@@ -409,6 +417,19 @@ const Page = () => {
               autoHeight
               getRowId={row => row.id}
               onSortModelChange={handleSortChange}
+              sx={{
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#3f51b5',
+                  fontSize: '13px',
+                  fontWeight: 'bold'
+                },
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  textTransform: 'uppercase'
+                },
+                '& .first-column-header': {
+                  paddingLeft: '24px' // Custom right padding for the first column header
+                }
+              }}
             />
           </Box>
           <OrderDetails open={orderDeatilsOpen} order={selectedOrder} setOpen={setOrderDeatilsOpen} />
