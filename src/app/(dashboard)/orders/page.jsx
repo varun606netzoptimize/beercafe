@@ -5,9 +5,21 @@ import { forwardRef, useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, CircularProgress, Typography, Select, MenuItem, TextField } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  Select,
+  MenuItem,
+  TextField,
+  Card,
+  CardContent
+} from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { format } from 'date-fns'
+
+import padding from 'tailwindcss-logical/plugins/padding'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -275,6 +287,18 @@ const Page = () => {
     return <CustomTextField fullWidth inputRef={ref} {...rest} label={label} value={value} />
   })
 
+  const handleQueryValueChange = value => {
+    setQueryValue(value)
+
+    // Call getOrder immediately after the input change
+    getOrder({
+      startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
+      endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
+      paymentStatus,
+      queryValue: value // Use the updated value directly
+    })
+  }
+
   return (
     <div className='flex flex-col gap-6'>
       {isTableRendering ? (
@@ -282,49 +306,100 @@ const Page = () => {
           <CircularProgress size={32} />
         </Box>
       ) : (
-        <>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', width: '100%' }}>
-            <form onSubmit={handleQueryValueSubmit} style={{ display: 'flex', alignItems: 'end' }}>
-              {/* Date Picker */}
-              <AppReactDatepicker
-                selectsRange
-                monthsShown={2}
-                endDate={endDateRange}
-                selected={startDateRange}
-                startDate={startDateRange}
-                shouldCloseOnSelect={false}
-                id='date-range-picker-months'
-                onChange={handleOnChangeRange}
-                customInput={<CustomInput label='Search Orders by Date' end={endDateRange} start={startDateRange} />}
-              />
-              {/* Payment Status Dropdown */}
-              <Select
-                label='Payment Status'
-                value={paymentStatus}
-                onChange={handlePaymentStatusChange}
-                displayEmpty
-                sx={{ marginLeft: 2, marginBottom: 1, minWidth: 150 }}
+        <Card>
+          <CardContent>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+                flexWrap: 'wrap',
+                gap: 2, // Add some space between items on small screens
+                padding: 2, // Add padding for better separation from the table
+                backgroundColor: 'background.paper', // Change background color for distinction
+                borderRadius: 2, // Make the container rounded for a softer look
+              }}
+            >
+              <form
+                onSubmit={handleQueryValueSubmit}
+                style={{
+                  display: 'flex',
+                  alignItems: 'end',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  gap: 16 // Adding consistent spacing between items
+                }}
               >
-                <MenuItem value=''>All Payment Status</MenuItem>
-                <MenuItem value='PAID'>Paid</MenuItem>
-                <MenuItem value='PENDING'>Unpaid</MenuItem>
-              </Select>
-              {/* Customer Name Input */}
-              <TextField
-                label='Customer Name'
-                value={queryValue}
-                onChange={e => setQueryValue(e.target.value)}
-                sx={{ marginLeft: 2, marginBottom: 1 }}
-              />
-              <Button type='submit' variant='contained' color='primary' sx={{ marginLeft: 2 }}>
-                Search
-              </Button>
-              <Button variant='outlined' color='error' sx={{ marginLeft: 2 }} onClick={handleRemoveFilters}>
-                Remove Filters
-              </Button>
-            </form>
-          </Box>
-          <Box sx={{ height: 400, width: '100%' }}>
+                {/* Date Picker */}
+                <AppReactDatepicker
+                  selectsRange
+                  monthsShown={2}
+                  endDate={endDateRange}
+                  selected={startDateRange}
+                  startDate={startDateRange}
+                  shouldCloseOnSelect={false}
+                  id='date-range-picker-months'
+                  onChange={handleOnChangeRange}
+                  customInput={<CustomInput label='Select Date Range' end={endDateRange} start={startDateRange} />}
+                  sx={{
+                    minWidth: 200,
+                    maxWidth: 250,
+                    paddingBottom: 3 // Control width to ensure it fits well
+                  }}
+                />
+
+                {/* Payment Status Dropdown */}
+                <CustomTextField
+                  select
+                  label='Payment Status'
+                  id='payment-status'
+                  value={paymentStatus}
+                  onChange={handlePaymentStatusChange}
+                  sx={{
+                    minWidth: 200,
+                    marginLeft: 2,
+                    marginBottom: 1 // Margin adjustments for consistency
+                  }}
+                  SelectProps={{ displayEmpty: true }}
+                >
+                  <MenuItem value=''>All Payment Status</MenuItem>
+                  <MenuItem value='PAID'>Paid</MenuItem>
+                  <MenuItem value='PENDING'>Unpaid</MenuItem>
+                </CustomTextField>
+
+                {/* Search Input */}
+                <CustomTextField
+                  value={queryValue}
+                  onChange={e => handleQueryValueChange(e.target.value)}
+                  sx={{
+                    minWidth: 300,
+                    marginLeft: 'auto',
+                    marginBottom: 1,
+
+                    // flexGrow: 1
+                  }}
+                  placeholder='Search by Customer Name or Cafe'
+                />
+
+                {/* Remove Filters Button */}
+                <Button
+                  variant='outlined'
+                  color='error'
+                  sx={{
+                    marginLeft: 2,
+                    marginBottom: 1,
+                    paddingX: 3, // Add horizontal padding for a wider button
+                    flexShrink: 0 // Prevent the button from shrinking on small screens
+                  }}
+                  onClick={handleRemoveFilters}
+                >
+                  Remove Filters
+                </Button>
+              </form>
+            </Box>
+          </CardContent>
+          <Box sx={{ width: '100%' }}>
             <DataGrid
               rows={orders}
               columns={columns}
@@ -337,7 +412,7 @@ const Page = () => {
             />
           </Box>
           <OrderDetails open={orderDeatilsOpen} order={selectedOrder} setOpen={setOrderDeatilsOpen} />
-        </>
+        </Card>
       )}
     </div>
   )
