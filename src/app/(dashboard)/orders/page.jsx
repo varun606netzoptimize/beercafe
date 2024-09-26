@@ -325,7 +325,7 @@ const Page = () => {
               getRowId={row => row.id}
             />
           </Box>
-          <OrderDetails open={orderDeatilsOpen} order={selectedOrder} handleClose={handleCloseModal} />
+          <OrderDetails open={orderDeatilsOpen} order={selectedOrder} setOpen={setOrderDeatilsOpen} />
         </>
       )}
     </div>

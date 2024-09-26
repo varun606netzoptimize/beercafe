@@ -11,8 +11,6 @@ export default function OrderDetails({ open, setOpen, order }) {
     setOpen(false)
   }
 
-  console.log(order, 'Order Details')
-
   return (
     <>
       <Dialog
