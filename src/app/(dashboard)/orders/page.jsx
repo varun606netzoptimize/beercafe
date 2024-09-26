@@ -32,7 +32,7 @@ const Page = () => {
   const [startDateRange, setStartDateRange] = useState(new Date())
   const [endDateRange, setEndDateRange] = useState(new Date())
   const [paymentStatus, setPaymentStatus] = useState('')
-  const [customerName, setCustomerName] = useState('')
+  const [queryValue, setQueryValue] = useState('')
 
   useEffect(() => {
     if (tokenCheck) {
@@ -69,7 +69,7 @@ const Page = () => {
       })
   }
 
-  const getOrderByDate = (startDate, endDate, paymentStatus, customerName) => {
+  const getOrderByDate = (startDate, endDate, paymentStatus, queryValue) => {
     let url = `${ENDPOINT.GET_ORDER_BY_DATE}`
 
     // Append date parameters if they are provided
@@ -77,7 +77,7 @@ const Page = () => {
     if (endDate) url += startDate ? `&endDate=${endDate}` : `?endDate=${endDate}`
     if (paymentStatus)
       url += startDate || endDate ? `&paymentStatus=${paymentStatus}` : `?paymentStatus=${paymentStatus}`
-    if (customerName) url += startDate || endDate || paymentStatus ? `&query=${customerName}` : `?query=${customerName}`
+    if (queryValue) url += startDate || endDate || paymentStatus ? `&query=${queryValue}` : `?query=${queryValue}`
 
     setIsLoading(true)
 
@@ -121,7 +121,7 @@ const Page = () => {
       const formattedStartDate = start ? format(start, 'yyyy-MM-dd') : null
       const formattedEndDate = end ? format(end, 'yyyy-MM-dd') : null
 
-      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, customerName)
+      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, queryValue)
     }
   }
 
@@ -129,7 +129,7 @@ const Page = () => {
     setStartDateRange(new Date())
     setEndDateRange(new Date())
     setPaymentStatus('')
-    setCustomerName('')
+    setQueryValue('')
     getOrders()
   }
 
@@ -142,18 +142,18 @@ const Page = () => {
       const formattedStartDate = format(startDateRange, 'yyyy-MM-dd')
       const formattedEndDate = format(endDateRange, 'yyyy-MM-dd')
 
-      getOrderByDate(formattedStartDate, formattedEndDate, selectedStatus, customerName)
+      getOrderByDate(formattedStartDate, formattedEndDate, selectedStatus, queryValue)
     }
   }
 
-  const handleCustomerNameSubmit = event => {
+  const handleQueryValueSubmit = event => {
     event.preventDefault()
 
     if (startDateRange && endDateRange) {
       const formattedStartDate = format(startDateRange, 'yyyy-MM-dd')
       const formattedEndDate = format(endDateRange, 'yyyy-MM-dd')
 
-      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, customerName)
+      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, queryValue)
     }
   }
 
@@ -274,7 +274,7 @@ const Page = () => {
       ) : (
         <>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'end', width: '100%' }}>
-            <form onSubmit={handleCustomerNameSubmit} style={{ display: 'flex', alignItems: 'end' }}>
+            <form onSubmit={handleQueryValueSubmit} style={{ display: 'flex', alignItems: 'end' }}>
               {/* Date Picker */}
               <AppReactDatepicker
                 selectsRange
@@ -302,8 +302,8 @@ const Page = () => {
               {/* Customer Name Input */}
               <TextField
                 label='Customer Name'
-                value={customerName}
-                onChange={e => setCustomerName(e.target.value)}
+                value={queryValue}
+                onChange={e => setQueryValue(e.target.value)}
                 sx={{ marginLeft: 2, marginBottom: 1 }}
               />
               <Button type='submit' variant='contained' color='primary' sx={{ marginLeft: 2 }}>
