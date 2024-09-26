@@ -39,66 +39,50 @@ const Page = () => {
       if (!authToken.token) {
         redirect('/login')
       } else {
-        getOrders()
+        getOrder()
       }
 
       setPageTitle('Orders')
     }
   }, [authToken])
 
-  const getOrders = () => {
-    const url = `${ENDPOINT.GET_ALL_ORDERS}`
+  const getOrder = ({ startDate, endDate, paymentStatus, queryValue } = {}) => {
+    let url = `${ENDPOINT.GET_ORDERS}`;
+    const params = [];
 
-    setIsLoading(true)
+    // Conditionally append query parameters
+    if (startDate) params.push(`startDate=${startDate}`);
+    if (endDate) params.push(`endDate=${endDate}`);
+    if (paymentStatus) params.push(`paymentStatus=${paymentStatus}`);
+    if (queryValue) params.push(`query=${queryValue}`);
+
+    // If any parameters exist, join them with '&' and append to URL
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+
+    setIsLoading(true);
 
     axios
       .get(url, {
         headers: {
-          Authorization: `Bearer ${authToken.token}`
-        }
+          Authorization: `Bearer ${authToken.token}`,
+        },
       })
-      .then(res => {
-        setOrders(res.data)
+      .then((response) => {
+        const orders = response.data;
+
+        setOrders(orders);
       })
-      .catch(err => {
-        console.log('failed:', err.response)
+      .catch((error) => {
+        console.error('Error fetching orders:', error);
       })
       .finally(() => {
         setIsLoading(false)
         setIsTableRendering(false)
-      })
-  }
+      });
+  };
 
-  const getOrderByDate = ({ startDate, endDate, paymentStatus, queryValue }) => {
-    let url = `${ENDPOINT.GET_ORDER_BY_DATE}`
-
-    // Append date parameters if they are provided
-    if (startDate) url += `?startDate=${startDate}`
-    if (endDate) url += startDate ? `&endDate=${endDate}` : `?endDate=${endDate}`
-    if (paymentStatus)
-      url += startDate || endDate ? `&paymentStatus=${paymentStatus}` : `?paymentStatus=${paymentStatus}`
-    if (queryValue) url += startDate || endDate || paymentStatus ? `&query=${queryValue}` : `?query=${queryValue}`
-
-    setIsLoading(true)
-
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${authToken.token}`
-        }
-      })
-      .then(response => {
-        const orders = response.data
-
-        setOrders(orders)
-      })
-      .catch(error => {
-        console.error('Error fetching orders:', error)
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
-  }
 
 
   const handleOpenModal = order => {
@@ -117,12 +101,12 @@ const Page = () => {
     setStartDateRange(start || null) // Allow start date to be null
     setEndDateRange(end || null) // Allow end date to be null
 
-    // Call getOrderByDate only if at least one of the dates is selected
+    // Call getOrder only if at least one of the dates is selected
     if (start || end) {
       const formattedStartDate = start ? format(start, 'yyyy-MM-dd') : null
       const formattedEndDate = end ? format(end, 'yyyy-MM-dd') : null
 
-      getOrderByDate({
+      getOrder({
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         paymentStatus,
@@ -137,7 +121,7 @@ const Page = () => {
     setEndDateRange(null)
     setPaymentStatus('')
     setQueryValue('')
-    getOrders()
+    getOrder()
   }
 
   const handlePaymentStatusChange = event => {
@@ -145,7 +129,7 @@ const Page = () => {
 
     setPaymentStatus(selectedStatus)
 
-    getOrderByDate({
+    getOrder({
       startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
       endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
       paymentStatus: selectedStatus,
@@ -157,7 +141,7 @@ const Page = () => {
   const handleQueryValueSubmit = event => {
     event.preventDefault()
 
-    getOrderByDate({
+    getOrder({
       startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
       endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
       paymentStatus,
