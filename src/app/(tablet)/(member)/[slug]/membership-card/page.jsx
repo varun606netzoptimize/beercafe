@@ -129,10 +129,10 @@ const Page = ({ params }) => {
               }}
               value={selectRFID}
             >
-              <MenuItem value={'9314890E'}>{'9314890E'}</MenuItem>
-              <MenuItem value={'D30DDD24'}>{'D30DDD24'}</MenuItem>
-              <MenuItem value={'9314872E'}>{'9314872E'}</MenuItem>
-              <MenuItem value={'93148727'}>{'93148727'}</MenuItem>
+              <MenuItem value={'9314890E'}>{'9314890E (Amod Sinha)'}</MenuItem>
+              <MenuItem value={'D30DDD24'}>{'D30DDD24 (Naunihal Singh)'}</MenuItem>
+              <MenuItem value={'9314872E'}>{'9314872E (Neeraj Kumar)'}</MenuItem>
+              <MenuItem value={'93148727'}>{'93148727 (Not Registered)'}</MenuItem>
             </Select>
           </FormControl>
         </Box>
