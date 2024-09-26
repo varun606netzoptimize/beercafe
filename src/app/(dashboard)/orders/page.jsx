@@ -29,8 +29,8 @@ const Page = () => {
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [orderDeatilsOpen, setOrderDeatilsOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
-  const [startDateRange, setStartDateRange] = useState(new Date())
-  const [endDateRange, setEndDateRange] = useState(new Date())
+  const [startDateRange, setStartDateRange] = useState(null)
+  const [endDateRange, setEndDateRange] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState('')
   const [queryValue, setQueryValue] = useState('')
 
@@ -69,7 +69,7 @@ const Page = () => {
       })
   }
 
-  const getOrderByDate = (startDate, endDate, paymentStatus, queryValue) => {
+  const getOrderByDate = ({ startDate, endDate, paymentStatus, queryValue }) => {
     let url = `${ENDPOINT.GET_ORDER_BY_DATE}`
 
     // Append date parameters if they are provided
@@ -100,6 +100,7 @@ const Page = () => {
       })
   }
 
+
   const handleOpenModal = order => {
     setSelectedOrder(order)
     setOrderDeatilsOpen(true)
@@ -121,13 +122,19 @@ const Page = () => {
       const formattedStartDate = start ? format(start, 'yyyy-MM-dd') : null
       const formattedEndDate = end ? format(end, 'yyyy-MM-dd') : null
 
-      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, queryValue)
+      getOrderByDate({
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        paymentStatus,
+        queryValue
+      })
     }
   }
 
+
   const handleRemoveFilters = () => {
-    setStartDateRange(new Date())
-    setEndDateRange(new Date())
+    setStartDateRange(null)
+    setEndDateRange(null)
     setPaymentStatus('')
     setQueryValue('')
     getOrders()
@@ -138,24 +145,26 @@ const Page = () => {
 
     setPaymentStatus(selectedStatus)
 
-    if (startDateRange && endDateRange) {
-      const formattedStartDate = format(startDateRange, 'yyyy-MM-dd')
-      const formattedEndDate = format(endDateRange, 'yyyy-MM-dd')
-
-      getOrderByDate(formattedStartDate, formattedEndDate, selectedStatus, queryValue)
-    }
+    getOrderByDate({
+      startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
+      endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
+      paymentStatus: selectedStatus,
+      queryValue
+    })
   }
+
 
   const handleQueryValueSubmit = event => {
     event.preventDefault()
 
-    if (startDateRange && endDateRange) {
-      const formattedStartDate = format(startDateRange, 'yyyy-MM-dd')
-      const formattedEndDate = format(endDateRange, 'yyyy-MM-dd')
-
-      getOrderByDate(formattedStartDate, formattedEndDate, paymentStatus, queryValue)
-    }
+    getOrderByDate({
+      startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
+      endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
+      paymentStatus,
+      queryValue
+    })
   }
+
 
   const columns = [
     {

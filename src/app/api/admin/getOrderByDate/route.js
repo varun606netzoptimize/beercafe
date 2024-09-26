@@ -42,7 +42,7 @@ function validateFilters(filters) {
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
 
-  // Extract query parameters, with 'query' being the generic search term for customers or cafes
+  // Extract query parameters
   const filters = {
     startDate: searchParams.get('startDate'),
     endDate: searchParams.get('endDate'),
@@ -59,44 +59,55 @@ export async function GET(req) {
   }
 
   try {
-    // Construct dynamic where clause based on filters
-    const whereClause = {
-      // Date range filter, only applied if both startDate and endDate are provided
-      ...(filters.startDate &&
-        filters.endDate && {
-          createdAt: {
-            gte: new Date(filters.startDate),
-            lte: new Date(filters.endDate)
-          }
-        }),
+    // Initialize an empty where clause
+    const whereClause = {}
 
-      // Payment status filter, applied if provided
-      ...(filters.paymentStatus && { paymentStatus: filters.paymentStatus }),
-
-      // Payment mode filter, applied if provided
-      ...(filters.paymentMode && { paymentMode: filters.paymentMode }),
-
-      // General search applied to both Customer names and Cafe names
-      ...(filters.search && {
-        OR: [
-          {
-            Customer: {
-              OR: [
-                { firstname: { contains: filters.search, mode: 'insensitive' } },
-                { lastname: { contains: filters.search, mode: 'insensitive' } }
-              ]
-            }
-          },
-          {
-            Cafe: {
-              name: { contains: filters.search, mode: 'insensitive' }
-            }
-          }
-        ]
-      })
+    // Apply start date filter if present
+    if (filters.startDate) {
+      whereClause.createdAt = { gte: new Date(filters.startDate) }
     }
 
-    // Fetch orders based on filters
+    // Apply end date filter if present, adding to `createdAt` if already set
+    if (filters.endDate) {
+      const endDateWithTime = new Date(filters.endDate)
+
+      endDateWithTime.setHours(23, 59, 59, 999) // Set time to end of the day
+      whereClause.createdAt = {
+        ...(whereClause.createdAt || {}),
+        lte: endDateWithTime
+      }
+    }
+
+    // Apply payment status filter, if provided
+    if (filters.paymentStatus) {
+      whereClause.paymentStatus = filters.paymentStatus
+    }
+
+    // Apply payment mode filter, if provided
+    if (filters.paymentMode) {
+      whereClause.paymentMode = filters.paymentMode
+    }
+
+    // Apply general search filter for Customer and Cafe
+    if (filters.search) {
+      whereClause.OR = [
+        {
+          Customer: {
+            OR: [
+              { firstname: { contains: filters.search, mode: 'insensitive' } },
+              { lastname: { contains: filters.search, mode: 'insensitive' } }
+            ]
+          }
+        },
+        {
+          Cafe: {
+            name: { contains: filters.search, mode: 'insensitive' }
+          }
+        }
+      ]
+    }
+
+    // Fetch orders based on the where clause
     const orders = await prisma.order.findMany({
       where: whereClause,
       include: {
@@ -117,6 +128,6 @@ export async function GET(req) {
   } catch (error) {
     console.error('Error fetching orders:', error)
 
-    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
+return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
   }
 }
