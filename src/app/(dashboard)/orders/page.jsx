@@ -164,7 +164,7 @@ const Page = () => {
   const columns = [
     {
       field: 'customerName',
-      headerName: 'Customer Name',
+      headerName: 'Customer',
       flex: 1,
       renderCell: params => (
         <Box
@@ -193,7 +193,13 @@ const Page = () => {
       headerName: 'Cafe',
       flex: 1,
       renderCell: params => (
-        <Box>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'left',
+          height:'100%',
+        }}>
           <Typography>
             <strong>
               <small>{params?.row?.Cafe.name}</small>
@@ -436,6 +442,7 @@ const Page = () => {
               components={{ NoRowsOverlay }}
               pageSizeOptions={[5, 10, 25]}
               autoHeight
+              rowHeight={60}
               getRowId={row => row.id}
               onSortModelChange={handleSortChange}
               sx={{
