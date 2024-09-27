@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -108,12 +108,17 @@ export default function Page() {
       headerName: 'Brand Name',
       flex: 1,
       renderCell: params => (
-        <Box>
+        <Box
+          sx={{
+            paddingLeft: '16px'
+          }}
+        >
           <p>
             <strong>{params?.row?.Brand?.name}</strong>
           </p>
         </Box>
-      )
+      ),
+      headerClassName: 'first-column-header'
     },
     {
       field: 'name',
@@ -132,7 +137,15 @@ export default function Page() {
       headerName: 'Cafe',
       flex: 1,
       renderCell: params => (
-        <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'left',
+            height: '100%'
+          }}
+        >
           <Typography>
             <strong>
               <small>{params?.row?.Cafe.name}</small>
@@ -144,13 +157,15 @@ export default function Page() {
         </Box>
       )
     },
-    { field: 'SKU', headerName: 'SKU', flex: 1 },
+    { field: 'SKU', headerName: 'SKU', flex: 1,       sortable: false    },
     { field: 'quantity', headerName: 'Quantity', flex: 1 },
-    { field: 'description', headerName: 'Description', flex: 1 },
+
+    // { field: 'description', headerName: 'Description', flex: 1 },
     {
       field: 'productVariation',
       headerName: 'Product Variation',
       flex: 1,
+      sortable: false,
       renderCell: params => (
         <>
           {params?.row?.variations?.length ? (
@@ -212,34 +227,53 @@ export default function Page() {
 
   return (
     <div className='flex flex-col gap-6'>
-      <Card>
-        <Box sx={titleBoxStyle}>
-          <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
-          <Button
-            variant='contained'
-            size='medium'
-            startIcon={<i className='tabler-bottle' />}
-            onClick={() => setOpen(true)}
-          >
-            Add Product
-          </Button>
-        </Box>
-      </Card>
-
       {isTableRendering ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <CircularProgress size={32} />
         </Box>
       ) : (
-        <DataGrid
-          loading={isLoading}
-          rows={products}
-          columns={columns}
-          pagination
-          rowCount={products?.length}
+        <Card>
+          <CardContent
+            sx={{
+              padding: '16px'
+            }}
+          >
+            <Box sx={titleBoxStyle}>
+              <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
+              <Button
+                variant='contained'
+                size='medium'
+                startIcon={<i className='tabler-bottle' />}
+                onClick={() => setOpen(true)}
+              >
+                Add Product
+              </Button>
+            </Box>
+          </CardContent>
 
-          // getRowHeight={() => 'auto'}
-        />
+          <DataGrid
+            loading={isLoading}
+            rows={products}
+            columns={columns}
+            pagination
+            rowCount={products?.length}
+            rowHeight={60}
+            disableColumnFilter
+            sx={{
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#3f51b5',
+                fontSize: '13px',
+                fontWeight: 'bold'
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                textTransform: 'uppercase'
+              },
+              '& .first-column-header': {
+                paddingLeft: '24px'
+              }
+            }}
+          />
+        </Card>
       )}
 
       <AddProductDrawer open={open} onClose={() => setOpen(false)} getProducts={getProducts} />
