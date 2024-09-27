@@ -477,7 +477,7 @@ return rowCountRef.current
           </CardContent>
           <Box sx={{ width: '100%' }}>
             <DataGrid
-              rows={orders.data}
+              rows={orders?.data}
               loading={isLoading}
               columns={columns}
               disableSelectionOnClick={true}
