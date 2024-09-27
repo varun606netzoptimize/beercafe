@@ -460,6 +460,7 @@ const Page = () => {
           <Box sx={{ width: '100%' }}>
             <DataGrid
               rows={orders.data}
+              loading={isLoading}
               columns={columns}
               disableSelectionOnClick={true}
               rowCount={rowCount}
