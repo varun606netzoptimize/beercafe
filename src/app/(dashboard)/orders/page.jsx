@@ -39,6 +39,7 @@ const Page = () => {
   const [endDateRange, setEndDateRange] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState('')
   const [queryValue, setQueryValue] = useState('')
+  const [debounceTimer, setDebounceTimer] = useState(null)
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10
@@ -55,6 +56,15 @@ const Page = () => {
       setPageTitle('Orders')
     }
   }, [authToken])
+
+  useEffect(() => {
+    // Cleanup function to clear the timer when the component unmounts
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+      }
+    }
+  }, [debounceTimer])
 
   const getOrder = ({ startDate, endDate, paymentStatus, queryValue, sortBy, sortOrder, page, pageSize } = {}) => {
     let url = `${ENDPOINT.GET_ORDERS}`
@@ -321,13 +331,21 @@ const Page = () => {
   const handleQueryValueChange = value => {
     setQueryValue(value)
 
-    // Call getOrder immediately after the input change
-    getOrder({
-      startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
-      endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
-      paymentStatus,
-      queryValue: value // Use the updated value directly
-    })
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+
+    const timer = setTimeout(() => {
+      // Call getOrder immediately after the input change
+      getOrder({
+        startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
+        endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
+        paymentStatus,
+        queryValue: value // Use the updated value directly
+      })
+    }, 500)
+
+    setDebounceTimer(timer)
   }
 
   const handlePageSizeChange = pageInfo => {
@@ -337,7 +355,7 @@ const Page = () => {
       pageSize: pageInfo.pageSize
     }))
 
-    console.log(pageInfo, "pageInfo")
+    console.log(pageInfo, 'pageInfo')
 
     getOrder({
       startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
