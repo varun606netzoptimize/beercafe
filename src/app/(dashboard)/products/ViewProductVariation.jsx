@@ -135,7 +135,9 @@ export default function ViewProductVariation({
   const startIndex = page * pageSize
   const paginatedData = myProductVariationData?.slice(startIndex, startIndex + pageSize)
 
-  return (
+  console.log(productData, 'productData')
+
+return (
     <>
       <Dialog
         open={open}
@@ -150,7 +152,7 @@ export default function ViewProductVariation({
           className='flex flex-row items-center justify-between'
           sx={{ padding: 4, paddingLeft: 6, paddingRight: 6, marginBottom: -4 }}
         >
-          <h3>{productData?.name} Price Variation</h3>
+          <h3 className='w-fit'>{productData?.name} Price Variation - <span className='font-normal text-base'>{productData?.Cafe.name}</span> </h3>
           <Button
             variant='contained'
             color='primary'
