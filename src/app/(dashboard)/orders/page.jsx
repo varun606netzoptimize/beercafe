@@ -1,5 +1,4 @@
 'use client'
-
 import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { redirect } from 'next/navigation'
@@ -20,13 +19,12 @@ import {
 } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { format } from 'date-fns'
-
 import padding from 'tailwindcss-logical/plugins/padding'
 
 import { AuthContext } from '@/context/AuthContext'
+import AppReactDatepicker from '@/@core/components/date-picker'
 import { ENDPOINT } from '@/endpoints'
 import OrderDetails from './OrderDeatils'
-import AppReactDatepicker from '@/@core/components/date-picker'
 import CustomTextField from '@/@core/components/mui/TextField'
 
 const Page = () => {
@@ -40,6 +38,7 @@ const Page = () => {
   const [paymentStatus, setPaymentStatus] = useState('')
   const [queryValue, setQueryValue] = useState('')
   const [debounceTimer, setDebounceTimer] = useState(null)
+
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10
@@ -373,7 +372,9 @@ const Page = () => {
     if (orders?.meta?.totalOrdersCount !== undefined) {
       rowCountRef.current = orders?.meta?.totalOrdersCount
     }
-    return rowCountRef.current
+
+
+return rowCountRef.current
   }, [orders?.meta?.totalOrdersCount])
 
   return (
@@ -440,7 +441,6 @@ const Page = () => {
                   <MenuItem value='PAID'>Paid</MenuItem>
                   <MenuItem value='PENDING'>Unpaid</MenuItem>
                 </CustomTextField>
-
                 <AppReactDatepicker
                   selectsRange
                   monthsShown={2}
