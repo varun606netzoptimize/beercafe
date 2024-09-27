@@ -1,244 +1,244 @@
-datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
-}
+  datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+  }
 
-generator client {
-  provider = "prisma-client-js"
-}
+  generator client {
+    provider = "prisma-client-js"
+  }
 
-model Cafe {
-  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
-  slug                String?   @unique
-  videoUrl            String?
-  location            String
-  address             String
-  description         String?
-  parentId            String?   @db.ObjectId
-  priceConversionRate Float?
-  createdAt           DateTime  @default(now()) @map("created_at")
-  updatedAt           DateTime  @updatedAt @map("updated_at")
-  deletedAt           DateTime? @map("deleted_at")
+  model Cafe {
+    id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+    name                String
+    slug                String?   @unique
+    videoUrl            String?
+    location            String
+    address             String
+    description         String?
+    parentId            String?   @db.ObjectId
+    priceConversionRate Float?
+    createdAt           DateTime  @default(now()) @map("created_at")
+    updatedAt           DateTime  @updatedAt @map("updated_at")
+    deletedAt           DateTime? @map("deleted_at")
 
-  parent   Cafe?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children Cafe[] @relation("ParentChild")
+    parent   Cafe?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    children Cafe[] @relation("ParentChild")
 
-  cafeUsers     CafeUser[]
-  CafeCustomers CafeCustomers[]
-  CafeBrands    CafeBrands[]
-  MachineMaster MachineMaster[]
-  RFIDMaster    RFIDMaster[]
-  Product       Product[]
-  Order         Order[]
-}
+    cafeUsers     CafeUser[]
+    CafeCustomers CafeCustomers[]
+    CafeBrands    CafeBrands[]
+    MachineMaster MachineMaster[]
+    RFIDMaster    RFIDMaster[]
+    Product       Product[]
+    Order         Order[]
+  }
 
-model CafeUser {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  cafeId    String    @db.ObjectId
-  userId    String    @db.ObjectId
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  model CafeUser {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    cafeId    String    @db.ObjectId
+    userId    String    @db.ObjectId
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
 
-  user User  @relation(fields: [userId], references: [id])
-  cafe Cafe? @relation(fields: [cafeId], references: [id])
+    user User  @relation(fields: [userId], references: [id])
+    cafe Cafe? @relation(fields: [cafeId], references: [id])
 
-  // @@map("cafe_users")
-}
+    // @@map("cafe_users")
+  }
 
-model User {
-  id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
-  name                  String
-  email                 String?                 @unique
-  phoneNumber           String?                 @map("phone_number")
-  password              String?
-  userTypeId            String                  @db.ObjectId
-  createdAt             DateTime                @default(now()) @map("created_at")
-  updatedAt             DateTime                @updatedAt @map("updated_at")
-  deletedAt             DateTime?               @map("deleted_at")
-  userType              UserType                @relation(fields: [userTypeId], references: [id])
-  cafeUsers             CafeUser[]
-  CustomerPointsHistory CustomerPointsHistory[]
+  model User {
+    id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
+    name                  String
+    email                 String?                 @unique
+    phoneNumber           String?                 @map("phone_number")
+    password              String?
+    userTypeId            String                  @db.ObjectId
+    createdAt             DateTime                @default(now()) @map("created_at")
+    updatedAt             DateTime                @updatedAt @map("updated_at")
+    deletedAt             DateTime?               @map("deleted_at")
+    userType              UserType                @relation(fields: [userTypeId], references: [id])
+    cafeUsers             CafeUser[]
+    CustomerPointsHistory CustomerPointsHistory[]
 
-  // @@map("users")
-}
+    // @@map("users")
+  }
 
-model UserType {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  type      String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  model UserType {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    type      String
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
 
-  users User[]
+    users User[]
 
-  // @@map("user_type")
-}
+    // @@map("user_type")
+  }
 
-model Customer {
-  id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
-  firstname             String
-  lastname              String
-  phoneNumber           String?                 @map("phone_number")
-  email                 String?
-  points                Float
-  createdAt             DateTime                @default(now()) @map("created_at")
-  updatedAt             DateTime                @updatedAt @map("updated_at")
-  deletedAt             DateTime?               @map("deleted_at")
-  customerRFID          CustomerRFID[]
-  CafeCustomers         CafeCustomers[]
-  Order                 Order[]
-  CustomerPointsHistory CustomerPointsHistory[]
-}
+  model Customer {
+    id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
+    firstname             String
+    lastname              String
+    phoneNumber           String?                 @map("phone_number")
+    email                 String?
+    points                Float
+    createdAt             DateTime                @default(now()) @map("created_at")
+    updatedAt             DateTime                @updatedAt @map("updated_at")
+    deletedAt             DateTime?               @map("deleted_at")
+    customerRFID          CustomerRFID[]
+    CafeCustomers         CafeCustomers[]
+    Order                 Order[]
+    CustomerPointsHistory CustomerPointsHistory[]
+  }
 
-model CustomerPointsHistory {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  customerId String    @db.ObjectId
-  userId     String?   @db.ObjectId
-  orderId    String?   @db.ObjectId
-  amount     Float // Changed from Int to Float
-  action     String
-  status     String
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
-  Customer   Customer  @relation(fields: [customerId], references: [id])
-  User       User?     @relation(fields: [userId], references: [id])
-  Order      Order?    @relation(fields: [orderId], references: [id])
-}
+  model CustomerPointsHistory {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    customerId String    @db.ObjectId
+    userId     String?   @db.ObjectId
+    orderId    String?   @db.ObjectId
+    amount     Float // Changed from Int to Float
+    action     String
+    status     String
+    createdAt  DateTime  @default(now()) @map("created_at")
+    updatedAt  DateTime  @updatedAt @map("updated_at")
+    deletedAt  DateTime? @map("deleted_at")
+    Customer   Customer  @relation(fields: [customerId], references: [id])
+    User       User?     @relation(fields: [userId], references: [id])
+    Order      Order?    @relation(fields: [orderId], references: [id])
+  }
 
-model Otp {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  phoneNumber String   @map("phone_number")
-  otp         String
-  expiresAt   DateTime
-  createdAt   DateTime @default(now()) @map("created_at")
-  verified    Boolean  @default(false)
+  model Otp {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    phoneNumber String   @map("phone_number")
+    otp         String
+    expiresAt   DateTime
+    createdAt   DateTime @default(now()) @map("created_at")
+    verified    Boolean  @default(false)
 
-  @@index([phoneNumber])
-}
+    @@index([phoneNumber])
+  }
 
-model CafeCustomers {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  cafeId     String    @db.ObjectId
-  customerID String    @db.ObjectId
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
+  model CafeCustomers {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    cafeId     String    @db.ObjectId
+    customerID String    @db.ObjectId
+    createdAt  DateTime  @default(now()) @map("created_at")
+    updatedAt  DateTime  @updatedAt @map("updated_at")
+    deletedAt  DateTime? @map("deleted_at")
 
-  cafe     Cafe?     @relation(fields: [cafeId], references: [id])
-  Customer Customer? @relation(fields: [customerID], references: [id])
-}
+    cafe     Cafe?     @relation(fields: [cafeId], references: [id])
+    Customer Customer? @relation(fields: [customerID], references: [id])
+  }
 
-model RFIDMaster {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  rfidNumber   String         @map("rfid_number")
-  expiry       DateTime       @map("expiry")
-  cafeId       String         @db.ObjectId
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
-  deletedAt    DateTime?      @map("deleted_at")
-  customerRFID CustomerRFID[]
+  model RFIDMaster {
+    id           String         @id @default(auto()) @map("_id") @db.ObjectId
+    rfidNumber   String         @map("rfid_number")
+    expiry       DateTime       @map("expiry")
+    cafeId       String         @db.ObjectId
+    createdAt    DateTime       @default(now()) @map("created_at")
+    updatedAt    DateTime       @updatedAt @map("updated_at")
+    deletedAt    DateTime?      @map("deleted_at")
+    customerRFID CustomerRFID[]
 
-  Cafe Cafe? @relation(fields: [cafeId], references: [id])
-}
+    Cafe Cafe? @relation(fields: [cafeId], references: [id])
+  }
 
-model CustomerRFID {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  customerId   String      @db.ObjectId
-  rFIDMasterId String      @db.ObjectId
-  Customer     Customer?   @relation(fields: [customerId], references: [id])
-  RFIDMaster   RFIDMaster? @relation(fields: [rFIDMasterId], references: [id])
-}
+  model CustomerRFID {
+    id           String      @id @default(auto()) @map("_id") @db.ObjectId
+    customerId   String      @db.ObjectId
+    rFIDMasterId String      @db.ObjectId
+    Customer     Customer?   @relation(fields: [customerId], references: [id])
+    RFIDMaster   RFIDMaster? @relation(fields: [rFIDMasterId], references: [id])
+  }
 
-model Brands {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  logo        String
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  deletedAt   DateTime?    @map("deleted_at")
-  CafeBrands  CafeBrands[]
-  Product     Product[]
-}
+  model Brands {
+    id          String       @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    description String
+    logo        String
+    createdAt   DateTime     @default(now()) @map("created_at")
+    updatedAt   DateTime     @updatedAt @map("updated_at")
+    deletedAt   DateTime?    @map("deleted_at")
+    CafeBrands  CafeBrands[]
+    Product     Product[]
+  }
 
-model CafeBrands {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  BrandID String @db.ObjectId
-  CafeID  String @db.ObjectId
+  model CafeBrands {
+    id      String @id @default(auto()) @map("_id") @db.ObjectId
+    BrandID String @db.ObjectId
+    CafeID  String @db.ObjectId
 
-  Brand Brands? @relation(fields: [BrandID], references: [id])
-  Cafe  Cafe?   @relation(fields: [CafeID], references: [id])
-}
+    Brand Brands? @relation(fields: [BrandID], references: [id])
+    Cafe  Cafe?   @relation(fields: [CafeID], references: [id])
+  }
 
-model Product {
-  id          String             @id @default(auto()) @map("_id") @db.ObjectId
-  brandId     String             @db.ObjectId
-  cafeId      String?            @db.ObjectId
-  name        String
-  SKU         String             @unique
-  description String?
-  quantity    Int
-  image       String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  deletedAt   DateTime?
-  variations  ProductVariation[]
-  Brand       Brands             @relation(fields: [brandId], references: [id])
-  Cafe        Cafe?              @relation(fields: [cafeId], references: [id])
-}
+  model Product {
+    id          String             @id @default(auto()) @map("_id") @db.ObjectId
+    brandId     String             @db.ObjectId
+    cafeId      String?            @db.ObjectId
+    name        String
+    SKU         String             @unique
+    description String?
+    quantity    Int
+    image       String?
+    createdAt   DateTime           @default(now())
+    updatedAt   DateTime           @updatedAt
+    deletedAt   DateTime?
+    variations  ProductVariation[]
+    Brand       Brands             @relation(fields: [brandId], references: [id])
+    Cafe        Cafe?              @relation(fields: [cafeId], references: [id])
+  }
 
-model ProductVariation {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  productId    String        @db.ObjectId
-  key          String
-  value        String?
-  salePrice    Float
-  regularPrice Float
-  points       Int
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  deletedAt    DateTime?
-  product      Product?      @relation(fields: [productId], references: [id])
-  OrderDetail  OrderDetail[]
-}
+  model ProductVariation {
+    id           String        @id @default(auto()) @map("_id") @db.ObjectId
+    productId    String        @db.ObjectId
+    key          String
+    value        String?
+    salePrice    Float
+    regularPrice Float
+    points       Int
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    deletedAt    DateTime?
+    product      Product?      @relation(fields: [productId], references: [id])
+    OrderDetail  OrderDetail[]
+  }
 
-model Order {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  customerId    String?       @db.ObjectId
-  cafeId        String?       @db.ObjectId
-  amount        Float
-  rfidMasterId  String?
-  paymentMode   String
-  paymentStatus String
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  deletedAt     DateTime?
-  details       OrderDetail[]
+  model Order {
+    id            String        @id @default(auto()) @map("_id") @db.ObjectId
+    customerId    String?       @db.ObjectId
+    cafeId        String?       @db.ObjectId
+    amount        Float
+    rfidMasterId  String?
+    paymentMode   String
+    paymentStatus String
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    deletedAt     DateTime?
+    details       OrderDetail[]
 
-  Customer              Customer?               @relation(fields: [customerId], references: [id])
-  Cafe                  Cafe?                   @relation(fields: [cafeId], references: [id])
-  CustomerPointsHistory CustomerPointsHistory[]
-}
+    Customer              Customer?               @relation(fields: [customerId], references: [id])
+    Cafe                  Cafe?                   @relation(fields: [cafeId], references: [id])
+    CustomerPointsHistory CustomerPointsHistory[]
+  }
 
-model OrderDetail {
-  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
-  orderId            String            @db.ObjectId
-  quantity           String
-  amount             Float
-  productVariationId String            @db.ObjectId
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  order              Order?            @relation(fields: [orderId], references: [id])
-  productVariation   ProductVariation? @relation(fields: [productVariationId], references: [id])
-}
+  model OrderDetail {
+    id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+    orderId            String            @db.ObjectId
+    quantity           String
+    amount             Float
+    productVariationId String            @db.ObjectId
+    createdAt          DateTime          @default(now())
+    updatedAt          DateTime          @updatedAt
+    order              Order?            @relation(fields: [orderId], references: [id])
+    productVariation   ProductVariation? @relation(fields: [productVariationId], references: [id])
+  }
 
-model MachineMaster {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  cafeId           String @db.ObjectId
-  machineRefNumber String @unique
+  model MachineMaster {
+    id               String @id @default(auto()) @map("_id") @db.ObjectId
+    cafeId           String @db.ObjectId
+    machineRefNumber String @unique
 
-  Cafe Cafe @relation(fields: [cafeId], references: [id])
-}
+    Cafe Cafe @relation(fields: [cafeId], references: [id])
+  }

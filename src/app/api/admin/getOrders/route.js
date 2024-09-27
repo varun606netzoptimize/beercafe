@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 
 import { PrismaClient } from '@prisma/client'
 
+import { getUserIdFromToken } from '../../utils/jwt'
+
 // Initialize Prisma Client
 const prisma = new PrismaClient()
 
@@ -40,7 +42,19 @@ function validateFilters(filters) {
 }
 
 export async function GET(req) {
-  const { searchParams } = new URL(req.url)
+  const { searchParams } = new URL(req.url);
+
+  const token = req.headers.get('Authorization')?.split(' ')[1]
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const userId = getUserIdFromToken(token)
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+  }
 
   // Extract query parameters
   const filters = {
@@ -63,8 +77,24 @@ export async function GET(req) {
   }
 
   try {
+
+    const cafeUsers = await prisma.cafeUser.findMany({
+      where: {userId: userId},
+      select : {cafeId: true}
+    })
+
+    if(cafeUsers.length === 0){
+      return NextResponse.json([]);
+    }
+
+    const cafeIds = cafeUsers.map(cu => cu.cafeId);
+
     // Initialize an empty where clause
-    const whereClause = {}
+    const whereClause = {
+      cafeId : {
+        in: cafeIds
+      }
+    }
 
     // Apply start date filter if present
     if (filters.startDate) {
@@ -154,5 +184,5 @@ function getOrderBy(sortBy, sortOrder) {
   };
 
   // Return the appropriate orderBy field
-  return validSortFields[sortBy] || { createdAt: 'asc' }; // Default sort by createdAt if invalid
+  return validSortFields[sortBy] || { createdAt: 'desc' }; // Default sort by createdAt if invalid
 }
