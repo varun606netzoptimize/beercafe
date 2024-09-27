@@ -42,7 +42,7 @@ function validateFilters(filters) {
 }
 
 export async function GET(req) {
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url)
 
   const token = req.headers.get('Authorization')?.split(' ')[1]
 
@@ -65,8 +65,8 @@ export async function GET(req) {
     paymentMode: searchParams.get('paymentMode'),
     sortBy: searchParams.get('sortBy'),
     sortOrder: searchParams.get('sortOrder'),
-    page: Number(searchParams.get('page')),
-    pageSize: Number(searchParams.get('pageSize'))
+    page: Number(searchParams.get('page')) || 1,
+    pageSize: Number(searchParams.get('pageSize')) || 10
   }
 
   // Validate filters
@@ -77,21 +77,20 @@ export async function GET(req) {
   }
 
   try {
-
     const cafeUsers = await prisma.cafeUser.findMany({
-      where: {userId: userId},
-      select : {cafeId: true}
+      where: { userId: userId },
+      select: { cafeId: true }
     })
 
-    if(cafeUsers.length === 0){
-      return NextResponse.json([]);
+    if (cafeUsers.length === 0) {
+      return NextResponse.json([])
     }
 
-    const cafeIds = cafeUsers.map(cu => cu.cafeId);
+    const cafeIds = cafeUsers.map(cu => cu.cafeId)
 
     // Initialize an empty where clause
     const whereClause = {
-      cafeId : {
+      cafeId: {
         in: cafeIds
       }
     }
@@ -141,10 +140,17 @@ export async function GET(req) {
       ]
     }
 
+    const skip = (filters.page - 1) * filters.pageSize
+    const take = filters.pageSize
+
+    const totalOrdersCount = await prisma.order.count({ where: whereClause })
+
     // Fetch orders based on the where clause
     const orders = await prisma.order.findMany({
       where: whereClause,
       orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
+      skip,
+      take,
       include: {
         Customer: true,
         Cafe: true,
@@ -159,7 +165,15 @@ export async function GET(req) {
       }
     })
 
-    return NextResponse.json(orders)
+    return NextResponse.json({
+      data: orders,
+      meta: {
+        totalOrdersCount,
+        currentPage: filters.page,
+        pageSize: filters.pageSize,
+        totalPages: Math.ceil(totalOrdersCount / filters.pageSize)
+      }
+    })
   } catch (error) {
     console.error('Error fetching orders:', error)
 
@@ -170,19 +184,19 @@ export async function GET(req) {
 function getOrderBy(sortBy, sortOrder) {
   const validSortFields = {
     customerName: {
-      Customer: { firstname: sortOrder || 'asc' }, // Default to ascending if no order provided
+      Customer: { firstname: sortOrder || 'asc' } // Default to ascending if no order provided
     },
     cafeName: {
-      Cafe: { name: sortOrder || 'asc' },
+      Cafe: { name: sortOrder || 'asc' }
     },
     amount: {
-      amount: sortOrder || 'asc',
+      amount: sortOrder || 'asc'
     },
     createdAt: {
-      createdAt: sortOrder || 'asc',
-    },
-  };
+      createdAt: sortOrder || 'asc'
+    }
+  }
 
   // Return the appropriate orderBy field
-  return validSortFields[sortBy] || { createdAt: 'desc' }; // Default sort by createdAt if invalid
+  return validSortFields[sortBy] || { createdAt: 'desc' } // Default sort by createdAt if invalid
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useContext, useEffect, useState } from 'react'
+import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { redirect } from 'next/navigation'
 
@@ -29,14 +29,6 @@ import OrderDetails from './OrderDeatils'
 import AppReactDatepicker from '@/@core/components/date-picker'
 import CustomTextField from '@/@core/components/mui/TextField'
 
-const NoRowsOverlay = () => (
-  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-    <Typography variant='body1' color='textSecondary'>
-      No orders found for this date range.
-    </Typography>
-  </Box>
-)
-
 const Page = () => {
   const { authToken, tokenCheck, setPageTitle, setOrders, orders } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
@@ -47,6 +39,10 @@ const Page = () => {
   const [endDateRange, setEndDateRange] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState('')
   const [queryValue, setQueryValue] = useState('')
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10
+  })
 
   useEffect(() => {
     if (tokenCheck) {
@@ -60,7 +56,7 @@ const Page = () => {
     }
   }, [authToken])
 
-  const getOrder = ({ startDate, endDate, paymentStatus, queryValue, sortBy, sortOrder } = {}) => {
+  const getOrder = ({ startDate, endDate, paymentStatus, queryValue, sortBy, sortOrder, page, pageSize } = {}) => {
     let url = `${ENDPOINT.GET_ORDERS}`
     const params = []
 
@@ -71,12 +67,14 @@ const Page = () => {
     if (queryValue) params.push(`query=${queryValue}`)
     if (sortBy) params.push(`sortBy=${sortBy}`)
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
+    if (page) params.push(`page=${page}`)
+    if (pageSize) params.push(`pageSize=${pageSize}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
       url += `?${params.join('&')}`
     }
-
+    setIsTableRendering(true)
     setIsLoading(true)
 
     axios
@@ -193,13 +191,15 @@ const Page = () => {
       headerName: 'Cafe',
       flex: 1,
       renderCell: params => (
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'left',
-          height:'100%',
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'left',
+            height: '100%'
+          }}
+        >
           <Typography>
             <strong>
               <small>{params?.row?.Cafe.name}</small>
@@ -330,6 +330,32 @@ const Page = () => {
     })
   }
 
+  const handlePageSizeChange = pageInfo => {
+    setPaginationModel(prevModel => ({
+      ...prevModel,
+      page: pageInfo.page,
+      pageSize: pageInfo.pageSize
+    }))
+
+    getOrder({
+      startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
+      endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
+      paymentStatus,
+      queryValue,
+      page: pageInfo.page,
+      pageSize: pageInfo.pageSize
+    })
+  }
+
+  const rowCountRef = useRef(orders?.meta?.totalOrdersCount || 0)
+
+  const rowCount = useMemo(() => {
+    if (orders?.meta?.totalOrdersCount !== undefined) {
+      rowCountRef.current = orders?.meta?.totalOrdersCount
+    }
+    return rowCountRef.current
+  }, [orders?.meta?.totalOrdersCount])
+
   return (
     <div className='flex flex-col gap-6'>
       {isTableRendering ? (
@@ -340,7 +366,7 @@ const Page = () => {
         <Card>
           <CardContent
             sx={{
-              padding: '16px' // Add padding for better separation from the table
+              padding: '16px'
             }}
           >
             <Box
@@ -350,10 +376,10 @@ const Page = () => {
                 alignItems: 'center',
                 width: '100%',
                 flexWrap: 'wrap',
-                gap: 2, // Add some space between items on small screens
-                padding: 2, // Add padding for better separation from the table
-                backgroundColor: 'background.paper', // Change background color for distinction
-                borderRadius: 2 // Make the container rounded for a softer look
+                gap: 2,
+                padding: 2,
+                backgroundColor: 'background.paper',
+                borderRadius: 2
               }}
             >
               <form
@@ -363,7 +389,7 @@ const Page = () => {
                   alignItems: 'end',
                   justifyContent: 'space-between',
                   width: '100%',
-                  gap: 16 // Adding consistent spacing between items
+                  gap: 16
                 }}
               >
                 {/* Search Input */}
@@ -376,10 +402,6 @@ const Page = () => {
                   }}
                   placeholder='Search by Customer Name or Cafe'
                 />
-
-                {/* Payment Status Dropdown */}
-
-                {/* Date Picker */}
 
                 <CustomTextField
                   select
@@ -417,15 +439,14 @@ const Page = () => {
                   }}
                 />
 
-                {/* Remove Filters Button */}
                 <Button
                   variant='outlined'
                   color='error'
                   sx={{
                     marginLeft: 2,
                     marginBottom: 1,
-                    paddingX: 3, // Add horizontal padding for a wider button
-                    flexShrink: 0 // Prevent the button from shrinking on small screens
+                    paddingX: 3,
+                    flexShrink: 0
                   }}
                   onClick={handleRemoveFilters}
                 >
@@ -436,10 +457,13 @@ const Page = () => {
           </CardContent>
           <Box sx={{ width: '100%' }}>
             <DataGrid
-              rows={orders}
+              rows={orders.data}
               columns={columns}
-              disableSelectionOnClick
-              components={{ NoRowsOverlay }}
+              disableSelectionOnClick={true}
+              rowCount={rowCount}
+              paginationMode='server'
+              paginationModel={paginationModel}
+              onPaginationModelChange={handlePageSizeChange}
               pageSizeOptions={[5, 10, 25]}
               autoHeight
               rowHeight={60}
@@ -455,7 +479,7 @@ const Page = () => {
                   textTransform: 'uppercase'
                 },
                 '& .first-column-header': {
-                  paddingLeft: '24px' // Custom right padding for the first column header
+                  paddingLeft: '24px'
                 }
               }}
             />
