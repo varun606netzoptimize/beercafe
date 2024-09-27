@@ -337,12 +337,14 @@ const Page = () => {
       pageSize: pageInfo.pageSize
     }))
 
+    console.log(pageInfo, "pageInfo")
+
     getOrder({
       startDate: startDateRange ? format(startDateRange, 'yyyy-MM-dd') : null,
       endDate: endDateRange ? format(endDateRange, 'yyyy-MM-dd') : null,
       paymentStatus,
       queryValue,
-      page: pageInfo.page,
+      page: pageInfo.page + 1,
       pageSize: pageInfo.pageSize
     })
   }
