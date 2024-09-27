@@ -84,7 +84,7 @@ const Page = () => {
     if (params.length > 0) {
       url += `?${params.join('&')}`
     }
-    // setIsTableRendering(true)
+
     setIsLoading(true)
 
     axios
