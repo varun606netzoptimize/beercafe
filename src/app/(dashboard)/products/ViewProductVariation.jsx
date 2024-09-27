@@ -173,7 +173,9 @@ return (
             columns={columns}
             pagination
             paginationModel={paginationModel}
-            pageSizeOptions={[10, 20, 30]}
+            disableSelectionOnClick={true}
+            pageSizeOptions={[5, 10, 25]}
+            autoHeight
             onPaginationModelChange={newPaginationModel => {
               setPaginationModel(newPaginationModel)
             }}

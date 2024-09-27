@@ -198,5 +198,5 @@ function getOrderBy(sortBy, sortOrder) {
   }
 
   // Return the appropriate orderBy field
-  return validSortFields[sortBy] || { createdAt: 'desc' } // Default sort by createdAt if invalid
+  return validSortFields[sortBy] || { createdAt: 'desc' }
 }

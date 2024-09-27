@@ -49,10 +49,19 @@ export default function Page() {
     }
   }, [authToken])
 
-  const getProducts = () => {
-    const url = `${ENDPOINT.GET_PRODUCT}`
+  const getProducts = ({ sortBy, sortOrder, page, pageSize } = {}) => {
+    let url = `${ENDPOINT.GET_PRODUCT}`
+    const params = []
 
-    console.log(':url', url)
+    if (sortBy) params.push(`sortBy=${sortBy}`)
+    if (sortOrder) params.push(`sortOrder=${sortOrder}`)
+    if (page) params.push(`page=${page}`)
+    if (pageSize) params.push(`pageSize=${pageSize}`)
+
+    // If any parameters exist, join them with '&' and append to URL
+    if (params.length > 0) {
+      url += `?${params.join('&')}`
+    }
 
     setIsLoading(true)
 
@@ -104,7 +113,7 @@ export default function Page() {
 
   const columns = [
     {
-      field: 'brand',
+      field: 'brandName',
       headerName: 'Brand Name',
       flex: 1,
       renderCell: params => (
@@ -121,7 +130,7 @@ export default function Page() {
       headerClassName: 'first-column-header'
     },
     {
-      field: 'name',
+      field: 'productName',
       headerName: 'Product Name',
       flex: 1,
       renderCell: params => (
@@ -133,7 +142,7 @@ export default function Page() {
       )
     },
     {
-      field: 'cafe',
+      field: 'cafeName',
       headerName: 'Cafe',
       flex: 1,
       renderCell: params => (
@@ -157,7 +166,7 @@ export default function Page() {
         </Box>
       )
     },
-    { field: 'SKU', headerName: 'SKU', flex: 1,       sortable: false    },
+    { field: 'SKU', headerName: 'SKU', flex: 1, sortable: false },
     { field: 'quantity', headerName: 'Quantity', flex: 1 },
 
     // { field: 'description', headerName: 'Description', flex: 1 },
@@ -225,6 +234,18 @@ export default function Page() {
     }
   ]
 
+  const handleSortChange = sortModel => {
+    console.log(sortModel, 'sortModel')
+
+    if (sortModel?.length > 0) {
+      const { field, sort } = sortModel[0]
+
+      getProducts({ sortBy: field, sortOrder: sort })
+    } else {
+      getProducts()
+    }
+  }
+
   return (
     <div className='flex flex-col gap-6'>
       {isTableRendering ? (
@@ -258,7 +279,11 @@ export default function Page() {
             pagination
             rowCount={products?.length}
             rowHeight={60}
+            autoHeight
+            disableSelectionOnClick={true}
             disableColumnFilter
+            disableRowSelectionOnClick
+            onSortModelChange={handleSortChange}
             sx={{
               '& .MuiDataGrid-columnHeaders': {
                 backgroundColor: '#3f51b5',
