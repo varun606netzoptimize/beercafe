@@ -13,6 +13,7 @@ import { PieChart } from '@mui/x-charts/PieChart'
 import { Box, Button, Card, Typography, CircularProgress } from '@mui/material'
 
 import { AuthContext } from '@/context/AuthContext'
+import EarningReportsWithTabs from './(components)/EarningReportsWithTabs'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -79,30 +80,7 @@ export default function Page() {
               </Typography>
             </Card>
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#28C76F' }}>
-              <Typography variant='h6'>Parent Cafes</Typography>
-              <Typography variant='h4'>
-                {cafes?.pagination?.totalCafes ? (
-                  cafes?.cafes?.filter(cafe => cafe.parentId === null)?.length
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#00BAD1' }}>
-              <Typography variant='h6'>Branch Cafes</Typography>
-              <Typography variant='h4'>
-                {cafes?.pagination?.totalCafes ? (
-                  cafes?.cafes?.filter(cafe => cafe.parentId !== null)?.length
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
+
 
           <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
@@ -117,36 +95,11 @@ export default function Page() {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#28C76F' }}>
-              <Typography variant='h6'>Cafe Owners</Typography>
-              <Typography variant='h4'>
-                {users?.pagination?.totalUsers ? (
-                  users?.users?.filter(user => user.userType === 'owner')?.length
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#00BAD1' }}>
-              <Typography variant='h6'>Cafe Staff</Typography>
-              <Typography variant='h4'>
-                {users?.pagination?.totalUsers ? (
-                  users?.users?.filter(user => user.userType !== 'owner')?.length
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
         </Grid>
       </Box>
 
       <Box>
-        <Grid container spacing={2}>
+        {/* <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <Item>
               <Typography variant='h6'>Cafe Chart - Monthly Visits</Typography>
@@ -177,7 +130,9 @@ export default function Page() {
               />
             </Item>
           </Grid>
-        </Grid>
+        </Grid> */}
+
+        <EarningReportsWithTabs serverMode="mode" />
       </Box>
     </div>
   )
