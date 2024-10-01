@@ -168,7 +168,18 @@ const EarningReportsWithTabs = ({ serverMode, orderData }) => {
             className='!border-0 mbe-10'
             sx={{
               '& .MuiTabs-indicator': { display: 'none !important' },
-              '& .MuiTab-root': { padding: '0 !important', border: '0 !important' }
+              '& .MuiTab-root': {
+                padding: '0 !important',
+                border: '0 !important',
+                blockSize: '100px',
+                borderRadius: '10px',
+                inlineSize: '110px',
+                '&.Mui-selected': {
+                  border: '1px solid #7367F0 !important',
+                  borderColor: theme.palette.primary.main, // Change the background color for the active tab
+                  color: theme.palette.common.white // Change text color for the active tab
+                }
+              }
             }}
           >
             <Tab
