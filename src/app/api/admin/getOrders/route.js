@@ -141,7 +141,7 @@ export async function GET(req) {
     }
 
     const skip = (filters.page - 1) * filters.pageSize
-    const take = filters.pageSize
+    const take = filters.pageSize 
 
     const totalOrdersCount = await prisma.order.count({ where: whereClause })
 
