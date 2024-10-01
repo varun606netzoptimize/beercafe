@@ -12,6 +12,10 @@ import { BarChart } from '@mui/x-charts/BarChart'
 import { PieChart } from '@mui/x-charts/PieChart'
 import { Box, Button, Card, Typography, CircularProgress } from '@mui/material'
 
+import axios from 'axios'
+
+import { ENDPOINT } from '@/endpoints'
+
 import { AuthContext } from '@/context/AuthContext'
 import EarningReportsWithTabs from './(components)/EarningReportsWithTabs'
 
@@ -49,6 +53,7 @@ const mockBarData = {
 
 export default function Page() {
   const { authToken, tokenCheck, setPageTitle, cafes, users } = useContext(AuthContext)
+  const [orderData, setOrderData] = React.useState(null)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -56,12 +61,42 @@ export default function Page() {
         redirect('/login')
       }
 
+      getOrderMonthly()
       setPageTitle('Dashboard')
     }
   }, [authToken])
 
   if (!authToken.token) {
     return null
+  }
+
+  const getOrderMonthly = ({ year = '2024' } = {}) => {
+    let url = `${ENDPOINT.GET_ORDERS_DATA_BY_MONTH}`
+    const params = []
+
+    // Conditionally append query parameters
+    if (year) params.push(`year=${year}`)
+
+    // If any parameters exist, join them with '&' and append to URL
+    if (params.length > 0) {
+      url += `?${params.join('&')}`
+    }
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+      .then(response => {
+        const orders = response.data
+
+        setOrderData(orders)
+      })
+      .catch(error => {
+        console.error('Error fetching orders:', error)
+      })
+      .finally(() => {})
   }
 
   return (
@@ -81,7 +116,6 @@ export default function Page() {
             </Card>
           </Grid>
 
-
           <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
               <Typography variant='h6'>Total Users</Typography>
@@ -94,7 +128,6 @@ export default function Page() {
               </Typography>
             </Card>
           </Grid>
-
         </Grid>
       </Box>
 
@@ -131,8 +164,11 @@ export default function Page() {
             </Item>
           </Grid>
         </Grid> */}
-
-        <EarningReportsWithTabs serverMode="mode" />
+        {orderData ? (
+          <EarningReportsWithTabs serverMode='mode' orderData={orderData} />
+        ) : (
+          <CircularProgress size={28} sx={{ color: 'white' }} />
+        )}
       </Box>
     </div>
   )
