@@ -166,8 +166,8 @@ export default function Page() {
         <Grid container spacing={2}>
           <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
-              <Typography variant='h6'>Total Cafes</Typography>
-              <Typography variant='h4'>
+              <Typography variant='h6' color="white">Total Cafes</Typography>
+              <Typography variant='h4' color="white">
                 {cafes?.pagination?.totalCafes ? (
                   cafes?.pagination?.totalCafes
                 ) : (

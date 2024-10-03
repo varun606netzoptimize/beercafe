@@ -87,6 +87,10 @@ export async function GET(req) {
       orderCountsByMonth[monthName].totalRevenue += order.amount
     })
 
+    for (const month of monthNames) {
+      orderCountsByMonth[month].totalRevenue = Math.floor(orderCountsByMonth[month].totalRevenue)
+    }
+
     return NextResponse.json(orderCountsByMonth)
   } catch (error) {
     console.error('Error fetching orders:', error)

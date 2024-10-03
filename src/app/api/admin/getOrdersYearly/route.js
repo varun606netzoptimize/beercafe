@@ -87,6 +87,10 @@ export async function GET(req) {
       }
     })
 
+    for (const year in orderCountsByYear) {
+      orderCountsByYear[year].totalRevenue = Math.floor(orderCountsByYear[year].totalRevenue)
+    }
+
     return NextResponse.json(orderCountsByYear)
   } catch (error) {
     console.error('Error fetching orders:', error)

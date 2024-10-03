@@ -88,6 +88,10 @@ export async function GET(req) {
       orderCountsByDay[dayName].totalRevenue += order.amount
     })
 
+    for (const day in orderCountsByDay) {
+      orderCountsByDay[day].totalRevenue = Math.floor(orderCountsByDay[day].totalRevenue)
+    }
+
     return NextResponse.json(orderCountsByDay)
   } catch (error) {
     console.error('Error fetching orders:', error)
