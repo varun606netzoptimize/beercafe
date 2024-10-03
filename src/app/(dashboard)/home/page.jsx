@@ -55,6 +55,7 @@ export default function Page() {
   const { authToken, tokenCheck, setPageTitle, cafes, users } = useContext(AuthContext)
   const [orderData, setOrderData] = React.useState(null)
   const [orderDataIsLoading, setOrderDataIsLoading] = React.useState(true)
+  const [selectedFilter, setSelectedFilter] = React.useState('Current Week')
 
   useEffect(() => {
     if (tokenCheck) {
@@ -232,6 +233,8 @@ export default function Page() {
             getOrderWeekly={getOrderWeekly}
             getOrderYearly={getOrderYearly}
             loading={orderDataIsLoading}
+            selectedFilter={selectedFilter}
+            setSelectedFilter={setSelectedFilter}
           />
         ) : (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>

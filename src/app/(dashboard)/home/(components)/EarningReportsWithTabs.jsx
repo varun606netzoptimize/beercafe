@@ -41,13 +41,14 @@ const EarningReportsWithTabs = ({
   getOrderMonthly,
   getOrderWeekly,
   getOrderYearly,
-  loading = false
+  loading = false,
+  setSelectedFilter,
+  selectedFilter
 }) => {
   // States
   const [value, setValue] = useState('orders')
   const [anchorEl, setAnchorEl] = useState(null)
   const [selectYear, setSelectYear] = useState(new Date().getFullYear())
-  const [selectedFilter, setSelectedFilter] = useState('Current Week')
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
@@ -189,7 +190,7 @@ const EarningReportsWithTabs = ({
     <Card>
       <CardHeader
         title='Earning Reports'
-        subheader='Yearly Earnings Overview'
+        subheader={`${selectedFilter} Earnings Overview`}
         action={
           <>
             {selectedFilter === 'Monthly' && (
