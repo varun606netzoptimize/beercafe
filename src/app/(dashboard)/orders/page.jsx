@@ -478,7 +478,7 @@ return rowCountRef.current
           <Box sx={{ width: '100%' }}>
             <DataGrid
               rows={orders?.data}
-              loading={true}
+              loading={isLoading }
               columns={columns}
               disableSelectionOnClick={true}
               rowCount={rowCount}
