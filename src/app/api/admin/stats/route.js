@@ -73,7 +73,7 @@ export async function GET(req) {
     // Get IDs of all child cafes for the user's cafes
     const childCafeIds = cafes.flatMap(cafe => cafe.children.map(child => child.id))
 
-    // Fetch details of child cafes
+    // Fetch details of child cafes and total count of all cafes (including children)
     const childCafes = await prisma.cafe.findMany({
       where: {
         id: { in: childCafeIds }
@@ -83,8 +83,11 @@ export async function GET(req) {
       }
     })
 
+    // Total count of all cafes including child and parent cafes
+    const totalAllCafes = totalCafes + childCafes.length
+
     return NextResponse.json({
-      totalCafes,
+      totalCafes: totalAllCafes, // Include all cafes
       totalOrders,
       totalRevenue,
       totalProducts,
