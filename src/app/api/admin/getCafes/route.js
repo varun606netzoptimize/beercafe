@@ -58,7 +58,8 @@ export async function GET(req) {
           }
         },
         children: true, // Include child cafes
-        parent: { // Include parent cafe and its users
+        parent: {
+          // Include parent cafe and its users
           include: {
             cafeUsers: {
               include: {

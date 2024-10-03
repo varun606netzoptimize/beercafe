@@ -1,59 +1,59 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-import { getUserIdFromToken } from '../../utils/jwt';
+import { getUserIdFromToken } from '../../utils/jwt'
 
 // Initialize Prisma Client
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 // Helper function for validation
 function validateFilters(filters) {
-  const errors = [];
+  const errors = []
 
   // Validate date formats if present
   if (filters.startDate) {
-    const parsedStartDate = new Date(filters.startDate);
+    const parsedStartDate = new Date(filters.startDate)
 
     if (isNaN(parsedStartDate.getTime())) {
-      errors.push('Invalid startDate format.');
+      errors.push('Invalid startDate format.')
     }
   }
 
   if (filters.endDate) {
-    const parsedEndDate = new Date(filters.endDate);
+    const parsedEndDate = new Date(filters.endDate)
 
     if (isNaN(parsedEndDate.getTime())) {
-      errors.push('Invalid endDate format.');
+      errors.push('Invalid endDate format.')
     }
   }
 
   // Validate startDate before endDate if both provided
   if (filters.startDate && filters.endDate) {
-    const parsedStartDate = new Date(filters.startDate);
-    const parsedEndDate = new Date(filters.endDate);
+    const parsedStartDate = new Date(filters.startDate)
+    const parsedEndDate = new Date(filters.endDate)
 
     if (parsedStartDate > parsedEndDate) {
-      errors.push('startDate must be before endDate.');
+      errors.push('startDate must be before endDate.')
     }
   }
 
-  return errors;
+  return errors
 }
 
 export async function GET(req) {
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url)
 
-  const token = req.headers.get('Authorization')?.split(' ')[1];
+  const token = req.headers.get('Authorization')?.split(' ')[1]
 
   if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const userId = getUserIdFromToken(token);
+  const userId = getUserIdFromToken(token)
 
   if (!userId) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
   // Extract query parameters
@@ -67,13 +67,13 @@ export async function GET(req) {
     sortOrder: searchParams.get('sortOrder'),
     page: Number(searchParams.get('page')) || 1,
     pageSize: Number(searchParams.get('pageSize')) || 10
-  };
+  }
 
   // Validate filters
-  const errors = validateFilters(filters);
+  const errors = validateFilters(filters)
 
   if (errors.length > 0) {
-    return NextResponse.json({ error: errors }, { status: 400 });
+    return NextResponse.json({ error: errors }, { status: 400 })
   }
 
   try {
@@ -81,58 +81,58 @@ export async function GET(req) {
     const cafeUsers = await prisma.cafeUser.findMany({
       where: { userId: userId },
       select: { cafeId: true }
-    });
+    })
 
     if (cafeUsers.length === 0) {
-      return NextResponse.json([]); // No cafes found for the user
+      return NextResponse.json([]) // No cafes found for the user
     }
 
-    const cafeIds = cafeUsers.map(cu => cu.cafeId);
+    const cafeIds = cafeUsers.map(cu => cu.cafeId)
 
     // Fetch both parent and child cafes
     const parentAndChildCafes = await prisma.cafe.findMany({
       where: {
         OR: [
-          { id: { in: cafeIds } },       // Parent cafes
-          { parentId: { in: cafeIds } }  // Child cafes
+          { id: { in: cafeIds } }, // Parent cafes
+          { parentId: { in: cafeIds } } // Child cafes
         ]
       },
       select: { id: true }
-    });
+    })
 
-    const allCafeIds = parentAndChildCafes.map(cafe => cafe.id);
+    const allCafeIds = parentAndChildCafes.map(cafe => cafe.id)
 
     // Initialize an empty where clause
     const whereClause = {
       cafeId: {
         in: allCafeIds
       }
-    };
+    }
 
     // Apply start date filter if present
     if (filters.startDate) {
-      whereClause.createdAt = { gte: new Date(filters.startDate) };
+      whereClause.createdAt = { gte: new Date(filters.startDate) }
     }
 
     // Apply end date filter if present, adding to `createdAt` if already set
     if (filters.endDate) {
-      const endDateWithTime = new Date(filters.endDate);
+      const endDateWithTime = new Date(filters.endDate)
 
-      endDateWithTime.setHours(23, 59, 59, 999); // Set time to end of the day
+      endDateWithTime.setHours(23, 59, 59, 999) // Set time to end of the day
       whereClause.createdAt = {
         ...(whereClause.createdAt || {}),
         lte: endDateWithTime
-      };
+      }
     }
 
     // Apply payment status filter, if provided
     if (filters.paymentStatus) {
-      whereClause.paymentStatus = filters.paymentStatus;
+      whereClause.paymentStatus = filters.paymentStatus
     }
 
     // Apply payment mode filter, if provided
     if (filters.paymentMode) {
-      whereClause.paymentMode = filters.paymentMode;
+      whereClause.paymentMode = filters.paymentMode
     }
 
     // Apply general search filter for Customer and Cafe
@@ -151,13 +151,13 @@ export async function GET(req) {
             name: { contains: filters.search, mode: 'insensitive' }
           }
         }
-      ];
+      ]
     }
 
-    const skip = (filters.page - 1) * filters.pageSize;
-    const take = filters.pageSize;
+    const skip = (filters.page - 1) * filters.pageSize
+    const take = filters.pageSize
 
-    const totalOrdersCount = await prisma.order.count({ where: whereClause });
+    const totalOrdersCount = await prisma.order.count({ where: whereClause })
 
     // Fetch orders based on the where clause
     const orders = await prisma.order.findMany({
@@ -177,7 +177,7 @@ export async function GET(req) {
           }
         }
       }
-    });
+    })
 
     return NextResponse.json({
       data: orders,
@@ -187,11 +187,11 @@ export async function GET(req) {
         pageSize: filters.pageSize,
         totalPages: Math.ceil(totalOrdersCount / filters.pageSize)
       }
-    });
+    })
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error('Error fetching orders:', error)
 
-    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
   }
 }
 
@@ -209,8 +209,8 @@ function getOrderBy(sortBy, sortOrder) {
     createdAt: {
       createdAt: sortOrder || 'asc'
     }
-  };
+  }
 
   // Return the appropriate orderBy field
-  return validSortFields[sortBy] || { createdAt: 'desc' };
+  return validSortFields[sortBy] || { createdAt: 'desc' }
 }
