@@ -57,8 +57,8 @@ export async function GET(req) {
             }
           }
         },
-        children: true,
-        parent: {
+        children: true, // Include child cafes
+        parent: { // Include parent cafe and its users
           include: {
             cafeUsers: {
               include: {
@@ -75,13 +75,13 @@ export async function GET(req) {
     })
 
     // Get the total number of cafes based on the filters
-    const totalCafes = await prisma.cafe.count({ where: filters })
+    const totalCafesCount = await prisma.cafe.count({ where: filters })
 
     // Calculate total number of pages
-    const totalPages = Math.ceil(totalCafes / limit)
+    const totalPages = Math.ceil(totalCafesCount / limit)
     const hasNextPage = page < totalPages
 
-    // Map the cafes to include user and user type information
+    // Map the cafes to include owners and their children
     const result = cafes.map(cafe => {
       let owners = []
 
@@ -133,7 +133,7 @@ export async function GET(req) {
         priceConversionRate: cafe.priceConversionRate,
         parentId: cafe.parentId,
         owners: owners,
-        children: cafe.children,
+        children: cafe.children, // Child cafes included here
         createdAt: cafe.createdAt,
         updatedAt: cafe.updatedAt,
         deletedAt: cafe.deletedAt,
@@ -152,15 +152,15 @@ export async function GET(req) {
       }
     })
 
-    // Return the response with pagination info
+    // Return the response with cafes and pagination info
     return new NextResponse(
       JSON.stringify({
         message: 'Cafes fetched successfully',
-        cafes: result,
+        totalCafes: result, // Include all cafes in totalCafes
         pagination: {
           page,
           limit,
-          totalCafes,
+          totalCafes: totalCafesCount, // Total number of cafes
           totalPages,
           hasNextPage
         }
