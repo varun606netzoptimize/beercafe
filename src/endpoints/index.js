@@ -52,6 +52,7 @@ export const ENDPOINT = {
   GET_ALL_ORDERS: baseURL + '/api/admin/getAllOrders',
   GET_ORDERS: baseURL + '/api/admin/getOrders',
   GET_ORDERS_DATA_BY_MONTH: baseURL + '/api/admin/getOrdersMonthly',
+  GET_ORDERS_DATA_BY_WEEK: baseURL + '/api/admin/getOrdersWeekly',
 }
 
 export const POS_ENDPOINTS = {

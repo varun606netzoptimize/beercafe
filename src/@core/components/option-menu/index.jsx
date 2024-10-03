@@ -45,7 +45,7 @@ const MenuItemWrapper = ({ children, option }) => {
 
 const OptionMenu = props => {
   // Props
-  const { tooltipProps, icon, iconClassName, options, leftAlignMenu, iconButtonProps } = props
+  const { tooltipProps, icon, iconClassName, options, leftAlignMenu, iconButtonProps, onClick } = props
 
   // States
   const [open, setOpen] = useState(false)
@@ -66,6 +66,11 @@ const OptionMenu = props => {
     }
 
     setOpen(false)
+  }
+
+  const handleMenuItemClick = (e, option) => {
+    if (onClick) onClick(option) // Call parent onClick handler with the option
+    handleClose(e) // Close the menu
   }
 
   return (
@@ -97,7 +102,7 @@ const OptionMenu = props => {
                   {options.map((option, index) => {
                     if (typeof option === 'string') {
                       return (
-                        <MenuItem key={index} onClick={handleClose}>
+                        <MenuItem key={index} onClick={e => handleMenuItemClick(e, option)}>
                           {option}
                         </MenuItem>
                       )
@@ -109,12 +114,7 @@ const OptionMenu = props => {
                           key={index}
                           {...option.menuItemProps}
                           {...(option.href && { className: 'p-0' })}
-                          onClick={e => {
-                            handleClose(e)
-                            option.menuItemProps && option.menuItemProps.onClick
-                              ? option.menuItemProps.onClick(e)
-                              : null
-                          }}
+                          onClick={e => handleMenuItemClick(e, option)}
                         >
                           <MenuItemWrapper option={option}>
                             {(typeof option.icon === 'string' ? <i className={option.icon} /> : option.icon) || null}

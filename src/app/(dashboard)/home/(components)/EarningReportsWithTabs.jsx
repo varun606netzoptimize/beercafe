@@ -23,6 +23,8 @@ import classnames from 'classnames'
 // Components Imports
 import { Box, Button, Menu, MenuItem } from '@mui/material'
 
+import padding from 'tailwindcss-logical/plugins/padding'
+
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
@@ -33,15 +35,15 @@ import CustomLoadingOverlay from '@/components/CustomLoadingOverlay/CustomLoadin
 // Styled Component Imports
 const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
 
-const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, loading = false }) => {
+const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrderWeekly, loading = false }) => {
   // States
   const [value, setValue] = useState('orders')
   const [anchorEl, setAnchorEl] = useState(null)
   const [selectYear, setSelectYear] = useState(new Date().getFullYear())
+  const [selectedFilter, setSelectedFilter] = useState('Monthly')
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
-    console.log(event.currentTarget.innerHTML)
   }
 
   const handleClose = () => {
@@ -95,7 +97,8 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, loadin
         fontWeight: 500,
         colors: [rgbaToHex(`rgb(${theme.mainColorChannels[_mode]} / 0.9)`)],
         fontSize: theme.typography.body1.fontSize
-      }
+      },
+      className: 'custom-datalabel'
     },
     colors,
     states: {
@@ -118,7 +121,10 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, loadin
     xaxis: {
       axisTicks: { show: false },
       axisBorder: { color: rgbaToHex(`rgb(${theme.mainColorChannels[_mode]} / 0.12)`) },
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      categories:
+        selectedFilter === 'Current Week'
+          ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       labels: {
         style: {
           colors: disabledText,
@@ -180,29 +186,46 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, loadin
         subheader='Yearly Earnings Overview'
         action={
           <>
-            <Button
-              size='small'
-              variant='tonal'
-              onClick={handleClick}
-              endIcon={<i className='tabler-chevron-down text-xl' />}
-            >
-              {selectYear}
-            </Button>
-            <Menu
-              keepMounted
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              open={Boolean(anchorEl)}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-              {yearOptions.map(year => (
-                <MenuItem key={year} onClick={() => handleMenuItemClick(year)}>
-                  {year}
-                </MenuItem>
-              ))}
-            </Menu>
-            <OptionMenu options={['Monthly']} />
+            {selectedFilter === 'Monthly' && (
+              <>
+                <Button
+                  size='small'
+                  variant='tonal'
+                  onClick={handleClick}
+                  endIcon={<i className='tabler-chevron-down text-xl' />}
+                >
+                  {selectYear}
+                </Button>
+                <Menu
+                  keepMounted
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  open={Boolean(anchorEl)}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  {yearOptions.map(year => (
+                    <MenuItem key={year} onClick={() => handleMenuItemClick(year)}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </>
+            )}
+            <OptionMenu
+              options={['Monthly', 'Yearly', 'Current Week']}
+              onClick={option => {
+                setSelectedFilter(option)
+
+                if (option === 'Monthly') {
+                  getOrderMonthly({ year: selectYear })
+                } else if (option === 'Current Week') {
+                  getOrderWeekly()
+                } else {
+                  getOrderMonthly({ year: selectYear })
+                }
+              }}
+            />
           </>
         }
       />
