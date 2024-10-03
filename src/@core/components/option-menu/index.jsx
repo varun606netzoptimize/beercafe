@@ -45,7 +45,7 @@ const MenuItemWrapper = ({ children, option }) => {
 
 const OptionMenu = props => {
   // Props
-  const { tooltipProps, icon, iconClassName, options, leftAlignMenu, iconButtonProps, onClick } = props
+  const { tooltipProps, icon, iconClassName, options, leftAlignMenu, iconButtonProps, onClick, selectedFilter } = props
 
   // States
   const [open, setOpen] = useState(false)
@@ -100,9 +100,20 @@ const OptionMenu = props => {
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList autoFocusItem={open}>
                   {options.map((option, index) => {
+                    const isActive = option === selectedFilter
+
                     if (typeof option === 'string') {
                       return (
-                        <MenuItem key={index} onClick={e => handleMenuItemClick(e, option)}>
+                        <MenuItem
+                          key={index}
+                          onClick={e => handleMenuItemClick(e, option)}
+                          sx={{
+                            backgroundColor: isActive ? 'rgba(47, 43, 61, 0.06)' : 'transparent', // Apply background color if active
+                            '&:hover': {
+                              backgroundColor: isActive ? 'rgba(47, 43, 61, 0.1)' : 'rgba(0, 0, 0, 0.08)' // Optional hover effect
+                            }
+                          }}
+                        >
                           {option}
                         </MenuItem>
                       )
@@ -115,6 +126,12 @@ const OptionMenu = props => {
                           {...option.menuItemProps}
                           {...(option.href && { className: 'p-0' })}
                           onClick={e => handleMenuItemClick(e, option)}
+                          sx={{
+                            backgroundColor: isActive ? 'rgba(47, 43, 61, 0.06)' : 'transparent', // Apply background color if active
+                            '&:hover': {
+                              backgroundColor: isActive ? 'rgba(47, 43, 61, 0.1)' : 'rgba(0, 0, 0, 0.08)' // Optional hover effect
+                            }
+                          }}
                         >
                           <MenuItemWrapper option={option}>
                             {(typeof option.icon === 'string' ? <i className={option.icon} /> : option.icon) || null}

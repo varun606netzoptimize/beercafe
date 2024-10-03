@@ -62,7 +62,7 @@ export default function Page() {
         redirect('/login')
       }
 
-      getOrderMonthly()
+      getOrderWeekly()
       setPageTitle('Dashboard')
     }
   }, [authToken])

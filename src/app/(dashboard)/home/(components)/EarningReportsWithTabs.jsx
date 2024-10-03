@@ -40,7 +40,7 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
   const [value, setValue] = useState('orders')
   const [anchorEl, setAnchorEl] = useState(null)
   const [selectYear, setSelectYear] = useState(new Date().getFullYear())
-  const [selectedFilter, setSelectedFilter] = useState('Monthly')
+  const [selectedFilter, setSelectedFilter] = useState('Current Week')
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
@@ -123,7 +123,7 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
       axisBorder: { color: rgbaToHex(`rgb(${theme.mainColorChannels[_mode]} / 0.12)`) },
       categories:
         selectedFilter === 'Current Week'
-          ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
           : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       labels: {
         style: {
@@ -213,14 +213,15 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
               </>
             )}
             <OptionMenu
-              options={['Monthly', 'Yearly', 'Current Week']}
+              options={['Current Week', 'Monthly', 'Yearly']}
+              selectedFilter={selectedFilter}
               onClick={option => {
                 setSelectedFilter(option)
 
-                if (option === 'Monthly') {
-                  getOrderMonthly({ year: selectYear })
-                } else if (option === 'Current Week') {
+                if (option === 'Current Week') {
                   getOrderWeekly()
+                } else if (option === 'Monthly') {
+                  getOrderMonthly({ year: selectYear })
                 } else {
                   getOrderMonthly({ year: selectYear })
                 }
