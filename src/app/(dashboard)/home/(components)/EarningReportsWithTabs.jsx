@@ -242,10 +242,14 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
               '& .MuiTabs-indicator': { display: 'none !important' },
               '& .MuiTab-root': {
                 padding: '0 !important',
+                margin: '0 15px 0 0 !important',
                 border: '0 !important',
                 blockSize: '100px',
                 borderRadius: '10px',
                 inlineSize: '110px',
+                borderStyle: 'dashed !important',
+                borderWidth: '1px !important',
+                borderColor: 'rgb(47 43 61 / 0.12) !important',
                 '&.Mui-selected': {
                   border: '1px solid #7367F0 !important',
                   borderColor: theme.palette.primary.main, // Change the background color for the active tab
