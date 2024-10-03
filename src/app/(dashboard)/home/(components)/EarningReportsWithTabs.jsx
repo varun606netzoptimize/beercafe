@@ -21,18 +21,38 @@ import { useColorScheme, useTheme } from '@mui/material/styles'
 import classnames from 'classnames'
 
 // Components Imports
+import { Box, Button, Menu, MenuItem } from '@mui/material'
+
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
 import { rgbaToHex } from '@/utils/rgbaToHex'
+import CustomLoadingOverlay from '@/components/CustomLoadingOverlay/CustomLoadingOverlay'
 
 // Styled Component Imports
 const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
 
-const EarningReportsWithTabs = ({ serverMode, orderData }) => {
+const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, loading = false }) => {
   // States
   const [value, setValue] = useState('orders')
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [selectYear, setSelectYear] = useState(new Date().getFullYear())
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget)
+    console.log(event.currentTarget.innerHTML)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleMenuItemClick = year => {
+    setSelectYear(year)
+    getOrderMonthly({ year: year })
+    setAnchorEl(null)
+  }
 
   // Hooks
   const theme = useTheme()
@@ -151,12 +171,40 @@ const EarningReportsWithTabs = ({ serverMode, orderData }) => {
     ]
   }
 
+  const yearOptions = [new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2]
+
   return (
     <Card>
       <CardHeader
         title='Earning Reports'
         subheader='Yearly Earnings Overview'
-        action={<OptionMenu options={['Monthly']} />}
+        action={
+          <>
+            <Button
+              size='small'
+              variant='tonal'
+              onClick={handleClick}
+              endIcon={<i className='tabler-chevron-down text-xl' />}
+            >
+              {selectYear}
+            </Button>
+            <Menu
+              keepMounted
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              open={Boolean(anchorEl)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              {yearOptions.map(year => (
+                <MenuItem key={year} onClick={() => handleMenuItemClick(year)}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Menu>
+            <OptionMenu options={['Monthly']} />
+          </>
+        }
       />
       <CardContent>
         <TabContext value={value}>
@@ -209,12 +257,17 @@ const EarningReportsWithTabs = ({ serverMode, orderData }) => {
               }
             />
           </TabList>
-          <TabPanel value='orders' className='!p-0'>
-            <AppReactApexCharts type='bar' height={233} options={options} series={[{ data: ordersData }]} />
-          </TabPanel>
-          <TabPanel value='revenue' className='!p-0'>
-            <AppReactApexCharts type='bar' height={233} options={options} series={[{ data: revenueData }]} />
-          </TabPanel>
+
+          <Box sx={{ position: 'relative' }}>
+            {loading && <CustomLoadingOverlay />}
+
+            <TabPanel value='orders' className='!p-0'>
+              <AppReactApexCharts type='bar' height={233} options={options} series={[{ data: ordersData }]} />
+            </TabPanel>
+            <TabPanel value='revenue' className='!p-0'>
+              <AppReactApexCharts type='bar' height={233} options={options} series={[{ data: revenueData }]} />
+            </TabPanel>
+          </Box>
         </TabContext>
       </CardContent>
     </Card>

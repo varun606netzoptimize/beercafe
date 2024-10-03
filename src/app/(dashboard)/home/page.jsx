@@ -54,6 +54,7 @@ const mockBarData = {
 export default function Page() {
   const { authToken, tokenCheck, setPageTitle, cafes, users } = useContext(AuthContext)
   const [orderData, setOrderData] = React.useState(null)
+  const [orderDataIsLoading, setOrderDataIsLoading] = React.useState(true)
 
   useEffect(() => {
     if (tokenCheck) {
@@ -70,7 +71,7 @@ export default function Page() {
     return null
   }
 
-  const getOrderMonthly = ({ year = '2024' } = {}) => {
+  const getOrderMonthly = ({ year = new Date().getFullYear() } = {}) => {
     let url = `${ENDPOINT.GET_ORDERS_DATA_BY_MONTH}`
     const params = []
 
@@ -82,6 +83,7 @@ export default function Page() {
       url += `?${params.join('&')}`
     }
 
+    setOrderDataIsLoading(true)
     axios
       .get(url, {
         headers: {
@@ -96,7 +98,9 @@ export default function Page() {
       .catch(error => {
         console.error('Error fetching orders:', error)
       })
-      .finally(() => {})
+      .finally(() => {
+        setOrderDataIsLoading(false)
+      })
   }
 
   return (
@@ -165,9 +169,16 @@ export default function Page() {
           </Grid>
         </Grid> */}
         {orderData ? (
-          <EarningReportsWithTabs serverMode='mode' orderData={orderData} />
+          <EarningReportsWithTabs
+            serverMode='mode'
+            orderData={orderData}
+            getOrderMonthly={getOrderMonthly}
+            loading={orderDataIsLoading}
+          />
         ) : (
-          <CircularProgress size={28} sx={{ color: 'white' }} />
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress size={28} sx={{ color: 'blue', marginX: 'auto' }} />
+          </Box>
         )}
       </Box>
     </div>
