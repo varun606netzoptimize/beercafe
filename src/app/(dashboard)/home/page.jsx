@@ -66,7 +66,7 @@ export default function Page() {
       getOrderWeekly()
       setPageTitle('Dashboard')
     }
-  }, [authToken])
+  }, 7[authToken])
 
   if (!authToken.token) {
     return null
@@ -177,7 +177,7 @@ export default function Page() {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
               <Typography variant='h6'>Total Users</Typography>
               <Typography variant='h4'>
@@ -188,7 +188,7 @@ export default function Page() {
                 )}
               </Typography>
             </Card>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
 
