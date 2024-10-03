@@ -152,6 +152,9 @@ export async function GET(req) {
       }
     })
 
+    // Include the count of children in total
+    const totalCafesWithChildren = result.reduce((acc, cafe) => acc + 1 + cafe.children.length, 0)
+
     // Return the response with cafes and pagination info
     return new NextResponse(
       JSON.stringify({
@@ -160,7 +163,7 @@ export async function GET(req) {
         pagination: {
           page,
           limit,
-          totalCafes: totalCafesCount, // Total number of cafes
+          totalCafes: totalCafesWithChildren, // Total number of cafes including children
           totalPages,
           hasNextPage
         }
