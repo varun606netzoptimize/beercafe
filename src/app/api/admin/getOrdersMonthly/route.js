@@ -51,22 +51,25 @@ export async function GET(req) {
       select: {
         createdAt: true,
         cafeId: true,
-        amount: true,
+        amount: true
       }
     })
 
     const orderCountsByMonth = {}
 
-    for (let i = 0; i < 12; i++) {
-      orderCountsByMonth[i] = { totalOrders: 0, totalRevenue: 0 }
-    }
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+    monthNames.forEach((month, index) => {
+      orderCountsByMonth[month] = { totalOrders: 0, totalRevenue: 0 }
+    })
 
     // Group orders by month
     orders.forEach(order => {
       const orderMonth = new Date(order.createdAt).getMonth() // getMonth returns 0-indexed month (0 = Jan, 11 = Dec)
+      const monthName = monthNames[orderMonth]
 
-      orderCountsByMonth[orderMonth].totalOrders += 1
-      orderCountsByMonth[orderMonth].totalRevenue += order.amount
+      orderCountsByMonth[monthName].totalOrders += 1
+      orderCountsByMonth[monthName].totalRevenue += order.amount
     })
 
     return NextResponse.json(orderCountsByMonth)

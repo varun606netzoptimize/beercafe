@@ -61,17 +61,20 @@ export async function GET(req) {
 
     const orderCountsByDay = {}
 
+    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
     // Initialize object for days of the week (0: Sunday, 6: Saturday)
-    for (let i = 0; i < 7; i++) {
-      orderCountsByDay[i] = { totalOrders: 0, totalRevenue: 0 }
-    }
+    weekDays.forEach(day => {
+      orderCountsByDay[day] = { totalOrders: 0, totalRevenue: 0 }
+    })
 
     // Group orders by day of the week
     orders.forEach(order => {
       const orderDay = new Date(order.createdAt).getDay() // getDay returns day of the week (0 = Sunday, 6 = Saturday)
+      const dayName = weekDays[orderDay]
 
-      orderCountsByDay[orderDay].totalOrders += 1
-      orderCountsByDay[orderDay].totalRevenue += order.amount
+      orderCountsByDay[dayName].totalOrders += 1
+      orderCountsByDay[dayName].totalRevenue += order.amount
     })
 
     return NextResponse.json(orderCountsByDay)

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
+
 import { PrismaClient } from '@prisma/client'
+
 import { getUserIdFromToken } from '../../utils/jwt'
 
 const prisma = new PrismaClient()
@@ -74,6 +76,7 @@ export async function GET(req) {
     return NextResponse.json(orderCountsByYear)
   } catch (error) {
     console.error('Error fetching orders:', error)
-    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
+
+return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
   }
 }

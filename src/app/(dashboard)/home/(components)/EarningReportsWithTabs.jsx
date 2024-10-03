@@ -130,12 +130,7 @@ const EarningReportsWithTabs = ({
     xaxis: {
       axisTicks: { show: false },
       axisBorder: { color: rgbaToHex(`rgb(${theme.mainColorChannels[_mode]} / 0.12)`) },
-      categories:
-        selectedFilter === 'Current Week'
-          ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-          : selectedFilter === 'Monthly'
-            ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-            : Object.keys(orderData),
+      categories : Object.keys(orderData),
       labels: {
         style: {
           colors: disabledText,
@@ -228,6 +223,7 @@ const EarningReportsWithTabs = ({
               selectedFilter={selectedFilter}
               onClick={option => {
                 setSelectedFilter(option)
+
                 if (option === 'Current Week') {
                   getOrderWeekly()
                 } else if (option === 'Monthly') {
