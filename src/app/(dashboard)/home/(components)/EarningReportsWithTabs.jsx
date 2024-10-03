@@ -35,7 +35,14 @@ import CustomLoadingOverlay from '@/components/CustomLoadingOverlay/CustomLoadin
 // Styled Component Imports
 const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
 
-const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrderWeekly, loading = false }) => {
+const EarningReportsWithTabs = ({
+  serverMode,
+  orderData,
+  getOrderMonthly,
+  getOrderWeekly,
+  getOrderYearly,
+  loading = false
+}) => {
   // States
   const [value, setValue] = useState('orders')
   const [anchorEl, setAnchorEl] = useState(null)
@@ -73,6 +80,8 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
   const revenueData = Object.values(orderData).map(month => month.totalRevenue)
 
   const colors = Array(12).fill(rgbaToHex(`rgb(${theme.palette.primary.mainChannel} / 0.16)`))
+
+  console.log(Object.keys(orderData), 'ordersData')
 
   const options = {
     chart: {
@@ -124,7 +133,9 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
       categories:
         selectedFilter === 'Current Week'
           ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-          : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          : selectedFilter === 'Monthly'
+            ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            : Object.keys(orderData),
       labels: {
         style: {
           colors: disabledText,
@@ -217,13 +228,12 @@ const EarningReportsWithTabs = ({ serverMode, orderData, getOrderMonthly, getOrd
               selectedFilter={selectedFilter}
               onClick={option => {
                 setSelectedFilter(option)
-
                 if (option === 'Current Week') {
                   getOrderWeekly()
                 } else if (option === 'Monthly') {
                   getOrderMonthly({ year: selectYear })
                 } else {
-                  getOrderMonthly({ year: selectYear })
+                  getOrderYearly()
                 }
               }}
             />

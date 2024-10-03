@@ -126,6 +126,39 @@ export default function Page() {
       })
   }
 
+  const getOrderYearly = ({ startYear = '2014', endYear = new Date().getFullYear() } = {}) => {
+    let url = `${ENDPOINT.GET_ORDERS_DATA_BY_YEAR}`
+    const params = []
+
+    // Conditionally append query parameters
+    if (startYear) params.push(`startYear=${startYear}`)
+    if (endYear) params.push(`endYear=${endYear}`)
+
+    // If any parameters exist, join them with '&' and append to URL
+    if (params.length > 0) {
+      url += `?${params.join('&')}`
+    }
+
+    setOrderDataIsLoading(true)
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+      .then(response => {
+        const orders = response.data
+
+        setOrderData(orders)
+      })
+      .catch(error => {
+        console.error('Error fetching orders:', error)
+      })
+      .finally(() => {
+        setOrderDataIsLoading(false)
+      })
+  }
+
   return (
     <div className='flex flex-col gap-6'>
       <Box>
@@ -197,6 +230,7 @@ export default function Page() {
             orderData={orderData}
             getOrderMonthly={getOrderMonthly}
             getOrderWeekly={getOrderWeekly}
+            getOrderYearly={getOrderYearly}
             loading={orderDataIsLoading}
           />
         ) : (
