@@ -66,7 +66,7 @@ export default function Page() {
       getOrderWeekly()
       setPageTitle('Dashboard')
     }
-  }, 7[authToken])
+  }, [authToken])
 
   if (!authToken.token) {
     return null
