@@ -4,13 +4,8 @@ import { useContext, useEffect } from 'react'
 
 import { redirect } from 'next/navigation'
 
-import { styled } from '@mui/material/styles'
-import { DataGrid } from '@mui/x-data-grid'
-import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
-import { BarChart } from '@mui/x-charts/BarChart'
-import { PieChart } from '@mui/x-charts/PieChart'
-import { Box, Button, Card, Typography, CircularProgress } from '@mui/material'
+import { Box, Button, Card, Typography, CircularProgress, CardHeader, CardContent } from '@mui/material'
 
 import axios from 'axios'
 
@@ -18,41 +13,11 @@ import { ENDPOINT } from '@/endpoints'
 
 import { AuthContext } from '@/context/AuthContext'
 import EarningReportsWithTabs from './(components)/EarningReportsWithTabs'
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary
-}))
-
-const mockData = {
-  pieChartData: [
-    { id: '1', label: 'Cafe 1', value: 10 },
-    { id: '2', label: 'Cafe 2', value: 35 },
-    { id: '3', label: 'Cafe 3', value: 45 },
-    { id: '4', label: 'Cafe 4', value: 25 }
-  ],
-  barChartData: [
-    { id: '1', label: 'Week 1', value: 10 },
-    { id: '2', label: 'Week 2', value: 20 },
-    { id: '3', label: 'Week 3', value: 15 },
-    { id: '4', label: 'Week 4', value: 30 }
-  ]
-}
-
-const mockBarData = {
-  xAxisData: ['group A', 'group B', 'group C'],
-  seriesData: [
-    { name: 'Series 1', data: [4, 3, 5] },
-    { name: 'Series 2', data: [1, 6, 3] },
-    { name: 'Series 3', data: [2, 5, 6] }
-  ]
-}
+import StatisticsCard from './(components)/StatisticsCard'
+import CongratulationsJohn from './(components)/Congratulations'
 
 export default function Page() {
-  const { authToken, tokenCheck, setPageTitle, cafes, users, stats } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle, cafes, users } = useContext(AuthContext)
   const [orderData, setOrderData] = React.useState(null)
   const [orderDataIsLoading, setOrderDataIsLoading] = React.useState(true)
   const [selectedFilter, setSelectedFilter] = React.useState('Current Week')
@@ -162,96 +127,16 @@ export default function Page() {
 
   return (
     <div className='flex flex-col gap-6'>
-      <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
-              <Typography variant='h6' color="white">Total Cafes</Typography>
-              <Typography variant='h4' color="white">
-                {stats?.totalCafes ? (
-                  stats?.totalCafes
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
-              <Typography variant='h6' color="white">Total Products</Typography>
-              <Typography variant='h4' color="white">
-                {stats?.totalProducts ? (
-                  stats?.totalProducts
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
-              <Typography variant='h6' color="white">Total Orders</Typography>
-              <Typography variant='h4' color="white">
-                {stats?.totalOrders ? (
-                  stats?.totalOrders
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
-              <Typography variant='h6' color="white">Total Revenue</Typography>
-              <Typography variant='h4' color="white">
-                {stats?.totalRevenue ? (
-                  stats?.totalRevenue
-                ) : (
-                  <CircularProgress size={28} sx={{ color: 'white' }} />
-                )}
-              </Typography>
-            </Card>
-          </Grid>
-
+      <Grid container spacing={6}>
+        <Grid item xs={12} md={4}>
+          <CongratulationsJohn />
         </Grid>
-      </Box>
+        <Grid item xs={12} md={8}>
+          <StatisticsCard />
+        </Grid>
+      </Grid>
 
       <Box>
-        {/* <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Item>
-              <Typography variant='h6'>Cafe Chart - Monthly Visits</Typography>
-              <BarChart
-                xAxis={[{ scaleType: 'band', data: mockBarData.xAxisData }]}
-                series={mockBarData.seriesData.map(series => ({
-                  data: series.data,
-                  name: series.name
-                }))}
-                width={500}
-                height={300}
-              />
-            </Item>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Item>
-              <Typography variant='h6'>Pie Chart - Cafe Popularity</Typography>
-              <PieChart
-                series={[
-                  {
-                    data: mockData.pieChartData,
-                    highlightScope: { faded: 'global', highlighted: 'item' },
-                    faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' }
-                  }
-                ]}
-                width={400}
-                height={200}
-              />
-            </Item>
-          </Grid>
-        </Grid> */}
         {orderData ? (
           <EarningReportsWithTabs
             serverMode='mode'

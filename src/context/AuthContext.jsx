@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   const [tokenCheck, setTokenCheck] = useState(false)
   const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
   const [stats, setStats] = useState(null)
+  const [statsIsLoading, setStatsIsLoading] = useState(true)
   const [users, setUsers] = useState({ users: [], pagination: null })
   const [currentUser, setCurrentUser] = useState(null)
   const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
@@ -128,6 +129,8 @@ export const AuthProvider = ({ children }) => {
       url += '?ownerId=' + userData?.id
     }
 
+    setStatsIsLoading(true)
+
     await axios
       .get(url, {
         headers: {
@@ -139,6 +142,9 @@ export const AuthProvider = ({ children }) => {
       })
       .catch(err => {
         console.log('failed:', err.response)
+      })
+      .finally(() => {
+        setStatsIsLoading(false)
       })
   }
 
@@ -267,7 +273,8 @@ export const AuthProvider = ({ children }) => {
         orders,
         setCafeId,
         cafeId,
-        stats
+        stats,
+        statsIsLoading,
       }}
     >
       {children}
