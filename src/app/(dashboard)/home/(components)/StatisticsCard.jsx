@@ -43,8 +43,6 @@ const StatisticsCard = () => {
     }
   ]
 
-  console.log(stats)
-
   return (
     <Card>
       <CardHeader

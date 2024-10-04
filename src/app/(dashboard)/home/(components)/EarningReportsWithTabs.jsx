@@ -82,8 +82,6 @@ const EarningReportsWithTabs = ({
 
   const colors = Array(12).fill(rgbaToHex(`rgb(${theme.palette.primary.mainChannel} / 0.16)`))
 
-  console.log(Object.keys(orderData), 'ordersData')
-
   const options = {
     chart: {
       parentHeightOffset: 0,
