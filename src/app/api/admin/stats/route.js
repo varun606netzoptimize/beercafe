@@ -53,7 +53,7 @@ export async function GET(req) {
       }
     })
 
-    const { totalCafes, totalProducts, totalOrders } = cafes.reduce(
+    const { totalCafes, totalProducts, totalOrders, totalRevenue } = cafes.reduce(
       (acc, cafe) => {
         const parentProductCount = cafe.Product.length
 
@@ -67,13 +67,20 @@ export async function GET(req) {
           return childTotal + childCafe.Order.length
         }, 0)
 
+        const parentRevenue = cafe.Order.reduce((total, order) => total + order.amount, 0)
+
+        const childrenRevenue = cafe.children.reduce((childTotal, childCafe) => {
+          return childTotal + childCafe.Order.reduce((total, order) => total + order.amount, 0)
+        }, 0)
+
         acc.totalCafes += 1 + cafe.children.length
         acc.totalProducts += parentProductCount + childrenProductCount
         acc.totalOrders += parentOrderCount + childrenOrderCount
+        acc.totalRevenue += parentRevenue + childrenRevenue
 
         return acc
       },
-      { totalCafes: 0, totalProducts: 0, totalOrders: 0 }
+      { totalCafes: 0, totalProducts: 0, totalOrders: 0, totalRevenue: 0 }
     )
 
     return NextResponse.json(
@@ -81,6 +88,7 @@ export async function GET(req) {
         totalProducts,
         totalCafes,
         totalOrders,
+        totalRevenue,
         cafes: cafes
       },
       { status: 200 }
