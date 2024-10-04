@@ -83,12 +83,14 @@ export async function GET(req) {
       { totalCafes: 0, totalProducts: 0, totalOrders: 0, totalRevenue: 0 }
     )
 
+    const formattedTotalRevenue = parseFloat(totalRevenue.toFixed(2));
+
     return NextResponse.json(
       {
         totalProducts,
         totalCafes,
         totalOrders,
-        totalRevenue,
+        totalRevenue: formattedTotalRevenue,
         cafes: cafes
       },
       { status: 200 }
