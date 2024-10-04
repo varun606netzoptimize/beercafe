@@ -43,31 +43,26 @@ export async function GET(req) {
       }
     })
 
-    const cafesWithChildrenCount = cafes.map(cafe => ({
-      ...cafe,
-      childrenCount: cafe.children.length
-    }))
+    const { totalCafes, totalProducts } = cafes.reduce(
+      (acc, cafe) => {
+        const parentProductCount = cafe.Product.length
 
-    const totalCafes = cafesWithChildrenCount.reduce((total, cafe) => {
-      return total + 1 + cafe.childrenCount
-    }, 0)
+        const childrenProductCount = cafe.children.reduce((childTotal, childCafe) => {
+          return childTotal + childCafe.Product.length
+        }, 0)
 
-    const totalProducts = cafesWithChildrenCount.reduce((total, cafe) => {
-      const parentProductCount = cafe.Product.length
+        acc.totalCafes += 1 + cafe.children.length
+        acc.totalProducts += parentProductCount + childrenProductCount
 
-      const childrenProductCount = cafe.children.reduce((childTotal, childCafe) => {
-        return childTotal + childCafe.Product.length
-      }, 0)
-
-      return total + parentProductCount + childrenProductCount
-    }, 0)
+        return acc
+      },
+      { totalCafes: 0, totalProducts: 0 }
+    )
 
     return NextResponse.json(
       {
-        totalProducts: totalProducts,
-        totalCafes: totalCafes,
-
-        // cafes: cafesWithChildrenCount
+        totalProducts,
+        totalCafes
       },
       { status: 200 }
     )
