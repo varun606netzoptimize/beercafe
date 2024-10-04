@@ -48,17 +48,29 @@ export async function GET(req) {
       childrenCount: cafe.children.length
     }))
 
-    const totalCafes = cafesWithChildrenCount.reduce((total,cafe) => {
+    const totalCafes = cafesWithChildrenCount.reduce((total, cafe) => {
       return total + 1 + cafe.childrenCount
     }, 0)
 
-    return NextResponse.json({
-      // totalProducts: cafeProduct,
-      totalCafes: totalCafes,
-      cafes: cafesWithChildrenCount
-    }, { status: 200 })
+    const totalProducts = cafesWithChildrenCount.reduce((total, cafe) => {
+      const parentProductCount = cafe.Product.length
 
-    return NextResponse.json({ message: 'api called' }, { status: 200 })
+      const childrenProductCount = cafe.children.reduce((childTotal, childCafe) => {
+        return childTotal + childCafe.Product.length
+      }, 0)
+
+      return total + parentProductCount + childrenProductCount
+    }, 0)
+
+    return NextResponse.json(
+      {
+        totalProducts: totalProducts,
+        totalCafes: totalCafes,
+
+        // cafes: cafesWithChildrenCount
+      },
+      { status: 200 }
+    )
   } catch (error) {
     console.error('Error fetching orders:', error)
 
