@@ -36,14 +36,24 @@ export async function GET(req) {
         // cafeUsers: true,
         children: {
           include: {
-            Product: true
+            Product: true,
+            Order: {
+              where: {
+                paymentStatus: 'PAID'
+              }
+            }
           }
         },
-        Product: true
+        Product: true,
+        Order: {
+          where: {
+            paymentStatus: 'PAID'
+          }
+        }
       }
     })
 
-    const { totalCafes, totalProducts } = cafes.reduce(
+    const { totalCafes, totalProducts, totalOrders } = cafes.reduce(
       (acc, cafe) => {
         const parentProductCount = cafe.Product.length
 
@@ -51,18 +61,27 @@ export async function GET(req) {
           return childTotal + childCafe.Product.length
         }, 0)
 
+        const parentOrderCount = cafe.Order.length
+
+        const childrenOrderCount = cafe.children.reduce((childTotal, childCafe) => {
+          return childTotal + childCafe.Order.length
+        }, 0)
+
         acc.totalCafes += 1 + cafe.children.length
         acc.totalProducts += parentProductCount + childrenProductCount
+        acc.totalOrders += parentOrderCount + childrenOrderCount
 
         return acc
       },
-      { totalCafes: 0, totalProducts: 0 }
+      { totalCafes: 0, totalProducts: 0, totalOrders: 0 }
     )
 
     return NextResponse.json(
       {
         totalProducts,
-        totalCafes
+        totalCafes,
+        totalOrders,
+        cafes: cafes
       },
       { status: 200 }
     )
