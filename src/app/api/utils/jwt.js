@@ -10,6 +10,6 @@ export function getUserIdFromToken(token) {
   } catch (error) {
     console.error('Error decoding JWT:', error)
 
-return null
+    return null
   }
 }
