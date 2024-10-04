@@ -52,7 +52,7 @@ const mockBarData = {
 }
 
 export default function Page() {
-  const { authToken, tokenCheck, setPageTitle, cafes, users } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle, cafes, users, stats } = useContext(AuthContext)
   const [orderData, setOrderData] = React.useState(null)
   const [orderDataIsLoading, setOrderDataIsLoading] = React.useState(true)
   const [selectedFilter, setSelectedFilter] = React.useState('Current Week')
@@ -168,8 +168,8 @@ export default function Page() {
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
               <Typography variant='h6' color="white">Total Cafes</Typography>
               <Typography variant='h4' color="white">
-                {cafes?.pagination?.totalCafes ? (
-                  cafes?.pagination?.totalCafes
+                {stats?.totalCafes ? (
+                  stats?.totalCafes
                 ) : (
                   <CircularProgress size={28} sx={{ color: 'white' }} />
                 )}
@@ -177,18 +177,45 @@ export default function Page() {
             </Card>
           </Grid>
 
-          {/* <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={4}>
             <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
-              <Typography variant='h6'>Total Users</Typography>
-              <Typography variant='h4'>
-                {users?.pagination?.totalUsers ? (
-                  users?.pagination?.totalUsers
+              <Typography variant='h6' color="white">Total Products</Typography>
+              <Typography variant='h4' color="white">
+                {stats?.totalProducts ? (
+                  stats?.totalProducts
                 ) : (
                   <CircularProgress size={28} sx={{ color: 'white' }} />
                 )}
               </Typography>
             </Card>
-          </Grid> */}
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
+              <Typography variant='h6' color="white">Total Orders</Typography>
+              <Typography variant='h4' color="white">
+                {stats?.totalOrders ? (
+                  stats?.totalOrders
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={4}>
+            <Card sx={{ p: 2, textAlign: 'center', backgroundColor: '#948BF4' }}>
+              <Typography variant='h6' color="white">Total Revenue</Typography>
+              <Typography variant='h4' color="white">
+                {stats?.totalRevenue ? (
+                  stats?.totalRevenue
+                ) : (
+                  <CircularProgress size={28} sx={{ color: 'white' }} />
+                )}
+              </Typography>
+            </Card>
+          </Grid>
+
         </Grid>
       </Box>
 

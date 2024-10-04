@@ -91,7 +91,8 @@ export async function GET(req) {
         totalCafes,
         totalOrders,
         totalRevenue: formattedTotalRevenue,
-        cafes: cafes
+
+        // cafes: cafes
       },
       { status: 200 }
     )

@@ -6,6 +6,7 @@ export const ENDPOINT = {
   REQUEST_OTP: baseURL + '/api/auth/requestOTP',
   VERIFY_OTP: baseURL + '/api/auth/verifyOTP',
   GET_CAFES: baseURL + '/api/admin/getCafes',
+  GET_STATS: baseURL + '/api/admin/stats',
   CAFE_STATS: baseURL + '/api/admin/cafeStats',
   GET_MANAGERS: baseURL + '/api/admin/getManagers/',
   GET_USERS: baseURL + '/api/admin/getUsers/',

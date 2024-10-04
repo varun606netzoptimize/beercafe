@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [pageTitle, setPageTitle] = useState('')
   const [tokenCheck, setTokenCheck] = useState(false)
   const [cafes, setCafes] = useState({ cafes: [], pagination: {} })
+  const [stats, setStats] = useState(null)
   const [users, setUsers] = useState({ users: [], pagination: null })
   const [currentUser, setCurrentUser] = useState(null)
   const [cafeProducts, setCafeProducts] = useState({ cafe: null, products: [] })
@@ -91,7 +92,9 @@ export const AuthProvider = ({ children }) => {
       })
       .finally(() => {
         setTokenCheck(true)
-        GetCafe(userData)
+
+        // GetCafe(userData)
+        GetStats(userData)
         GetUsers()
         GetBrands()
       })
@@ -112,6 +115,27 @@ export const AuthProvider = ({ children }) => {
       })
       .then(res => {
         setCafes({ cafes: res.data.cafes, pagination: res.data.pagination })
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+  }
+
+  const GetStats = async userData => {
+    let url = ENDPOINT.GET_STATS
+
+    if (userData?.role != 'admin') {
+      url += '?ownerId=' + userData?.id
+    }
+
+    await axios
+      .get(url, {
+        headers: {
+          Authorization: 'Bearer ' + authToken.token
+        }
+      })
+      .then(res => {
+        setStats(res.data)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -242,7 +266,8 @@ export const AuthProvider = ({ children }) => {
         setOrders,
         orders,
         setCafeId,
-        cafeId
+        cafeId,
+        stats
       }}
     >
       {children}
