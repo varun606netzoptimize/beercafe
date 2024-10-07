@@ -79,20 +79,23 @@ export default function ViewProductVariation({
   }
 
   const columns = [
-    { field: 'value', headerName: 'Value', flex: 1 },
+    { field: 'value', headerName: 'Value', flex: 1,       minWidth: 120  },
     {
       field: 'salePrice',
       headerName: 'Sale Price',
       flex: 1,
-      renderCell: params => <Box>${params?.row?.salePrice}</Box>
+      renderCell: params => <Box>${params?.row?.salePrice}</Box>,
+      minWidth: 150
     },
     {
       field: 'regularPrice',
       headerName: 'Regular Price',
       flex: 1,
-      renderCell: params => <Box>${params?.row?.regularPrice}</Box>
+      renderCell: params => <Box>${params?.row?.regularPrice}</Box>,
+      minWidth: 160
+
     },
-    { field: 'points', headerName: 'Points', flex: 1 },
+    { field: 'points', headerName: 'Points', flex: 1,       minWidth: 100    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -127,7 +130,8 @@ export default function ViewProductVariation({
           </Button>
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 180
     }
   ]
 

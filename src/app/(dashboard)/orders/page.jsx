@@ -26,6 +26,7 @@ import AppReactDatepicker from '@/@core/components/date-picker'
 import { ENDPOINT } from '@/endpoints'
 import OrderDetails from './OrderDeatils'
 import CustomTextField from '@/@core/components/mui/TextField'
+import CrossFilter from '@/@menu/svg/CrossFilter'
 
 const Page = () => {
   const { authToken, tokenCheck, setPageTitle, setOrders, orders } = useContext(AuthContext)
@@ -193,7 +194,8 @@ const Page = () => {
         </Box>
       ),
       filterable: false,
-      headerClassName: 'first-column-header'
+      headerClassName: 'first-column-header',
+      minWidth: 180
     },
     {
       field: 'cafeName',
@@ -219,7 +221,8 @@ const Page = () => {
           </Typography>
         </Box>
       ),
-      filterable: false
+      filterable: false,
+      minWidth: 150
     },
     {
       field: 'amount',
@@ -232,7 +235,8 @@ const Page = () => {
           </p>
         </Box>
       ),
-      filterable: false
+      filterable: false,
+      minWidth: 150
     },
     {
       field: 'paymentMode',
@@ -246,7 +250,9 @@ const Page = () => {
         </Box>
       ),
       filterable: false,
-      sortable: false
+      sortable: false,
+      minWidth: 150
+
     },
     {
       field: 'paymentStatus',
@@ -263,7 +269,8 @@ const Page = () => {
         </Box>
       ),
       filterable: false,
-      sortable: false
+      sortable: false,
+      minWidth: 180
     },
     {
       field: 'createdAt',
@@ -284,7 +291,8 @@ const Page = () => {
           </p>
         </Box>
       ),
-      filterable: false
+      filterable: false,
+      minWidth: 150
     },
     {
       field: 'actions',
@@ -296,7 +304,7 @@ const Page = () => {
             variant='none'
             color='info'
             size='small'
-            sx={{ padding: 0, minWidth: '40px', minHeight: '40px', borderRadius: '50%' }}
+            sx={{ padding: 0, minWidth: '40px', minHeight: '40px', borderRadius: '50%', marginX: 'auto' }}
             onClick={() => handleOpenModal(params.row)}
           >
             <i className='tabler-eye text-[22px] text-textSecondary border-none' />
@@ -304,7 +312,8 @@ const Page = () => {
         </Box>
       ),
       filterable: false,
-      sortable: false
+      sortable: false,
+      minWidth: 100
     }
   ]
 
@@ -399,22 +408,16 @@ const Page = () => {
           >
             <form
               onSubmit={handleQueryValueSubmit}
-              style={{
-                display: 'flex',
-                alignItems: 'end',
-                justifyContent: 'space-between',
-                width: '100%',
-                gap: 16
-              }}
+              className='flex items-end justify-between w-full gap-4 flex-nowrap'
             >
               {/* Search Input */}
               <CustomTextField
                 value={queryValue}
                 onChange={e => handleQueryValueChange(e.target.value)}
                 sx={{
-                  minWidth: 300,
                   marginBottom: 1
                 }}
+                className='w-[250px] lg:w-[300px]'
                 placeholder='Search by Customer Name or Cafe'
               />
 
@@ -426,9 +429,9 @@ const Page = () => {
                 onChange={handlePaymentStatusChange}
                 sx={{
                   minWidth: 150,
-                  marginLeft: 'auto',
                   marginBottom: 1 // Margin adjustments for consistency
                 }}
+                className='lg:ml-auto'
                 SelectProps={{ displayEmpty: true }}
               >
                 <MenuItem value=''>All</MenuItem>
@@ -446,7 +449,7 @@ const Page = () => {
                 onChange={handleOnChangeRange}
                 customInput={<CustomInput label='Select Date Range' end={endDateRange} start={startDateRange} />}
                 sx={{
-                  minWidth: 200,
+                  minWidth: 250,
                   maxWidth: 250,
                   paddingBottom: 3,
                   marginLeft: 'auto'
@@ -459,12 +462,15 @@ const Page = () => {
                 sx={{
                   marginLeft: 2,
                   marginBottom: 1,
-                  paddingX: 3,
-                  flexShrink: 0
+
+                  padding: 3,
+                  flexShrink: 0,
+                  borderRadius: '100%',
+                  minWidth: 'auto'
                 }}
                 onClick={handleRemoveFilters}
               >
-                Remove Filters
+                <CrossFilter />
               </Button>
             </form>
           </Box>
@@ -500,7 +506,10 @@ const Page = () => {
                 },
                 '& .first-column-header': {
                   paddingLeft: '24px'
-                }
+                },
+                '& .MuiDataGrid-root': {
+        overflowX: 'auto',
+      },
               }}
             />
           </Box>

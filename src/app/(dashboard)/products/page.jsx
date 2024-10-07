@@ -128,7 +128,8 @@ export default function Page() {
           </p>
         </Box>
       ),
-      headerClassName: 'first-column-header'
+      headerClassName: 'first-column-header',
+      minWidth: 180
     },
     {
       field: 'productName',
@@ -140,7 +141,8 @@ export default function Page() {
             <strong>{params?.row?.name}</strong>
           </p>
         </Box>
-      )
+      ),
+      minWidth: 180
     },
     {
       field: 'cafeName',
@@ -165,10 +167,11 @@ export default function Page() {
             <small>{params?.row?.Cafe.address}</small>
           </Typography>
         </Box>
-      )
+      ),
+      minWidth: 180
     },
-    { field: 'SKU', headerName: 'SKU', flex: 1, sortable: false },
-    { field: 'quantity', headerName: 'Quantity', flex: 1 },
+    { field: 'SKU', headerName: 'SKU', flex: 1, sortable: false, minWidth: 100 },
+    { field: 'quantity', headerName: 'Quantity', flex: 1, minWidth: 140 },
 
     // { field: 'description', headerName: 'Description', flex: 1 },
     {
@@ -206,7 +209,8 @@ export default function Page() {
             </Button>
           )}
         </>
-      )
+      ),
+      minWidth: 180
     },
     {
       field: 'actions',
@@ -241,7 +245,8 @@ export default function Page() {
           </Button>
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 180
     }
   ]
 

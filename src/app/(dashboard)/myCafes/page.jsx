@@ -152,10 +152,11 @@ export default function Page() {
         {params.row.isParent ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
       </Box>
       ),
-      headerClassName: 'first-column-header'
+      headerClassName: 'first-column-header',
+      minWidth: 200
     },
-    { field: 'location', headerName: 'Location', flex: 1 },
-    { field: 'address', headerName: 'Address', flex: 1 },
+    { field: 'location', headerName: 'Location', flex: 1,       minWidth: 150  },
+    { field: 'address', headerName: 'Address', flex: 1 , minWidth: 150 },
     {
       field: 'staff',
       headerName: 'Staff',
@@ -186,7 +187,8 @@ export default function Page() {
           )}
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 100
     },
     {
       field: 'products',
@@ -208,7 +210,8 @@ export default function Page() {
           </Button>
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 130
     },
     {
       field: 'actions',
@@ -243,7 +246,8 @@ export default function Page() {
           </Button>
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 180
     }
   ]
 

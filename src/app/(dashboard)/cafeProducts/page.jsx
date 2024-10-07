@@ -112,7 +112,9 @@ export default function Page() {
           </p>
         </Box>
       ),
-      headerClassName: 'first-column-header'
+      headerClassName: 'first-column-header',
+      minWidth: 180
+
     },
     {
       field: 'name',
@@ -124,11 +126,12 @@ export default function Page() {
             <strong>{params?.row?.name}</strong>
           </p>
         </Box>
-      )
+      ),
+      minWidth: 180
     },
-    { field: 'SKU', headerName: 'SKU', flex: 1 },
-    { field: 'quantity', headerName: 'Quantity', flex: 1 },
-    { field: 'description', headerName: 'Description', flex: 1 },
+    { field: 'SKU', headerName: 'SKU', flex: 1 , minWidth: 100},
+    { field: 'quantity', headerName: 'Quantity', flex: 1 , minWidth: 140},
+    { field: 'description', headerName: 'Description', flex: 1, minWidth: 180 },
     {
       field: 'productVariation',
       headerName: 'Product Variation',
@@ -163,7 +166,8 @@ export default function Page() {
             </Button>
           )}
         </>
-      )
+      ),
+      minWidth: 220
     },
     {
       field: 'actions',
@@ -188,7 +192,8 @@ export default function Page() {
           </Button>
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 180
     }
   ]
 
