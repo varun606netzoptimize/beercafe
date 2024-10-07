@@ -160,7 +160,7 @@ export async function GET(req) {
     return new NextResponse(
       JSON.stringify({
         message: 'Cafes fetched successfully',
-        totalCafes: result, // Include all cafes in totalCafes
+        cafes: cafes, // Include all cafes in totalCafes
         pagination: {
           page,
           limit,

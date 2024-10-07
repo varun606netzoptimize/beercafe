@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
       .finally(() => {
         setTokenCheck(true)
 
-        // GetCafe(userData)
+        GetCafe(userData)
         GetStats(userData)
         GetUsers()
         GetBrands()
