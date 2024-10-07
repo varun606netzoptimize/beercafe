@@ -182,7 +182,8 @@ export default function Page() {
             <p style={{ color: '#808390' }}>No manager assigned</p>
           )}
         </Box>
-      )
+      ),
+      sortable: false
     },
     {
       field: 'products',
@@ -203,7 +204,8 @@ export default function Page() {
             View
           </Button>
         </Box>
-      )
+      ),
+      sortable: false
     },
     {
       field: 'actions',
