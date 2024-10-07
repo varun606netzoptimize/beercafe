@@ -37,7 +37,15 @@ const productSchema = yup.object().shape({
   imageUrl: yup.string().required('Image URL is required').url('Must be a valid URL')
 })
 
-export default function AddProductDrawer({ open, onClose, getProducts }) {
+export default function AddProductDrawer({
+  open,
+  onClose,
+  getProducts,
+  updateProductData,
+  setDrawerType,
+  drawerType,
+  setUpdateProductData
+}) {
   const { authToken, brands, cafeProducts, cafes } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -45,11 +53,54 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitted }
+    formState: { errors, isSubmitted },
+    setValue
   } = useForm({
     resolver: yupResolver(productSchema),
     mode: 'onBlur'
   })
+
+  const createProduct = async productData => {
+    try {
+      const response = await axios.post(ENDPOINT.CREATE_PRODUCT, productData, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+
+      console.log('Product added:', response.data)
+      toast.success(productData.name + ' Product Added')
+      reset()
+      onClose()
+      getProducts()
+    } catch (err) {
+      console.error('Error adding product:', err)
+      toast.error('Failed to add product')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const updateProduct = async productData => {
+    try {
+      const response = await axios.put(ENDPOINT.UPDATE_PRODUCT, productData, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+
+      console.log('Product Updated:', response.data)
+      toast.success(productData.name + 'Product Updated')
+      reset()
+      onClose()
+      getProducts()
+    } catch (err) {
+      console.error('Error updating product:', err)
+      toast.error('Failed to update product')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const onSubmit = async data => {
     setIsLoading(true)
@@ -64,25 +115,33 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
       image: data.imageUrl
     }
 
-    try {
-      const response = await axios.post(ENDPOINT.CREATE_PRODUCT, productData, {
-        headers: {
-          Authorization: `Bearer ${authToken.token}`
-        }
-      })
-
-      console.log('Product added:', response.data)
-      toast.success(data.name + ' Product Added')
-      reset()
-      onClose()
-      getProducts()
-    } catch (err) {
-      console.error('Error adding product:', err)
-      toast.error('Failed to add product')
-    } finally {
-      setIsLoading(false)
+    if (drawerType === 'update') {
+      productData.productId = data.id
     }
+
+    if (drawerType === 'update') {
+      await updateProduct(productData)
+    } else {
+      await createProduct(productData)
+    }
+
+    reset()
   }
+
+  React.useEffect(() => {
+    if (drawerType === 'update' && updateProductData) {
+      setValue('brand', updateProductData.Brand.id)
+      setValue('cafe', updateProductData.Cafe.id)
+      setValue('name', updateProductData.name)
+      setValue('sku', updateProductData.SKU)
+      setValue('description', updateProductData.description)
+      setValue('quantity', updateProductData.quantity)
+      setValue('imageUrl', updateProductData.image)
+      setValue('id', updateProductData.id)
+    } else {
+      reset()
+    }
+  }, [drawerType, updateProductData, setValue, reset])
 
   const DrawerList = (
     <Box sx={{ width: 400, padding: 4 }} role='presentation'>
@@ -223,7 +282,13 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
         />
 
         <Button fullWidth variant='contained' type='submit'>
-          {isLoading ? <CircularProgress color='inherit' size={20} /> : 'Add Product'}
+          {isLoading ? (
+            <CircularProgress color='inherit' size={20} />
+          ) : drawerType === 'update' ? (
+            'Update Product'
+          ) : (
+            'Add Product'
+          )}
         </Button>
       </form>
     </Box>

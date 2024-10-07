@@ -30,6 +30,7 @@ export default function Page() {
   const [variations, setVariations] = useState([])
 
   const [productData, setProductData] = useState(null)
+  const [updateProductData, setUpdateProductData] = useState(null)
   const [addVariationVisible, setAddVariationVisible] = useState(false)
   const [drawerType, setDrawerType] = useState('add')
 
@@ -213,7 +214,17 @@ export default function Page() {
       flex: 1,
       renderCell: params => (
         <Box>
-          <Button variant='outlined' color='info' size='small' sx={{ marginRight: 2 }} onClick={() => {}}>
+          <Button
+            variant='outlined'
+            color='info'
+            size='small'
+            sx={{ marginRight: 2 }}
+            onClick={() => {
+              setOpen(true)
+              setDrawerType('update')
+              setUpdateProductData(params?.row)
+            }}
+          >
             Edit
           </Button>
           <Button
@@ -300,7 +311,14 @@ export default function Page() {
         )}
       </Card>
 
-      <AddProductDrawer open={open} onClose={() => setOpen(false)} getProducts={getProducts} />
+      <AddProductDrawer
+        open={open}
+        onClose={() => setOpen(false)}
+        drawerType={drawerType}
+        setDrawerType={setDrawerType}
+        updateProductData={updateProductData}
+        getProducts={getProducts}
+      />
 
       <DeleteProduct
         open={showDeletePop}
