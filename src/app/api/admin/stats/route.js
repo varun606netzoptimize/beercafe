@@ -53,6 +53,8 @@ export async function GET(req) {
       }
     })
 
+    let bestCafeOfTheMonth = { name: '', totalRevenue: 0 }
+
     const { totalCafes, totalProducts, totalOrders, totalRevenue } = cafes.reduce(
       (acc, cafe) => {
         const parentProductCount = cafe.Product.length
@@ -73,6 +75,20 @@ export async function GET(req) {
           return childTotal + childCafe.Order.reduce((total, order) => total + order.amount, 0)
         }, 0)
 
+        // Check if parent cafe has the highest revenue
+        if (parentRevenue > bestCafeOfTheMonth.totalRevenue) {
+          bestCafeOfTheMonth = { name: cafe.name, totalRevenue: parentRevenue }
+        }
+
+        // Check each child cafe's revenue
+        cafe.children.forEach(childCafe => {
+          const childCafeRevenue = childCafe.Order.reduce((total, order) => total + order.amount, 0)
+
+          if (childCafeRevenue > bestCafeOfTheMonth.totalRevenue) {
+            bestCafeOfTheMonth = { name: childCafe.name, totalRevenue: childCafeRevenue }
+          }
+        })
+
         acc.totalCafes += 1 + cafe.children.length
         acc.totalProducts += parentProductCount + childrenProductCount
         acc.totalOrders += parentOrderCount + childrenOrderCount
@@ -83,7 +99,7 @@ export async function GET(req) {
       { totalCafes: 0, totalProducts: 0, totalOrders: 0, totalRevenue: 0 }
     )
 
-    const formattedTotalRevenue = parseFloat(totalRevenue.toFixed(2));
+    const formattedTotalRevenue = parseFloat(totalRevenue.toFixed(2))
 
     return NextResponse.json(
       {
@@ -91,8 +107,9 @@ export async function GET(req) {
         totalCafes,
         totalOrders,
         totalRevenue: formattedTotalRevenue,
+        bestCafeOfTheMonth: bestCafeOfTheMonth,
 
-        // cafes: cafes
+        cafes: cafes
       },
       { status: 200 }
     )
