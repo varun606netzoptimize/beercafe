@@ -14,6 +14,7 @@ import { ENDPOINT } from '@/endpoints'
 import ViewManagerModal from '../cafes/ViewManagerModal'
 import DeleteCafe from '../cafes/DeleteCafe'
 import AddMyCafeDrawer from './AddMyCafeDrawer'
+import ArrowDownRight from '@/@menu/svg/ArrowDownRight'
 
 export default function Page() {
   const router = useRouter()
@@ -145,9 +146,11 @@ export default function Page() {
       headerName: 'Name',
       flex: 1,
       renderCell: params => (
-        <Box sx={{ paddingLeft: params.row.isParent ? 4 : 8 }}>
-          {params.row.isParent ? <h3> {params.row.name}</h3> : <p>{params.row.name}</p>}
-        </Box>
+        <Box sx={{ paddingLeft: params.row.isParent ? 4 : 6, display: 'flex', alignItems: 'center', gap: 2 }}>
+        {/* Show ArrowDownRight icon if not a parent */}
+        {!params.row.isParent && <ArrowDownRight sx={{ marginRight: 3 }} />}
+        {params.row.isParent ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
+      </Box>
       ),
       headerClassName: 'first-column-header'
     },
