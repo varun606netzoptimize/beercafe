@@ -248,30 +248,29 @@ export default function Page() {
 
   return (
     <div className='flex flex-col gap-6'>
-      {isTableRendering ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress size={32} />
-        </Box>
-      ) : (
-        <Card>
-          <CardContent
-            sx={{
-              padding: '16px'
-            }}
-          >
-            <Box sx={titleBoxStyle}>
-              <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
-              <Button
-                variant='contained'
-                size='medium'
-                startIcon={<i className='tabler-bottle' />}
-                onClick={() => setOpen(true)}
-              >
-                Add Product
-              </Button>
-            </Box>
-          </CardContent>
-
+      <Card>
+        <CardContent
+          sx={{
+            padding: '16px'
+          }}
+        >
+          <Box sx={titleBoxStyle}>
+            <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
+            <Button
+              variant='contained'
+              size='medium'
+              startIcon={<i className='tabler-bottle' />}
+              onClick={() => setOpen(true)}
+            >
+              Add Product
+            </Button>
+          </Box>
+        </CardContent>
+        {isTableRendering ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+            <CircularProgress size={32} />
+          </Box>
+        ) : (
           <DataGrid
             loading={isLoading}
             rows={products}
@@ -298,8 +297,8 @@ export default function Page() {
               }
             }}
           />
-        </Card>
-      )}
+        )}
+      </Card>
 
       <AddProductDrawer open={open} onClose={() => setOpen(false)} getProducts={getProducts} />
 

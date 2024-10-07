@@ -4,16 +4,45 @@ const prisma = new PrismaClient()
 
 export async function PUT(req) {
   try {
-    const { id, brandId, cafeId, name, SKU, description, quantity, image } = await req.json()
+    const { productId, brandId, cafeId, name, SKU, description, quantity, image } = await req.json()
 
-    // Validate input: 'id', 'brandId', 'name', 'SKU', and 'quantity' are required
-    if (!id || !brandId || !name || !SKU || !quantity) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 })
+    // Validate input: 'productId', 'brandId', 'name', 'SKU', and 'quantity' are required
+    if (!productId) {
+      return new Response(JSON.stringify({ error: 'Missing required productId' }), { status: 400 })
     }
 
-    // Find the existing product by ID
+    if (!brandId) {
+      return new Response(JSON.stringify({ error: 'Missing required brandId' }), { status: 400 })
+    }
+
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+      return new Response(JSON.stringify({ error: 'Invalid or missing name' }), { status: 400 })
+    }
+
+    if (!SKU || typeof SKU !== 'string' || SKU.trim() === '') {
+      return new Response(JSON.stringify({ error: 'Invalid or missing SKU' }), { status: 400 })
+    }
+
+    if (typeof quantity !== 'number' || quantity < 0) {
+      return new Response(JSON.stringify({ error: 'Invalid quantity, must be a positive number' }), { status: 400 })
+    }
+
+    // Optionally validate cafeId, description, and image if needed
+    if (cafeId && typeof cafeId !== 'string') {
+      return new Response(JSON.stringify({ error: 'Invalid cafeId' }), { status: 400 })
+    }
+
+    if (description && typeof description !== 'string') {
+      return new Response(JSON.stringify({ error: 'Invalid description' }), { status: 400 })
+    }
+
+    if (image && typeof image !== 'string') {
+      return new Response(JSON.stringify({ error: 'Invalid image URL' }), { status: 400 })
+    }
+
+    // Find the product to ensure it exists
     const existingProduct = await prisma.product.findUnique({
-      where: { id }
+      where: { id: productId }
     })
 
     if (!existingProduct) {
@@ -22,15 +51,15 @@ export async function PUT(req) {
 
     // Update the product in the database
     const updatedProduct = await prisma.product.update({
-      where: { id },
+      where: { id: productId },
       data: {
-        brandId,
-        name,
-        SKU,
-        quantity,
-        description: description || null,
-        image: image || null,
-        cafeId: cafeId || null // Only include cafeId if provided
+        brandId: brandId || existingProduct.brandId, // Keep existing value if not provided
+        name: name || existingProduct.name,
+        SKU: SKU || existingProduct.SKU,
+        quantity: quantity || existingProduct.quantity,
+        description: description || existingProduct.description,
+        image: image || existingProduct.image,
+        cafeId: cafeId || existingProduct.cafeId // Optional cafeId
       }
     })
 
@@ -41,3 +70,4 @@ export async function PUT(req) {
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 })
   }
 }
+
