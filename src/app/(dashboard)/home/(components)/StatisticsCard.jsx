@@ -1,6 +1,8 @@
 // MUI Imports
 import { useContext } from 'react'
 
+import Link from 'next/link'
+
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
@@ -21,25 +23,29 @@ const StatisticsCard = () => {
       stats: stats?.totalOrders,
       title: 'Sales',
       color: 'primary',
-      icon: 'tabler-chart-pie-2'
+      icon: 'tabler-chart-pie-2',
+      href: '/orders'
     },
     {
       color: 'info',
       stats: stats?.totalCafes,
       title: 'Cafes',
-      icon: 'tabler-coffee'
+      icon: 'tabler-coffee',
+      href: '/myCafes'
     },
     {
       color: 'error',
       stats: stats?.totalProducts,
       title: 'Products',
-      icon: 'tabler-shopping-cart'
+      icon: 'tabler-shopping-cart',
+      href: '/products'
     },
     {
       stats: stats?.totalRevenue,
       color: 'success',
       title: 'Revenue',
-      icon: 'tabler-currency-dollar'
+      icon: 'tabler-currency-dollar',
+      href: '/orders'
     }
   ]
 
@@ -59,9 +65,11 @@ const StatisticsCard = () => {
           <Grid container spacing={4}>
             {data.map((item, index) => (
               <Grid key={index} item xs className='flex items-center gap-4'>
-                <CustomAvatar color={item.color} variant='rounded' size={40} skin='light'>
-                  <i className={item.icon}></i>
-                </CustomAvatar>
+                <Link href={item.href} alt={item.href}>
+                  <CustomAvatar color={item.color} variant='rounded' size={40} skin='light'>
+                    <i className={item.icon}></i>
+                  </CustomAvatar>
+                </Link>
                 <div className='flex flex-col'>
                   <Typography variant='h5'>{item.stats}</Typography>
                   <Typography variant='body2'>{item.title}</Typography>
