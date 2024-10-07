@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -106,12 +106,13 @@ export default function Page() {
       headerName: 'Brand Name',
       flex: 1,
       renderCell: params => (
-        <Box>
+        <Box sx={{paddingLeft: 4}}>
           <p>
             <strong>{params?.row?.Brand?.name}</strong>
           </p>
         </Box>
-      )
+      ),
+      headerClassName: 'first-column-header'
     },
     {
       field: 'name',
@@ -194,32 +195,47 @@ export default function Page() {
   return (
     <div className='flex flex-col gap-6'>
       <Card>
-        <Box sx={titleBoxStyle}>
-          <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
-          <Button
-            variant='contained'
-            size='medium'
-            startIcon={<i className='tabler-bottle' />}
-            onClick={() => setOpen(true)}
-          >
-            Add Product
-          </Button>
-        </Box>
-      </Card>
+        <CardContent>
+          <Box sx={titleBoxStyle}>
+            <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
+            <Button
+              variant='contained'
+              size='medium'
+              startIcon={<i className='tabler-bottle' />}
+              onClick={() => setOpen(true)}
+            >
+              Add Product
+            </Button>
+          </Box>
+        </CardContent>
 
-      {isTableRendering ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress size={32} />
-        </Box>
-      ) : (
-        <DataGrid
-          loading={isLoading}
-          rows={cafeProducts?.products}
-          columns={columns}
-          pagination
-          rowCount={cafeProducts?.products?.length}
-        />
-      )}
+        {isTableRendering ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+            <CircularProgress size={32} />
+          </Box>
+        ) : (
+          <DataGrid
+            loading={isLoading}
+            rows={cafeProducts?.products}
+            columns={columns}
+            pagination
+            rowCount={cafeProducts?.products?.length}
+            sx={{
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#3f51b5',
+                fontSize: '13px',
+                fontWeight: 'bold'
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                textTransform: 'uppercase'
+              },
+              '& .first-column-header': {
+                paddingLeft: '24px'
+              }
+            }}
+          />
+        )}
+      </Card>
 
       <AddProductDrawer open={open} onClose={() => setOpen(false)} getProducts={GetCafeProducts} />
 

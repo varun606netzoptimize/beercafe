@@ -105,8 +105,7 @@ export default function AddProductDrawer({ open, onClose, getProducts }) {
 
                   const selectedChild = selectedCafe?.children?.find(child => child.id === selected)
 
-
-return selectedChild ? selectedChild.name : selectedCafe?.name
+                  return selectedChild ? selectedChild.name : selectedCafe?.name
                 }}
               >
                 {cafes.cafes?.map(data => [
