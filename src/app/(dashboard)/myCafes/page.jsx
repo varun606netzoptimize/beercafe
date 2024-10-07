@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -145,10 +145,11 @@ export default function Page() {
       headerName: 'Name',
       flex: 1,
       renderCell: params => (
-        <Box sx={{ paddingLeft: params.row.isParent ? 0 : 4 }}>
+        <Box sx={{ paddingLeft: params.row.isParent ? 4 : 8 }}>
           {params.row.isParent ? <h3> {params.row.name}</h3> : <p>{params.row.name}</p>}
         </Box>
-      )
+      ),
+      headerClassName: 'first-column-header'
     },
     { field: 'location', headerName: 'Location', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
@@ -250,55 +251,77 @@ export default function Page() {
   return (
     <div className='flex flex-col gap-6'>
       <Card>
-        <Box sx={titleBoxStyle}>
-          <TextField
-            id='outlined-basic'
-            label='Search'
-            variant='outlined'
-            size='small'
-            onChange={e => {
-              setSearch(e.target.value)
+        <CardContent
+          sx={{
+            padding: '16px'
+          }}
+        >
+          <Box sx={titleBoxStyle}>
+            <TextField
+              id='outlined-basic'
+              label='Search'
+              variant='outlined'
+              size='small'
+              onChange={e => {
+                setSearch(e.target.value)
+              }}
+            />
+            <Button
+              variant='contained'
+              size='medium'
+              startIcon={<i className='tabler-briefcase' />}
+              onClick={() => {
+                setOpen(true)
+                setDrawerType('create')
+                setUpdateCafeData(null)
+              }}
+            >
+              Add Cafe
+            </Button>
+          </Box>
+        </CardContent>
+
+        {isTableRendering ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+            <CircularProgress size={32} />
+          </Box>
+        ) : (
+          <DataGrid
+            loading={isLoading}
+            rows={groupedCafes}
+            columns={columns}
+            pagination
+            paginationModel={paginationModel}
+            pageSizeOptions={[10]}
+            disableSelectionOnClick={true}
+            disableColumnFilter
+            disableRowSelectionOnClick
+            rowCount={totalRows}
+            paginationMode='server'
+            onPaginationModelChange={setPaginationModel}
+            sortingMode='server'
+            onSortModelChange={newSortModel => {
+              setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
+              setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
+            }}
+            rowSelectionModel={[]}
+            checkboxSelection={false}
+            sx={{
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#3f51b5',
+                fontSize: '13px',
+                fontWeight: 'bold'
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                textTransform: 'uppercase'
+              },
+              '& .first-column-header': {
+                paddingLeft: '24px'
+              }
             }}
           />
-          <Button
-            variant='contained'
-            size='medium'
-            startIcon={<i className='tabler-briefcase' />}
-            onClick={() => {
-              setOpen(true)
-              setDrawerType('create')
-              setUpdateCafeData(null)
-            }}
-          >
-            Add Cafe
-          </Button>
-        </Box>
+        )}
       </Card>
-
-      {isTableRendering ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress size={32} />
-        </Box>
-      ) : (
-        <DataGrid
-          loading={isLoading}
-          rows={groupedCafes}
-          columns={columns}
-          pagination
-          paginationModel={paginationModel}
-          pageSizeOptions={[10]}
-          rowCount={totalRows}
-          paginationMode='server'
-          onPaginationModelChange={setPaginationModel}
-          sortingMode='server'
-          onSortModelChange={newSortModel => {
-            setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
-            setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
-          }}
-          rowSelectionModel={[]}
-          checkboxSelection={false}
-        />
-      )}
 
       <ViewManagerModal open={viewManagers} setOpen={setViewManagers} staff={staff} />
 
