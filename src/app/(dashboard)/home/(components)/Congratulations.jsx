@@ -33,7 +33,7 @@ const CongratulationsJohn = () => {
                 Best Café of the Month
               </Typography>
               <Typography variant='h4' color='primary.main' className='mbe-1'>
-                ${stats.bestCafeOfTheMonth.totalRevenue} in Sales
+                ${stats.bestCafeOfTheMonth.totalRevenue} in Revenue
               </Typography>
               <Button variant='contained' color='primary'>
                 View Performance
