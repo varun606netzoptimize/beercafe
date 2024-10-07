@@ -53,7 +53,63 @@ export async function GET(req) {
       }
     })
 
+    // Fetch only current month orders for bestCafeOfTheMonth
+    const currentMonthCafes = await prisma.cafe.findMany({
+      where: {
+        cafeUsers: {
+          some: {
+            userId: userId
+          }
+        }
+      },
+      include: {
+        children: {
+          include: {
+            Order: {
+              where: {
+                paymentStatus: 'PAID',
+                createdAt: {
+                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) // Filter for this month
+                }
+              }
+            }
+          }
+        },
+        Order: {
+          where: {
+            paymentStatus: 'PAID',
+            createdAt: {
+              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) // Filter for this month
+            }
+          }
+        }
+      }
+    })
+
     let bestCafeOfTheMonth = { name: '', totalRevenue: 0 }
+
+    // Calculate the best cafe of the month based on currentMonthCafes data
+    currentMonthCafes.forEach(cafe => {
+      const parentRevenue = cafe.Order.reduce((total, order) => total + order.amount, 0)
+
+      const childrenRevenue = cafe.children.reduce((childTotal, childCafe) => {
+        return childTotal + childCafe.Order.reduce((total, order) => total + order.amount, 0)
+      }, 0)
+
+      // Check if parent cafe has the highest revenue
+      if (parentRevenue > bestCafeOfTheMonth.totalRevenue) {
+        bestCafeOfTheMonth = { name: cafe.name, totalRevenue: parentRevenue }
+      }
+
+      // Check each child cafe's revenue
+      cafe.children.forEach(childCafe => {
+        const childCafeRevenue = childCafe.Order.reduce((total, order) => total + order.amount, 0)
+
+        if (childCafeRevenue > bestCafeOfTheMonth.totalRevenue) {
+          bestCafeOfTheMonth = { name: childCafe.name, totalRevenue: childCafeRevenue }
+        }
+      })
+    })
 
     const { totalCafes, totalProducts, totalOrders, totalRevenue } = cafes.reduce(
       (acc, cafe) => {
@@ -74,20 +130,6 @@ export async function GET(req) {
         const childrenRevenue = cafe.children.reduce((childTotal, childCafe) => {
           return childTotal + childCafe.Order.reduce((total, order) => total + order.amount, 0)
         }, 0)
-
-        // Check if parent cafe has the highest revenue
-        if (parentRevenue > bestCafeOfTheMonth.totalRevenue) {
-          bestCafeOfTheMonth = { name: cafe.name, totalRevenue: parentRevenue }
-        }
-
-        // Check each child cafe's revenue
-        cafe.children.forEach(childCafe => {
-          const childCafeRevenue = childCafe.Order.reduce((total, order) => total + order.amount, 0)
-
-          if (childCafeRevenue > bestCafeOfTheMonth.totalRevenue) {
-            bestCafeOfTheMonth = { name: childCafe.name, totalRevenue: childCafeRevenue }
-          }
-        })
 
         acc.totalCafes += 1 + cafe.children.length
         acc.totalProducts += parentProductCount + childrenProductCount
