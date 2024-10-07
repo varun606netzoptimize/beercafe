@@ -271,7 +271,11 @@ export default function Page() {
               variant='contained'
               size='medium'
               startIcon={<i className='tabler-bottle' />}
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true)
+                setDrawerType('create')
+                setUpdateProductData(null)
+              }}
             >
               Add Product
             </Button>
