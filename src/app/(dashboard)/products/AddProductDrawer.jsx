@@ -90,7 +90,7 @@ export default function AddProductDrawer({
       })
 
       console.log('Product Updated:', response.data)
-      toast.success(productData.name + 'Product Updated')
+      toast.success(productData.name + ' Product Updated')
       reset()
       onClose()
       getProducts()
