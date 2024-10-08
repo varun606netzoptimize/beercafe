@@ -142,7 +142,15 @@ const Page = () => {
     setEndDateRange(null)
     setPaymentStatus('')
     setQueryValue('')
-    getOrder()
+    setPaginationModel(prevModel => ({
+      ...prevModel,
+      page: 0,
+      pageSize: paginationModel.pageSize
+    }))
+    getOrder({
+      page: 0,
+      pageSize: paginationModel.pageSize
+    })
   }
 
   const handlePaymentStatusChange = event => {
@@ -252,7 +260,6 @@ const Page = () => {
       filterable: false,
       sortable: false,
       minWidth: 150
-
     },
     {
       field: 'paymentStatus',
@@ -406,10 +413,7 @@ const Page = () => {
               borderRadius: 2
             }}
           >
-            <form
-              onSubmit={handleQueryValueSubmit}
-              className='flex items-end justify-between w-full gap-4 flex-nowrap'
-            >
+            <form onSubmit={handleQueryValueSubmit} className='flex items-end justify-between w-full gap-4 flex-nowrap'>
               {/* Search Input */}
               <CustomTextField
                 value={queryValue}
@@ -508,8 +512,8 @@ const Page = () => {
                   paddingLeft: '24px'
                 },
                 '& .MuiDataGrid-root': {
-        overflowX: 'auto',
-      },
+                  overflowX: 'auto'
+                }
               }}
             />
           </Box>
