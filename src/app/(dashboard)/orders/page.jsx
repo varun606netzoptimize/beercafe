@@ -45,6 +45,11 @@ const Page = () => {
     pageSize: 10
   })
 
+  const [sortingModel, setSortingModel] = useState({
+    sortBy: 'customerName',
+    sortOrder: 'asc'
+  })
+
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
@@ -328,9 +333,28 @@ const Page = () => {
     if (sortModel?.length > 0) {
       const { field, sort } = sortModel[0]
 
-      getOrder({ sortBy: field, sortOrder: sort })
+      setSortingModel(prevSorting => ({
+        ...prevSorting,
+        sortBy: field,
+        sortOrder: sort
+      }))
+
+      getOrder({ sortBy: field, sortOrder: sort, page: 0, pageSize: paginationModel.pageSize })
+      setPaginationModel(prevModel => ({
+        ...prevModel,
+        page: 0,
+        pageSize: prevModel.pageSize
+      }))
     } else {
-      getOrder()
+      getOrder({
+        page: 0,
+        pageSize: paginationModel.pageSize
+      })
+      setPaginationModel(prevModel => ({
+        ...prevModel,
+        page: 0,
+        pageSize: prevModel.pageSize
+      }))
     }
   }
 
@@ -378,7 +402,9 @@ const Page = () => {
       paymentStatus,
       queryValue,
       page: pageInfo.page + 1,
-      pageSize: pageInfo.pageSize
+      pageSize: pageInfo.pageSize,
+      sortBy: sortingModel.sortBy,
+      sortOrder: sortingModel.sortOrder
     })
   }
 

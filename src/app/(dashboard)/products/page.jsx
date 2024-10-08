@@ -34,6 +34,16 @@ export default function Page() {
   const [addVariationVisible, setAddVariationVisible] = useState(false)
   const [drawerType, setDrawerType] = useState('add')
 
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10
+  })
+
+  const [sortingModel, setSortingModel] = useState({
+    sortBy: 'brandName',
+    sortOrder: 'asc'
+  })
+
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
@@ -256,10 +266,45 @@ export default function Page() {
     if (sortModel?.length > 0) {
       const { field, sort } = sortModel[0]
 
-      getProducts({ sortBy: field, sortOrder: sort })
+      setSortingModel(prevSorting => ({
+        ...prevSorting,
+        sortBy: field,
+        sortOrder: sort
+      }))
+
+      getProducts({ sortBy: field, sortOrder: sort, page: 0, pageSize: paginationModel.pageSize })
+      setPaginationModel(prevModel => ({
+        ...prevModel,
+        page: 0,
+        pageSize: prevModel.pageSize
+      }))
     } else {
-      getProducts()
+      getProducts({
+        page: 0,
+        pageSize: paginationModel.pageSize
+      })
+      setPaginationModel(prevModel => ({
+        ...prevModel,
+        page: 0,
+        pageSize: prevModel.pageSize
+      }))
     }
+  }
+
+  const handlePageSizeChange = pageInfo => {
+    setPaginationModel(prevModel => ({
+      ...prevModel,
+      page: pageInfo.page,
+      pageSize: pageInfo.pageSize
+    }))
+
+    getProducts({
+      page: pageInfo.page + 1,
+      pageSize: pageInfo.pageSize,
+      sortBy: sortingModel.sortBy,
+      sortOrder: sortingModel.sortOrder
+    })
+    console.log(pageInfo, 'pageInfo')
   }
 
   return (
@@ -293,10 +338,13 @@ export default function Page() {
         ) : (
           <DataGrid
             loading={isLoading}
-            rows={products}
+            rows={products?.data}
             columns={columns}
-            pagination
-            rowCount={products?.length}
+            paginationMode='server'
+            paginationModel={paginationModel}
+            pageSizeOptions={[5, 10, 25]}
+            onPaginationModelChange={handlePageSizeChange}
+            rowCount={products?.meta?.totalProductsCount}
             rowHeight={60}
             autoHeight
             disableSelectionOnClick={true}

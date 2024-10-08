@@ -28,17 +28,12 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    // Extract filters from query params
+    // Extract and validate pagination and sorting params
     const filters = {
       sortBy: searchParams.get('sortBy'),
-      sortOrder: searchParams.get('sortOrder') || 'asc', // default sortOrder
-      page: Number(searchParams.get('page')) || 1,
-      pageSize: Number(searchParams.get('pageSize')) || 10
-    }
-
-    // Validate pagination params
-    if (filters.page <= 0 || filters.pageSize <= 0) {
-      return NextResponse.json({ error: 'Invalid pagination values' }, { status: 400 })
+      sortOrder: searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc', // default to 'asc'
+      page: Math.max(Number(searchParams.get('page')) || 1, 1), // default to 1, min 1
+      pageSize: Math.max(Number(searchParams.get('pageSize')) || 10, 1) // default to 10, min 1
     }
 
     // Fetch cafes associated with the user
@@ -55,13 +50,40 @@ export async function GET(req) {
 
     // If user has no cafes
     if (userCafes.length === 0) {
-      return NextResponse.json({ products: [] })
+      return NextResponse.json({
+        data: [],
+        meta: {
+          totalProductsCount: 0,
+          currentPage: filters.page,
+          pageSize: filters.pageSize,
+          totalPages: 0
+        }
+      })
     }
 
     // Extract all cafeIds including child cafes
     const cafeIds = extractCafeIds(userCafes)
 
-    // Fetch products from associated cafes
+    // Get the total product count for pagination
+    const totalProductsCount = await prisma.product.count({
+      where: {
+        cafeId: { in: cafeIds }
+      }
+    })
+
+    if (totalProductsCount === 0) {
+      return NextResponse.json({
+        data: [],
+        meta: {
+          totalProductsCount: 0,
+          currentPage: filters.page,
+          pageSize: filters.pageSize,
+          totalPages: 0
+        }
+      })
+    }
+
+    // Fetch products from associated cafes with pagination and sorting
     const products = await prisma.product.findMany({
       where: {
         cafeId: { in: cafeIds }
@@ -72,11 +94,7 @@ export async function GET(req) {
         Cafe: true,
         variations: {
           where: {
-            NOT: {
-              deletedAt: {
-                not: null
-              }
-            }
+            deletedAt: null // Only include variations that are not deleted
           }
         }
       },
@@ -84,12 +102,22 @@ export async function GET(req) {
       take: filters.pageSize
     })
 
-    // Return the product list
-    return NextResponse.json(products)
+    const totalPages = Math.ceil(totalProductsCount / filters.pageSize)
+
+    // Return the product list with meta information
+    return NextResponse.json({
+      data: products,
+      meta: {
+        totalProductsCount,
+        currentPage: filters.page,
+        pageSize: filters.pageSize,
+        totalPages
+      }
+    })
   } catch (error) {
     console.error('Error fetching products:', error)
 
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
@@ -116,6 +144,6 @@ function getOrderBy(sortBy, sortOrder) {
     quantity: { quantity: sortOrder }
   }
 
-  // Default sorting by brandName if no valid sortBy field is provided
-  return validSortFields[sortBy] || { Brand: { name: 'asc' } }
+  // Default sorting by product name if no valid sortBy field is provided
+  return validSortFields[sortBy] || { name: 'asc' }
 }
