@@ -22,11 +22,10 @@ export default function Page() {
   const { authToken, tokenCheck, currentUser, setPageTitle, setCafeProducts } = useContext(AuthContext)
 
   const [isDeleting, setDeleting] = useState(false)
-  const [myCafes, setMyCafes] = useState({ cafes: [], pagination: {} })
+  const [myCafes, setMyCafes] = useState(null)
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
-  const [totalRows, setTotalRows] = useState(0)
   const [viewManagers, setViewManagers] = useState(false)
 
   const [staff, setStaff] = useState({
@@ -45,8 +44,11 @@ export default function Page() {
     pageSize: 10
   })
 
-  const [sortOrder, setSortOrder] = useState('asc')
-  const [sortBy, setSortBy] = useState('name')
+  const [sortingModel, setSortingModel] = useState({
+    sortBy: 'name',
+    sortOrder: 'asc'
+  })
+
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [deleteCafeData, setDeleteCafeData] = useState(null)
 
@@ -61,11 +63,11 @@ export default function Page() {
   useEffect(() => {
     if (authToken.token) {
       if (currentUser) {
-        GetMyCafes()
+        getMyCafes()
         setPageTitle('Manage My Cafes')
       }
     }
-  }, [authToken, paginationModel.page, sortBy, sortOrder, currentUser, debouncedSearch])
+  }, [authToken, currentUser, debouncedSearch])
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -77,18 +79,35 @@ export default function Page() {
     }
   }, [search])
 
-  async function GetMyCafes() {
-    const url = `${ENDPOINT.GET_MY_CAFES}?ownerId=${currentUser?.id}&page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&search=${debouncedSearch}`
+  async function getMyCafes({ sortBy, sortOrder, page, pageSize, debouncedSearch } = {}) {
+    let url = `${ENDPOINT.GET_MY_CAFES}`
+    const params = []
+
+    if (sortBy) params.push(`sortBy=${sortBy}`)
+    if (sortOrder) params.push(`sortOrder=${sortOrder}`)
+    if (page) params.push(`page=${page}`)
+    if (pageSize) params.push(`pageSize=${pageSize}`)
+    if (debouncedSearch) params.push(`search=${debouncedSearch}`)
+
+    // If any parameters exist, join them with '&' and append to URL
+    if (params.length > 0) {
+      url += `?${params.join('&')}`
+    }
 
     setIsLoading(true)
 
     axios
-      .get(url, {})
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
       .then(res => {
         const cafesData = res.data.cafes
 
-        setMyCafes({ cafes: cafesData, pagination: res.data.pagination })
-        setTotalRows(res.data.pagination.totalCafes)
+        console.log(cafesData, "cafesData")
+
+        setMyCafes(res.data)
         groupCafes(cafesData)
       })
       .catch(err => {
@@ -113,7 +132,7 @@ export default function Page() {
         }
       })
       .then(res => {
-        GetMyCafes()
+        getMyCafes()
       })
       .catch(err => {
         console.log('Failed to delete manager:', err.response ? err.response.data : err.message)
@@ -126,8 +145,12 @@ export default function Page() {
   }
 
   const groupCafes = cafesData => {
+
+
     const parentCafes = cafesData.filter(cafe => cafe.parentId === null)
     const branches = cafesData.filter(cafe => cafe.parentId !== null)
+
+
 
     const grouped = parentCafes.map(parentCafe => {
       return {
@@ -137,6 +160,8 @@ export default function Page() {
       }
     })
 
+    console.log(grouped, "groupCafes")
+
     setGroupedCafes(grouped.flatMap(cafe => [cafe, ...cafe.children]))
   }
 
@@ -145,18 +170,20 @@ export default function Page() {
       field: 'name',
       headerName: 'Name',
       flex: 1,
-      renderCell: params => (
-        <Box sx={{ paddingLeft: params.row.isParent ? 4 : 6, display: 'flex', alignItems: 'center', gap: 2 }}>
-        {/* Show ArrowDownRight icon if not a parent */}
-        {!params.row.isParent && <ArrowDownRight sx={{ marginRight: 3 }} />}
-        {params.row.isParent ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
-      </Box>
-      ),
+      renderCell: params => {
+        return(
+        <Box sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Show ArrowDownRight icon if not a parent */}
+          {params.row.parentId && <ArrowDownRight sx={{ marginRight: 3 }} />}
+          {!params.row.parentId ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
+        </Box>
+        )
+      },
       headerClassName: 'first-column-header',
       minWidth: 200
     },
-    { field: 'location', headerName: 'Location', flex: 1,       minWidth: 150  },
-    { field: 'address', headerName: 'Address', flex: 1 , minWidth: 150 },
+    { field: 'location', headerName: 'Location', flex: 1, minWidth: 150 },
+    { field: 'address', headerName: 'Address', flex: 1, minWidth: 150 },
     {
       field: 'staff',
       headerName: 'Staff',
@@ -251,11 +278,60 @@ export default function Page() {
     }
   ]
 
-  const parentCafes = myCafes.cafes.filter(cafe => cafe.parentId === null)
+  const parentCafes = myCafes?.cafes?.filter(cafe => cafe.parentId === null)
 
   if (!authToken.token) {
     return null
   }
+
+  const handleSortChange = sortModel => {
+    console.log(sortModel, 'sortModel')
+
+    if (sortModel?.length > 0) {
+      const { field, sort } = sortModel[0]
+
+      setSortingModel(prevSorting => ({
+        ...prevSorting,
+        sortBy: field,
+        sortOrder: sort
+      }))
+
+      getMyCafes({ sortBy: field, sortOrder: sort, page: 0, pageSize: paginationModel.pageSize })
+      setPaginationModel(prevModel => ({
+        ...prevModel,
+        page: 0,
+        pageSize: prevModel.pageSize
+      }))
+    } else {
+      getMyCafes({
+        page: 0,
+        pageSize: paginationModel.pageSize
+      })
+      setPaginationModel(prevModel => ({
+        ...prevModel,
+        page: 0,
+        pageSize: prevModel.pageSize
+      }))
+    }
+  }
+
+  const handlePageSizeChange = pageInfo => {
+    setPaginationModel(prevModel => ({
+      ...prevModel,
+      page: pageInfo.page,
+      pageSize: pageInfo.pageSize
+    }))
+
+    getMyCafes({
+      page: pageInfo.page + 1,
+      pageSize: pageInfo.pageSize,
+      sortBy: sortingModel.sortBy,
+      sortOrder: sortingModel.sortOrder
+    })
+    console.log(pageInfo, 'pageInfo')
+  }
+
+
 
   return (
     <div className='flex flex-col gap-6'>
@@ -297,22 +373,17 @@ export default function Page() {
         ) : (
           <DataGrid
             loading={isLoading}
-            rows={groupedCafes}
+            rows={myCafes.cafes}
             columns={columns}
-            pagination
+            paginationMode='server'
             paginationModel={paginationModel}
-            pageSizeOptions={[10]}
+            pageSizeOptions={[5, 10, 25]}
+            onPaginationModelChange={handlePageSizeChange}
             disableSelectionOnClick={true}
             disableColumnFilter
             disableRowSelectionOnClick
-            rowCount={totalRows}
-            paginationMode='server'
-            onPaginationModelChange={setPaginationModel}
-            sortingMode='server'
-            onSortModelChange={newSortModel => {
-              setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
-              setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
-            }}
+            rowCount={myCafes?.pagination?.totalCafes}
+            onSortModelChange={handleSortChange}
             rowSelectionModel={[]}
             checkboxSelection={false}
             sx={{
@@ -348,7 +419,7 @@ export default function Page() {
         onClose={() => setOpen(false)}
         drawerType={drawerType}
         setDrawerType={setDrawerType}
-        GetCafe={GetMyCafes}
+        GetCafe={getMyCafes}
         updateCafeData={updateCafeData}
         cafes={parentCafes}
       />

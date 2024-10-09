@@ -2,40 +2,43 @@ import { NextResponse } from 'next/server'
 
 import { PrismaClient } from '@prisma/client'
 
+import { getUserIdFromToken } from '../../utils/jwt'
+
 const prisma = new PrismaClient()
 
 export async function GET(req) {
+  const { searchParams } = new URL(req.url)
+
   try {
-    // Extract pagination, sorting, and search parameters from query
-    const url = new URL(req.url, `http://${req.headers.host}`)
-    const page = parseInt(url.searchParams.get('page')) || 1
-    const limit = parseInt(url.searchParams.get('limit')) || 10
-    const sortBy = url.searchParams.get('sortBy') || 'name'
-    const sortOrder = url.searchParams.get('sortOrder') || 'asc'
-    const ownerId = url.searchParams.get('ownerId')
-    let search = url.searchParams.get('search') || ''
+    const token = req.headers.get('Authorization')?.split(' ')[1]
+
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const userId = getUserIdFromToken(token)
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
+    const filters = {
+      search: searchParams.get('search'), // General search for customer or cafe
+      sortBy: searchParams.get('sortBy') || 'createdAt', // Default sortBy to createdAt
+      sortOrder: searchParams.get('sortOrder') || 'asc', // Default sortOrder to ascending
+      page: Number(searchParams.get('page')) || 1,
+      pageSize: Number(searchParams.get('pageSize')) || 10
+    }
 
     // Trim and format the search query
-    search = search.trim().replace(/\s+/g, ' ')
-
-    // Validate sortBy and sortOrder
-    const validSortFields = ['name', 'location', 'createdAt']
-    const validSortOrders = ['asc', 'desc']
-    const sortField = validSortFields.includes(sortBy) ? sortBy : 'name'
-    const sortDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'asc'
-
-    if (!ownerId) {
-      return new NextResponse(JSON.stringify({ message: 'Owner ID is required' }), {
-        status: 400
-      })
-    }
+    filters.search = filters.search?.trim().replace(/\s+/g, ' ')
 
     // Get all cafes owned by the user
     const ownedCafes = await prisma.cafe.findMany({
       where: {
         cafeUsers: {
           some: {
-            userId: ownerId,
+            userId: userId,
             user: {
               userType: {
                 type: 'owner'
@@ -46,9 +49,9 @@ export async function GET(req) {
         AND: [
           {
             OR: [
-              { name: { contains: search, mode: 'insensitive' } },
-              { address: { contains: search, mode: 'insensitive' } },
-              { location: { contains: search, mode: 'insensitive' } }
+              { name: { contains: filters.search, mode: 'insensitive' } },
+              { address: { contains: filters.search, mode: 'insensitive' } },
+              { location: { contains: filters.search, mode: 'insensitive' } }
             ]
           }
         ]
@@ -91,9 +94,9 @@ export async function GET(req) {
         AND: [
           {
             OR: [
-              { name: { contains: search, mode: 'insensitive' } },
-              { address: { contains: search, mode: 'insensitive' } },
-              { location: { contains: search, mode: 'insensitive' } }
+              { name: { contains: filters.search, mode: 'insensitive' } },
+              { address: { contains: filters.search, mode: 'insensitive' } },
+              { location: { contains: filters.search, mode: 'insensitive' } }
             ]
           }
         ]
@@ -124,105 +127,66 @@ export async function GET(req) {
       }
     })
 
-    // Combine owned cafes and child cafes
-    const result = [...ownedCafes, ...childCafes]
+    // Helper function to separate owners and users
+    const categorizeUsers = cafeUsers => {
+      const owners = []
+      const users = []
 
-    // Apply pagination and sorting
-    const sortedAndPagedResult = result
-      .sort((a, b) => {
-        if (a[sortField] < b[sortField]) return sortDirection === 'asc' ? -1 : 1
-        if (a[sortField] > b[sortField]) return sortDirection === 'asc' ? 1 : -1
+      cafeUsers.forEach(cafeUser => {
+        const userType = cafeUser.user.userType?.type
 
-        return 0
-      })
-      .slice((page - 1) * limit, page * limit)
-
-    // Map the cafes to include user and owner information
-    const resultWithUsers = sortedAndPagedResult.map(cafe => {
-      let owners = []
-
-      // Collect owners from the parent cafe if it exists
-      if (cafe.parent) {
-        const parentOwners = cafe.parent.cafeUsers.filter(cafeUser => cafeUser.user.userType.type === 'owner')
-
-        if (parentOwners.length > 0) {
-          owners.push(
-            ...parentOwners.map(owner => ({
-              id: owner.user.id,
-              name: owner.user.name,
-              email: owner.user.email,
-              phoneNumber: owner.user.phoneNumber,
-              userType: owner.user.userType.type,
-              createdAt: owner.user.createdAt,
-              updatedAt: owner.user.updatedAt,
-              deletedAt: owner.user.deletedAt
-            }))
-          )
+        if (userType === 'owner') {
+          owners.push(cafeUser.user)
+        } else {
+          users.push(cafeUser.user)
         }
-      }
+      })
 
-      // Collect owners from the current cafe
-      const currentCafeOwners = cafe.cafeUsers.filter(cafeUser => cafeUser.user.userType.type === 'owner')
+      return { owners, users }
+    }
 
-      if (currentCafeOwners.length > 0) {
-        owners.push(
-          ...currentCafeOwners.map(owner => ({
-            id: owner.user.id,
-            name: owner.user.name,
-            email: owner.user.email,
-            phoneNumber: owner.user.phoneNumber,
-            userType: owner.user.userType.type,
-            createdAt: owner.user.createdAt,
-            updatedAt: owner.user.updatedAt,
-            deletedAt: owner.user.deletedAt
-          }))
-        )
-      }
+    // Categorize owners and users for each cafe
+    let cafesWithUserCategories = [...ownedCafes, ...childCafes].map(cafe => {
+      const { owners, users } = categorizeUsers(cafe.cafeUsers)
 
       return {
-        id: cafe.id,
-        name: cafe.name,
-        slug: cafe.slug,
-        location: cafe.location,
-        address: cafe.address,
-        description: cafe.description,
-        priceConversionRate: cafe.priceConversionRate,
-        parentId: cafe.parentId,
-        owners: owners,
-        createdAt: cafe.createdAt,
-        updatedAt: cafe.updatedAt,
-        deletedAt: cafe.deletedAt,
-        users: cafe.cafeUsers
-          .filter(cafeUser => cafeUser.user.userType.type !== 'owner') // Exclude owners from the users list
-          .map(cafeUser => ({
-            id: cafeUser.user.id,
-            name: cafeUser.user.name,
-            email: cafeUser.user.email,
-            phoneNumber: cafeUser.user.phoneNumber,
-            userType: cafeUser.user.userType.type,
-            createdAt: cafeUser.user.createdAt,
-            updatedAt: cafeUser.user.updatedAt,
-            deletedAt: cafeUser.user.deletedAt
-          }))
+        ...cafe,
+        owners,
+        users
       }
     })
 
-    // Calculate total number of pages
-    const totalCafes = result.length
-    const totalPages = Math.ceil(totalCafes / limit)
-    const hasNextPage = page < totalPages
+    // Implement sorting based on the provided sortBy and sortOrder
+    cafesWithUserCategories.sort((a, b) => {
+      let fieldA = a[filters.sortBy]?.toString().toLowerCase() || ''
+      let fieldB = b[filters.sortBy]?.toString().toLowerCase() || ''
 
-    // Return the response with pagination info
+      if (filters.sortOrder === 'asc') {
+        return fieldA.localeCompare(fieldB)
+      } else {
+        return fieldB.localeCompare(fieldA)
+      }
+    })
+
+    // Apply pagination on the sorted cafes
+    const totalCafesCount = cafesWithUserCategories.length
+    const totalPages = Math.ceil(totalCafesCount / filters.pageSize)
+
+    // Implement skip and take for pagination on the final sorted data
+    const paginatedCafes = cafesWithUserCategories.slice(
+      (filters.page - 1) * filters.pageSize,
+      filters.page * filters.pageSize
+    )
+
+    // Return the response with paginated cafes
     return new NextResponse(
       JSON.stringify({
-        message: 'Cafes fetched successfully',
-        cafes: resultWithUsers,
-        pagination: {
-          page,
-          limit,
-          totalCafes,
+        cafes: paginatedCafes,
+        meta: {
+          currentPage: filters.page,
+          pageSize: filters.pageSize,
           totalPages,
-          hasNextPage
+          totalCafesCount
         }
       }),
       { status: 200 }
