@@ -15,6 +15,7 @@ import ViewManagerModal from '../cafes/ViewManagerModal'
 import DeleteCafe from '../cafes/DeleteCafe'
 import AddMyCafeDrawer from './AddMyCafeDrawer'
 import ArrowDownRight from '@/@menu/svg/ArrowDownRight'
+import CollapsibleTable from './CollapsibleTable'
 
 export default function Page() {
   const router = useRouter()
@@ -146,6 +147,8 @@ export default function Page() {
       headerName: 'Name',
       flex: 1,
       renderCell: params => {
+        console.log(params, 'params')
+
         return(
         <Box sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}>
           {/* Show ArrowDownRight icon if not a parent */}
@@ -375,6 +378,9 @@ export default function Page() {
           />
         )}
       </Card>
+
+      <CollapsibleTable />
+
 
       <ViewManagerModal open={viewManagers} setOpen={setViewManagers} staff={staff} />
 
