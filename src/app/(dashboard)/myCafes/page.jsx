@@ -382,7 +382,7 @@ export default function Page() {
             disableSelectionOnClick={true}
             disableColumnFilter
             disableRowSelectionOnClick
-            rowCount={myCafes?.pagination?.totalCafes}
+            rowCount={myCafes?.meta?.totalCafesCount}
             onSortModelChange={handleSortChange}
             rowSelectionModel={[]}
             checkboxSelection={false}

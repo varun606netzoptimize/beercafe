@@ -35,6 +35,7 @@ export async function GET(req) {
 
     // Get all cafes owned by the user
     const ownedCafes = await prisma.cafe.findMany({
+      orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
       where: {
         cafeUsers: {
           some: {
@@ -57,16 +58,7 @@ export async function GET(req) {
         ]
       },
       include: {
-        cafeUsers: {
-          include: {
-            user: {
-              include: {
-                userType: true
-              }
-            }
-          }
-        },
-        parent: {
+        children: {
           include: {
             cafeUsers: {
               include: {
@@ -76,32 +68,22 @@ export async function GET(req) {
                   }
                 }
               }
+            },
+            parent: {
+              include: {
+                cafeUsers: {
+                  include: {
+                    user: {
+                      include: {
+                        userType: true
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
-        }
-      }
-    })
-
-    // Extract the IDs of the owned cafes
-    const ownedCafeIds = ownedCafes.map(cafe => cafe.id)
-
-    // Get cafes where parentId matches any of the owned cafe IDs
-    const childCafes = await prisma.cafe.findMany({
-      where: {
-        parentId: {
-          in: ownedCafeIds
         },
-        AND: [
-          {
-            OR: [
-              { name: { contains: filters.search, mode: 'insensitive' } },
-              { address: { contains: filters.search, mode: 'insensitive' } },
-              { location: { contains: filters.search, mode: 'insensitive' } }
-            ]
-          }
-        ]
-      },
-      include: {
         cafeUsers: {
           include: {
             user: {
@@ -146,7 +128,7 @@ export async function GET(req) {
     }
 
     // Categorize owners and users for each cafe
-    let cafesWithUserCategories = [...ownedCafes, ...childCafes].map(cafe => {
+    let cafesWithUserCategories = [...ownedCafes].map(cafe => {
       const { owners, users } = categorizeUsers(cafe.cafeUsers)
 
       return {
@@ -156,32 +138,14 @@ export async function GET(req) {
       }
     })
 
-    // Implement sorting based on the provided sortBy and sortOrder
-    cafesWithUserCategories.sort((a, b) => {
-      let fieldA = a[filters.sortBy]?.toString().toLowerCase() || ''
-      let fieldB = b[filters.sortBy]?.toString().toLowerCase() || ''
-
-      if (filters.sortOrder === 'asc') {
-        return fieldA.localeCompare(fieldB)
-      } else {
-        return fieldB.localeCompare(fieldA)
-      }
-    })
-
     // Apply pagination on the sorted cafes
     const totalCafesCount = cafesWithUserCategories.length
     const totalPages = Math.ceil(totalCafesCount / filters.pageSize)
 
-    // Implement skip and take for pagination on the final sorted data
-    const paginatedCafes = cafesWithUserCategories.slice(
-      (filters.page - 1) * filters.pageSize,
-      filters.page * filters.pageSize
-    )
-
     // Return the response with paginated cafes
     return new NextResponse(
       JSON.stringify({
-        cafes: paginatedCafes,
+        cafes: cafesWithUserCategories,
         meta: {
           currentPage: filters.page,
           pageSize: filters.pageSize,
@@ -200,4 +164,25 @@ export async function GET(req) {
   } finally {
     await prisma.$disconnect()
   }
+}
+
+
+function getOrderBy(sortBy, sortOrder) {
+  const validSortFields = {
+    customerName: {
+      Customer: { firstname: sortOrder || 'asc' } // Default to ascending if no order provided
+    },
+    cafeName: {
+      Cafe: { name: sortOrder || 'asc' }
+    },
+    amount: {
+      amount: sortOrder || 'asc'
+    },
+    createdAt: {
+      createdAt: sortOrder || 'asc'
+    }
+  }
+
+  // Return the appropriate orderBy field
+  return validSortFields[sortBy] || { createdAt: 'desc' }
 }

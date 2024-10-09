@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Slide from '@mui/material/Slide'
 
-import { Box, Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -27,7 +27,20 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'phoneNumber', headerName: 'Phone Number', flex: 1 },
-    { field: 'userType', headerName: 'Role', flex: 1 }
+    {
+      field: 'userType',
+      headerName: 'Role',
+      flex: 1,
+      renderCell: params => {
+        console.log(params, 'params');
+
+        return (
+          <>
+          {params.row.userType.type}
+          </>
+        )
+      }
+    }
   ]
 
   // Slice the data for pagination
