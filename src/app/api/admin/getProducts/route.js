@@ -33,7 +33,8 @@ export async function GET(req) {
       sortBy: searchParams.get('sortBy'),
       sortOrder: searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc', // default to 'asc'
       page: Math.max(Number(searchParams.get('page')) || 1, 1), // default to 1, min 1
-      pageSize: Math.max(Number(searchParams.get('pageSize')) || 10, 1) // default to 10, min 1
+      pageSize: Math.max(Number(searchParams.get('pageSize')) || 10, 1), // default to 10, min 1
+      search: searchParams.get('query'),
     }
 
     // Fetch cafes associated with the user
@@ -67,8 +68,17 @@ export async function GET(req) {
     // Get the total product count for pagination
     const totalProductsCount = await prisma.product.count({
       where: {
-        cafeId: { in: cafeIds }
-      }
+        cafeId: { in: cafeIds },
+        AND: filters.search
+          ? {
+              OR: [
+                { name: { contains: filters.search, mode: 'insensitive' } }, // Search in product name
+                { Brand: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in brand name
+                { Cafe: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in cafe name
+              ],
+            }
+          : {},
+      },
     })
 
     if (totalProductsCount === 0) {
@@ -86,7 +96,16 @@ export async function GET(req) {
     // Fetch products from associated cafes with pagination and sorting
     const products = await prisma.product.findMany({
       where: {
-        cafeId: { in: cafeIds }
+        cafeId: { in: cafeIds },
+        AND: filters.search
+          ? {
+              OR: [
+                { name: { contains: filters.search, mode: 'insensitive' } }, // Search in product name
+                { Brand: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in brand name
+                { Cafe: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in cafe name
+              ],
+            }
+          : {},
       },
       orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
       include: {
