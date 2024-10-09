@@ -32,8 +32,6 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
       headerName: 'Role',
       flex: 1,
       renderCell: params => {
-        console.log(params, 'params');
-
         return (
           <>
           {params.row.userType.type}

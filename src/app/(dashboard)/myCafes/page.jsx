@@ -35,7 +35,6 @@ export default function Page() {
 
   const [drawerType, setDrawerType] = useState('create')
   const [updateCafeData, setUpdateCafeData] = useState(null)
-  const [groupedCafes, setGroupedCafes] = useState([])
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
 
@@ -105,10 +104,7 @@ export default function Page() {
       .then(res => {
         const cafesData = res.data.cafes
 
-        console.log(cafesData, "cafesData")
-
         setMyCafes(res.data)
-        groupCafes(cafesData)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -142,27 +138,6 @@ export default function Page() {
         setOpenDeleteDialog(false)
         setDeleteCafeData(null)
       })
-  }
-
-  const groupCafes = cafesData => {
-
-
-    const parentCafes = cafesData.filter(cafe => cafe.parentId === null)
-    const branches = cafesData.filter(cafe => cafe.parentId !== null)
-
-
-
-    const grouped = parentCafes.map(parentCafe => {
-      return {
-        ...parentCafe,
-        isParent: true,
-        children: branches.filter(branch => branch.parentId === parentCafe.id)
-      }
-    })
-
-    console.log(grouped, "groupCafes")
-
-    setGroupedCafes(grouped.flatMap(cafe => [cafe, ...cafe.children]))
   }
 
   const columns = [
@@ -285,7 +260,6 @@ export default function Page() {
   }
 
   const handleSortChange = sortModel => {
-    console.log(sortModel, 'sortModel')
 
     if (sortModel?.length > 0) {
       const { field, sort } = sortModel[0]
@@ -328,7 +302,6 @@ export default function Page() {
       sortBy: sortingModel.sortBy,
       sortOrder: sortingModel.sortOrder
     })
-    console.log(pageInfo, 'pageInfo')
   }
 
 
