@@ -91,7 +91,7 @@ export async function GET(req) {
       orderBy: getOrderBy(filters.sortBy, filters.sortOrder)
     })
 
-    console.log(ownedCafes[0].children, "ownedCafes")
+    console.log(ownedCafes[0].children, 'ownedCafes')
 
     // Apply pagination on the sorted cafes
     const totalCafesCount = ownedCafes.length
