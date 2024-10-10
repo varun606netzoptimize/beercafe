@@ -351,6 +351,7 @@ export default function Page() {
             disableColumnFilter
             disableRowSelectionOnClick
             onSortModelChange={handleSortChange}
+            sortingMode="server"
             sx={{
               '& .MuiDataGrid-columnHeaders': {
                 backgroundColor: '#3f51b5',

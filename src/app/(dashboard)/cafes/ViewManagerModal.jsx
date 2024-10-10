@@ -29,8 +29,6 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
       headerName: 'Name',
       flex: 1,
       renderCell: params => {
-        console.log(params, 'totalCafes params')
-
         return <>{params.row.user.name}</>
       }
     },
@@ -39,8 +37,6 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
       headerName: 'Email',
       flex: 1,
       renderCell: params => {
-        console.log(params, 'totalCafes params')
-
         return <>{params.row.user.email}</>
       }
     },
@@ -49,8 +45,6 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
       headerName: 'Phone Number',
       flex: 1,
       renderCell: params => {
-        console.log(params, 'totalCafes params')
-
         return <>{params.row.user.phoneNumber}</>
       }
     },
@@ -59,8 +53,6 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
       headerName: 'Role',
       flex: 1,
       renderCell: params => {
-        console.log(params, 'totalCafes params')
-
         return <>{params.row.user.userType.type}</>
       }
     }

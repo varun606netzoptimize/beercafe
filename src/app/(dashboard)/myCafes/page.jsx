@@ -381,6 +381,7 @@ export default function Page() {
             onSortModelChange={handleSortChange}
             rowSelectionModel={[]}
             checkboxSelection={false}
+            sortingMode="server"
             sx={{
               '& .MuiDataGrid-columnHeaders': {
                 backgroundColor: '#3f51b5',

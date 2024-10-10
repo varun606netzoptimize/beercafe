@@ -523,6 +523,7 @@ const Page = () => {
               rowHeight={60}
               getRowId={row => row.id}
               onSortModelChange={handleSortChange}
+              sortingMode="server"
               sx={{
                 '& .MuiDataGrid-columnHeaders': {
                   backgroundColor: '#3f51b5',
