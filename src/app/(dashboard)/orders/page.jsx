@@ -1,7 +1,7 @@
 'use client'
 import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
-import { redirect, useSearchParams } from 'next/navigation'
+import { redirect, useRouter, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
 import {
@@ -29,7 +29,8 @@ import CustomTextField from '@/@core/components/mui/TextField'
 import CrossFilter from '@/@menu/svg/CrossFilter'
 
 const Page = () => {
-  const { authToken, tokenCheck, setPageTitle, setOrders, orders } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle, setOrders, orders, stats } = useContext(AuthContext)
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [orderDeatilsOpen, setOrderDeatilsOpen] = useState(false)
@@ -60,18 +61,12 @@ const Page = () => {
       if (!authToken.token) {
         redirect('/login')
       } else {
-        if (cafeIdParams) {
-          getOrder({
-            cafeId: cafeIdParams
-          })
-        } else {
-          getOrder()
-        }
+        getOrder()
       }
 
       setPageTitle('Orders')
     }
-  }, [authToken])
+  }, [authToken, cafeIdParams])
 
   useEffect(() => {
     // Cleanup function to clear the timer when the component unmounts
@@ -105,7 +100,7 @@ const Page = () => {
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
     if (pageSize) params.push(`pageSize=${pageSize}`)
-    if (cafeId) params.push(`cafeId=${cafeId}`)
+    if (cafeIdParams) params.push(`cafeId=${cafeIdParams}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
@@ -448,6 +443,16 @@ const Page = () => {
             padding: '16px'
           }}
         >
+          {cafeIdParams === stats?.bestCafeOfTheMonth?.cafeId && (
+            <Box className='flex  gap-2 items-center justify-center mb-6'>
+              <Typography>Currently viewing orders for {stats.bestCafeOfTheMonth.name} Cafe.</Typography>
+              <Button onClick={() => router.push('/orders')}>
+                {' '}
+                <i className='tabler-x text-[16px] text-blue border-none' />
+              </Button>
+            </Box>
+          )}
+
           <Box
             sx={{
               display: 'flex',
