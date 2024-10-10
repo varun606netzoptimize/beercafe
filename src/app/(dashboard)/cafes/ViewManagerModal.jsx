@@ -24,19 +24,44 @@ export default function ViewManagerModal({ open, setOpen, staff }) {
   }
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'email', headerName: 'Email', flex: 1 },
-    { field: 'phoneNumber', headerName: 'Phone Number', flex: 1 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      renderCell: params => {
+        console.log(params, 'totalCafes params')
+
+        return <>{params.row.user.name}</>
+      }
+    },
+    {
+      field: 'email',
+      headerName: 'Email',
+      flex: 1,
+      renderCell: params => {
+        console.log(params, 'totalCafes params')
+
+        return <>{params.row.user.email}</>
+      }
+    },
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      flex: 1,
+      renderCell: params => {
+        console.log(params, 'totalCafes params')
+
+        return <>{params.row.user.phoneNumber}</>
+      }
+    },
     {
       field: 'userType',
       headerName: 'Role',
       flex: 1,
       renderCell: params => {
-        return (
-          <>
-          {params.row.userType.type}
-          </>
-        )
+        console.log(params, 'totalCafes params')
+
+        return <>{params.row.user.userType.type}</>
       }
     }
   ]

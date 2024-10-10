@@ -15,7 +15,6 @@ import ViewManagerModal from '../cafes/ViewManagerModal'
 import DeleteCafe from '../cafes/DeleteCafe'
 import AddMyCafeDrawer from './AddMyCafeDrawer'
 import ArrowDownRight from '@/@menu/svg/ArrowDownRight'
-import CollapsibleTable from './CollapsibleTable'
 
 export default function Page() {
   const router = useRouter()
@@ -24,6 +23,7 @@ export default function Page() {
 
   const [isDeleting, setDeleting] = useState(false)
   const [myCafes, setMyCafes] = useState(null)
+  const [myCafesMetadata, setMyCafesMetaData] = useState(null)
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
@@ -79,6 +79,26 @@ export default function Page() {
     }
   }, [search])
 
+  const combineCafe = cafes => {
+    // Combine parent and child
+
+    const totalCafes = []
+
+    if (cafes.length > 0) {
+      cafes.forEach(cafe => {
+        totalCafes.push(cafe)
+
+        if (cafe.children.length > 0) {
+          cafe.children.forEach(child => {
+            totalCafes.push(child)
+          })
+        }
+      })
+    }
+
+    return totalCafes
+  }
+
   async function getMyCafes({ sortBy, sortOrder, page, pageSize, debouncedSearch } = {}) {
     let url = `${ENDPOINT.GET_MY_CAFES}`
     const params = []
@@ -105,7 +125,13 @@ export default function Page() {
       .then(res => {
         const cafesData = res.data.cafes
 
-        setMyCafes(res.data)
+        setMyCafesMetaData(res.data.meta)
+
+        const totalCafes = combineCafe(cafesData)
+
+        console.log(totalCafes, 'totalCafes')
+
+        setMyCafes(totalCafes)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -149,12 +175,12 @@ export default function Page() {
       renderCell: params => {
         console.log(params, 'params')
 
-        return(
-        <Box sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* Show ArrowDownRight icon if not a parent */}
-          {params.row.parentId && <ArrowDownRight sx={{ marginRight: 3 }} />}
-          {!params.row.parentId ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
-        </Box>
+        return (
+          <Box sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Show ArrowDownRight icon if not a parent */}
+            {params.row.parentId && <ArrowDownRight sx={{ marginRight: 3 }} />}
+            {!params.row.parentId ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
+          </Box>
         )
       },
       headerClassName: 'first-column-header',
@@ -168,20 +194,18 @@ export default function Page() {
       flex: 1,
       renderCell: params => (
         <Box>
-          {params.row.owners.length > 0 || params.row.users.length > 0 ? (
+          {params.row.cafeUsers.length > 0  ? (
             <Button
               variant='outlined'
               color='info'
               size='small'
               sx={{ marginRight: 2 }}
               onClick={() => {
-                const combinedManagers = [...params.row.owners, ...params.row.users]
-
                 setViewManagers(true)
 
                 setStaff({
                   name: params.row.name,
-                  staff: combinedManagers
+                  staff: params.row.cafeUsers
                 })
               }}
             >
@@ -256,14 +280,13 @@ export default function Page() {
     }
   ]
 
-  const parentCafes = myCafes?.cafes?.filter(cafe => cafe.parentId === null)
+  const parentCafes = myCafes?.filter(cafe => cafe.parentId === null)
 
   if (!authToken.token) {
     return null
   }
 
   const handleSortChange = sortModel => {
-
     if (sortModel?.length > 0) {
       const { field, sort } = sortModel[0]
 
@@ -307,8 +330,6 @@ export default function Page() {
     })
   }
 
-
-
   return (
     <div className='flex flex-col gap-6'>
       <Card>
@@ -349,7 +370,7 @@ export default function Page() {
         ) : (
           <DataGrid
             loading={isLoading}
-            rows={myCafes.cafes}
+            rows={myCafes}
             columns={columns}
             paginationMode='server'
             paginationModel={paginationModel}
@@ -358,7 +379,7 @@ export default function Page() {
             disableSelectionOnClick={true}
             disableColumnFilter
             disableRowSelectionOnClick
-            rowCount={myCafes?.meta?.totalCafesCount}
+            rowCount={myCafesMetadata?.totalCafesCount}
             onSortModelChange={handleSortChange}
             rowSelectionModel={[]}
             checkboxSelection={false}
@@ -378,9 +399,6 @@ export default function Page() {
           />
         )}
       </Card>
-
-      <CollapsibleTable />
-
 
       <ViewManagerModal open={viewManagers} setOpen={setViewManagers} staff={staff} />
 

@@ -109,43 +109,14 @@ export async function GET(req) {
       }
     })
 
-    // Helper function to separate owners and users
-    const categorizeUsers = cafeUsers => {
-      const owners = []
-      const users = []
-
-      cafeUsers.forEach(cafeUser => {
-        const userType = cafeUser.user.userType?.type
-
-        if (userType === 'owner') {
-          owners.push(cafeUser.user)
-        } else {
-          users.push(cafeUser.user)
-        }
-      })
-
-      return { owners, users }
-    }
-
-    // Categorize owners and users for each cafe
-    let cafesWithUserCategories = [...ownedCafes].map(cafe => {
-      const { owners, users } = categorizeUsers(cafe.cafeUsers)
-
-      return {
-        ...cafe,
-        owners,
-        users
-      }
-    })
-
     // Apply pagination on the sorted cafes
-    const totalCafesCount = cafesWithUserCategories.length
+    const totalCafesCount = ownedCafes.length
     const totalPages = Math.ceil(totalCafesCount / filters.pageSize)
 
     // Return the response with paginated cafes
     return new NextResponse(
       JSON.stringify({
-        cafes: cafesWithUserCategories,
+        cafes: ownedCafes,
         meta: {
           currentPage: filters.page,
           pageSize: filters.pageSize,
@@ -165,7 +136,6 @@ export async function GET(req) {
     await prisma.$disconnect()
   }
 }
-
 
 function getOrderBy(sortBy, sortOrder) {
   const validSortFields = {
