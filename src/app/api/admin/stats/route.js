@@ -98,7 +98,7 @@ export async function GET(req) {
 
       // Check if parent cafe has the highest revenue
       if (parentRevenue > bestCafeOfTheMonth.totalRevenue) {
-        bestCafeOfTheMonth = { name: cafe.name, totalRevenue: parentRevenue }
+        bestCafeOfTheMonth = { name: cafe.name, totalRevenue: parentRevenue, cafeId: cafe.id }
       }
 
       // Check each child cafe's revenue
@@ -106,7 +106,7 @@ export async function GET(req) {
         const childCafeRevenue = childCafe.Order.reduce((total, order) => total + order.amount, 0)
 
         if (childCafeRevenue > bestCafeOfTheMonth.totalRevenue) {
-          bestCafeOfTheMonth = { name: childCafe.name, totalRevenue: childCafeRevenue }
+          bestCafeOfTheMonth = { name: childCafe.name, totalRevenue: childCafeRevenue, cafeId: cafe.id }
         }
       })
     })

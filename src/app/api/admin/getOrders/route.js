@@ -66,7 +66,8 @@ export async function GET(req) {
     sortBy: searchParams.get('sortBy'),
     sortOrder: searchParams.get('sortOrder'),
     page: Number(searchParams.get('page')) || 1,
-    pageSize: Number(searchParams.get('pageSize')) || 10
+    pageSize: Number(searchParams.get('pageSize')) || 10,
+    cafeId: searchParams.get('cafeId')
   }
 
   // Validate filters
@@ -107,6 +108,10 @@ export async function GET(req) {
       cafeId: {
         in: allCafeIds
       }
+    }
+
+    if (filters.cafeId) {
+      whereClause.cafeId = filters.cafeId;
     }
 
     // Apply start date filter if present

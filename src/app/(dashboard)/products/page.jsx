@@ -33,6 +33,8 @@ export default function Page() {
   const [updateProductData, setUpdateProductData] = useState(null)
   const [addVariationVisible, setAddVariationVisible] = useState(false)
   const [drawerType, setDrawerType] = useState('add')
+  const [queryValue, setQueryValue] = useState('')
+  const [debounceTimer, setDebounceTimer] = useState(null)
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -60,7 +62,7 @@ export default function Page() {
     }
   }, [authToken])
 
-  const getProducts = ({ sortBy, sortOrder, page, pageSize } = {}) => {
+  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue } = {}) => {
     let url = `${ENDPOINT.GET_PRODUCT}`
     const params = []
 
@@ -68,6 +70,7 @@ export default function Page() {
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
     if (pageSize) params.push(`pageSize=${pageSize}`)
+    if (queryValue) params.push(`query=${queryValue}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
@@ -302,9 +305,26 @@ export default function Page() {
       page: pageInfo.page + 1,
       pageSize: pageInfo.pageSize,
       sortBy: sortingModel.sortBy,
-      sortOrder: sortingModel.sortOrder
+      sortOrder: sortingModel.sortOrder,
+      queryValue
     })
-    console.log(pageInfo, 'pageInfo')
+  }
+
+  const handleQueryValueChange = value => {
+    setQueryValue(value)
+
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+
+    const timer = setTimeout(() => {
+      // Call getOrder immediately after the input change
+      getProducts({
+        queryValue: value // Use the updated value directly
+      })
+    }, 500)
+
+    setDebounceTimer(timer)
   }
 
   return (
@@ -316,7 +336,13 @@ export default function Page() {
           }}
         >
           <Box sx={titleBoxStyle}>
-            <TextField id='outlined-basic' label='Search' variant='outlined' size='small' onChange={e => {}} />
+            <TextField
+              id='outlined-basic'
+              label='Search'
+              variant='outlined'
+              size='small'
+              onChange={e => handleQueryValueChange(e.target.value)}
+            />
             <Button
               variant='contained'
               size='medium'
