@@ -41,15 +41,30 @@ export async function GET(req) {
             userId: userId
           }
         },
-        AND: [
-          {
-            OR: [
-              { name: { contains: filters.search, mode: 'insensitive' } },
-              { address: { contains: filters.search, mode: 'insensitive' } },
-              { location: { contains: filters.search, mode: 'insensitive' } }
-            ]
-          }
-        ]
+        ...(filters.search && {
+          OR: [
+            {
+              // Search in parent cafe
+              OR: [
+                { name: { contains: filters.search, mode: 'insensitive' } },
+                { address: { contains: filters.search, mode: 'insensitive' } },
+                { location: { contains: filters.search, mode: 'insensitive' } }
+              ]
+            },
+            {
+              // Search in child cafes
+              children: {
+                some: {
+                  OR: [
+                    { name: { contains: filters.search, mode: 'insensitive' } },
+                    { address: { contains: filters.search, mode: 'insensitive' } },
+                    { location: { contains: filters.search, mode: 'insensitive' } }
+                  ]
+                }
+              }
+            }
+          ]
+        })
       },
       include: {
         children: {
