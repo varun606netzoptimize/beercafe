@@ -173,8 +173,6 @@ export default function Page() {
       headerName: 'Name',
       flex: 1,
       renderCell: params => {
-        console.log(params, 'params')
-
         return (
           <Box sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}>
             {/* Show ArrowDownRight icon if not a parent */}
@@ -194,7 +192,7 @@ export default function Page() {
       flex: 1,
       renderCell: params => (
         <Box>
-          {params.row.cafeUsers.length > 0  ? (
+          {params.row.cafeUsers.length > 0 ? (
             <Button
               variant='outlined'
               color='info'

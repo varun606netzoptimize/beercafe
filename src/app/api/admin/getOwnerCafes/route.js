@@ -88,10 +88,10 @@ export async function GET(req) {
           }
         }
       },
-      orderBy: getOrderBy(filters.sortBy, filters.sortOrder)
+      orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
+      skip: (filters.page - 1) * filters.pageSize,
+      take: filters.pageSize
     })
-
-    console.log(ownedCafes[0].children, 'ownedCafes')
 
     // Apply pagination on the sorted cafes
     const totalCafesCount = ownedCafes.length
@@ -121,22 +121,22 @@ export async function GET(req) {
   }
 }
 
-function getOrderBy(sortBy, sortOrder) {
+function getOrderBy(sortBy, sortOrder = 'asc') {
   const validSortFields = {
-    customerName: {
-      Customer: { firstname: sortOrder || 'asc' } // Default to ascending if no order provided
+    name: {
+      name: sortOrder // Sorting by the name field
     },
-    cafeName: {
-      Cafe: { name: sortOrder || 'asc' }
+    location: {
+      location: sortOrder // Sorting by the location field
+    },
+    address: {
+      address: sortOrder // Sorting by the address field
     },
     amount: {
-      amount: sortOrder || 'asc'
-    },
-    createdAt: {
-      createdAt: sortOrder || 'asc'
+      amount: sortOrder // Sorting by amount in Order model (if applicable)
     }
   }
 
-  // Return the appropriate orderBy field
+  // Return the appropriate orderBy field or default to createdAt in descending order
   return validSortFields[sortBy] || { name: 'asc' }
 }
