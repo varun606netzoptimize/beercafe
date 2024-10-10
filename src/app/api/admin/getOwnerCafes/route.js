@@ -24,7 +24,7 @@ export async function GET(req) {
 
     const filters = {
       search: searchParams.get('search'), // General search for customer or cafe
-      sortBy: searchParams.get('sortBy') || 'createdAt', // Default sortBy to createdAt
+      sortBy: searchParams.get('sortBy') || 'name', // Default sortBy to createdAt
       sortOrder: searchParams.get('sortOrder') || 'asc', // Default sortOrder to ascending
       page: Number(searchParams.get('page')) || 1,
       pageSize: Number(searchParams.get('pageSize')) || 10
@@ -35,16 +35,10 @@ export async function GET(req) {
 
     // Get all cafes owned by the user
     const ownedCafes = await prisma.cafe.findMany({
-      orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
       where: {
         cafeUsers: {
           some: {
-            userId: userId,
-            user: {
-              userType: {
-                type: 'owner'
-              }
-            }
+            userId: userId
           }
         },
         AND: [
@@ -69,7 +63,7 @@ export async function GET(req) {
                 }
               }
             },
-            parent: {
+            children: {
               include: {
                 cafeUsers: {
                   include: {
@@ -92,22 +86,12 @@ export async function GET(req) {
               }
             }
           }
-        },
-        parent: {
-          include: {
-            cafeUsers: {
-              include: {
-                user: {
-                  include: {
-                    userType: true
-                  }
-                }
-              }
-            }
-          }
         }
-      }
+      },
+      orderBy: getOrderBy(filters.sortBy, filters.sortOrder)
     })
+
+    console.log(ownedCafes[0].children, "ownedCafes")
 
     // Apply pagination on the sorted cafes
     const totalCafesCount = ownedCafes.length
@@ -154,5 +138,5 @@ function getOrderBy(sortBy, sortOrder) {
   }
 
   // Return the appropriate orderBy field
-  return validSortFields[sortBy] || { createdAt: 'desc' }
+  return validSortFields[sortBy] || { name: 'asc' }
 }
