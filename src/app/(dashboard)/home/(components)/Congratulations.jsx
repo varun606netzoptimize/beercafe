@@ -1,6 +1,8 @@
 // MUI Imports
 import { useContext } from 'react'
 
+import Link from 'next/link'
+
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -13,6 +15,8 @@ import { AuthContext } from '@/context/AuthContext'
 
 const CongratulationsJohn = () => {
   const { stats, statsIsLoading } = useContext(AuthContext)
+
+  console.log(stats?.bestCafeOfTheMonth)
 
   return (
     <Card>
@@ -35,9 +39,11 @@ const CongratulationsJohn = () => {
               <Typography variant='h4' color='primary.main' className='mbe-1'>
                 ${stats.bestCafeOfTheMonth.totalRevenue} in Revenue
               </Typography>
-              <Button variant='contained' color='primary'>
-                View Performance
-              </Button>
+              <Link href={`/orders?cafeId=${stats.bestCafeOfTheMonth.cafeId}`}>
+                <Button variant='contained' color='primary'>
+                  View Performance
+                </Button>
+              </Link>
             </CardContent>
           </Grid>
         )}

@@ -1,7 +1,7 @@
 'use client'
 import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
-import { redirect } from 'next/navigation'
+import { redirect, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
 import {
@@ -50,12 +50,23 @@ const Page = () => {
     sortOrder: 'asc'
   })
 
+  const searchParams = useSearchParams()
+  const cafeIdParams = searchParams.get('cafeId') || ''
+
+  console.log(cafeIdParams, 'cafeId')
+
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
         redirect('/login')
       } else {
-        getOrder()
+        if (cafeIdParams) {
+          getOrder({
+            cafeId: cafeIdParams
+          })
+        } else {
+          getOrder()
+        }
       }
 
       setPageTitle('Orders')
@@ -71,7 +82,17 @@ const Page = () => {
     }
   }, [debounceTimer])
 
-  const getOrder = ({ startDate, endDate, paymentStatus, queryValue, sortBy, sortOrder, page, pageSize } = {}) => {
+  const getOrder = ({
+    startDate,
+    endDate,
+    paymentStatus,
+    queryValue,
+    sortBy,
+    sortOrder,
+    page,
+    pageSize,
+    cafeId
+  } = {}) => {
     let url = `${ENDPOINT.GET_ORDERS}`
     const params = []
 
@@ -84,6 +105,7 @@ const Page = () => {
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
     if (pageSize) params.push(`pageSize=${pageSize}`)
+    if (cafeId) params.push(`cafeId=${cafeId}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
