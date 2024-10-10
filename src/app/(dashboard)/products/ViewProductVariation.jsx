@@ -176,6 +176,7 @@ return (
             rows={paginatedData}
             columns={columns}
             pagination
+            paginationMode='server'
             paginationModel={paginationModel}
             disableSelectionOnClick={true}
             pageSizeOptions={[5, 10, 25]}
