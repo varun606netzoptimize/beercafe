@@ -28,6 +28,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
   const [viewManagers, setViewManagers] = useState(false)
+  const [debounceTimer, setDebounceTimer] = useState(null)
 
   const [staff, setStaff] = useState({
     name: null,
@@ -36,8 +37,7 @@ export default function Page() {
 
   const [drawerType, setDrawerType] = useState('create')
   const [updateCafeData, setUpdateCafeData] = useState(null)
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [queryValue, setQueryValue] = useState('')
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -67,17 +67,7 @@ export default function Page() {
         setPageTitle('Manage My Cafes')
       }
     }
-  }, [authToken, currentUser, debouncedSearch])
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search) // Update the debounced search after delay
-    }, 500) // 500ms delay
-
-    return () => {
-      clearTimeout(handler) // Clear the timeout on cleanup to prevent unnecessary API calls
-    }
-  }, [search])
+  }, [authToken, currentUser])
 
   const combineCafe = cafes => {
     // Combine parent and child
@@ -99,7 +89,7 @@ export default function Page() {
     return totalCafes
   }
 
-  async function getMyCafes({ sortBy, sortOrder, page, pageSize, debouncedSearch } = {}) {
+  async function getMyCafes({ sortBy, sortOrder, page, pageSize, search } = {}) {
     let url = `${ENDPOINT.GET_MY_CAFES}`
     const params = []
 
@@ -107,7 +97,7 @@ export default function Page() {
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
     if (pageSize) params.push(`pageSize=${pageSize}`)
-    if (debouncedSearch) params.push(`search=${debouncedSearch}`)
+    if (search) params.push(`search=${search}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
@@ -165,6 +155,23 @@ export default function Page() {
         setOpenDeleteDialog(false)
         setDeleteCafeData(null)
       })
+  }
+
+  const handleQueryValueChange = value => {
+    setQueryValue(value)
+
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+
+    const timer = setTimeout(() => {
+      // Call getOrder immediately after the input change
+      getMyCafes({
+        search: value // Use the updated value directly
+      })
+    }, 500)
+
+    setDebounceTimer(timer)
   }
 
   const columns = [
@@ -338,13 +345,12 @@ export default function Page() {
         >
           <Box sx={titleBoxStyle}>
             <TextField
+              value={queryValue}
               id='outlined-basic'
               label='Search'
               variant='outlined'
               size='small'
-              onChange={e => {
-                setSearch(e.target.value)
-              }}
+              onChange={e => handleQueryValueChange(e.target.value)}
             />
             <Button
               variant='contained'
@@ -381,7 +387,7 @@ export default function Page() {
             onSortModelChange={handleSortChange}
             rowSelectionModel={[]}
             checkboxSelection={false}
-            sortingMode="server"
+            sortingMode='server'
             sx={{
               '& .MuiDataGrid-columnHeaders': {
                 backgroundColor: '#3f51b5',
