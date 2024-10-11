@@ -18,6 +18,8 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { toast, ToastContainer } from 'react-toastify'
 
+import { CornerDownRight } from 'lucide-react'
+
 import CustomTextField from '@core/components/mui/TextField'
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -241,13 +243,17 @@ export default function AddUserDrawer({ open, onClose, drawerType, setDrawerType
                 control={control}
                 render={({ field }) => (
                   <Select {...field} label='Cafe'>
-                    {cafes.map(data => {
-                      return (
-                        <MenuItem value={data.id} key={data.id}>
-                          {data.name}
+                    {cafes?.map(data => [
+                      <MenuItem key={data.id} value={data.id}>
+                        {data.name}
+                      </MenuItem>,
+                      data.children?.map(child => (
+                        <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
+                          <CornerDownRight size={16} />
+                          {child.name}
                         </MenuItem>
-                      )
-                    })}
+                      ))
+                    ])}
                   </Select>
                 )}
               />

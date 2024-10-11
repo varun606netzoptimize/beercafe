@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, Typography, CircularProgress, TextField } from '@mui/material'
+import { Box, Button, Card, Typography, CircularProgress, TextField, CardContent } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -135,15 +135,22 @@ export default function Page() {
       flex: 1,
       renderCell: params => {
         return (
-          <Box>
+          <Box
+            sx={{
+              paddingLeft: '16px'
+            }}
+          >
             <p>{params?.row?.name}</p>
           </Box>
         )
-      }
+      },
+      headerClassName: 'first-column-header',
+      minWidth: 180
     },
-    { field: 'email', headerName: 'Email', flex: 1 },
-    { field: 'phoneNumber', headerName: 'Phone', flex: 1 },
-    { field: 'userType', headerName: 'Role', flex: 1, renderCell: params => <p>{params?.row?.userType?.type}</p> },
+    { field: 'email', headerName: 'Email', flex: 1, minWidth: 180 },
+    { field: 'phoneNumber', headerName: 'Phone', flex: 1, minWidth: 150 },
+    { field: 'userType', headerName: 'Role', flex: 1, renderCell: params => <p>{params?.row?.userType?.type}</p>,       minWidth: 120
+  },
     {
       field: 'cafe',
       headerName: 'Cafe',
@@ -154,7 +161,8 @@ export default function Page() {
             <p>{params?.row?.cafeUsers[0]?.cafe?.name}</p>
           </Box>
         )
-      }
+      },
+      minWidth: 180
     },
     {
       field: 'actions',
@@ -190,7 +198,9 @@ export default function Page() {
           </Button>
         </Box>
       ),
-      sortable: false
+      sortable: false,
+      minWidth: 200
+
     }
   ]
 
@@ -201,58 +211,79 @@ export default function Page() {
   return (
     <div className='flex flex-col gap-6'>
       <Card>
-        <Box sx={headerBox}>
-          <TextField
-            id='outlined-basic'
-            label='Search'
-            variant='outlined'
-            size='small'
-            onChange={e => {
-              setSearch(e.target.value)
-            }}
-          />
-          <Button
-            variant='contained'
-            size='medium'
-            startIcon={<i className='tabler-briefcase' />}
-            onClick={() => {
-              setAddOpen(true)
-              setDrawerType('create')
-            }}
-          >
-            Add Cafe User
-          </Button>
+        <CardContent
+          sx={{
+            padding: '16px'
+          }}
+        >
+          <Box sx={headerBox}>
+            <TextField
+              id='outlined-basic'
+              label='Search'
+              variant='outlined'
+              size='small'
+              onChange={e => {
+                setSearch(e.target.value)
+              }}
+            />
+            <Button
+              variant='contained'
+              size='medium'
+              startIcon={<i className='tabler-briefcase' />}
+              onClick={() => {
+                setAddOpen(true)
+                setDrawerType('create')
+              }}
+            >
+              Add Cafe User
+            </Button>
+          </Box>
+        </CardContent>
+
+        <Box sx={{ width: '100%' }}>
+          {isTableRendering ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+              <CircularProgress size={32} />
+            </Box>
+          ) : (
+            <>
+              <DataGrid
+                loading={isLoading}
+                rows={users.users}
+                columns={columns}
+                pagination
+                paginationModel={paginationModel}
+                disableColumnFilter
+                disableRowSelectionOnClick
+                pageSizeOptions={[10]}
+                rowCount={totalRows}
+                paginationMode='server'
+                onPaginationModelChange={setPaginationModel}
+                sortingMode='server'
+                onSortModelChange={newSortModel => {
+                  setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
+                  setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
+                }}
+                rowSelectionModel={[]}
+                checkboxSelection={false}
+                sx={{
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#3f51b5',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    textTransform: 'uppercase'
+                  },
+                  '& .first-column-header': {
+                    paddingLeft: '24px'
+                  }
+                }}
+              />
+            </>
+          )}
         </Box>
       </Card>
-
-      <Box sx={{ width: '100%' }}>
-        {isTableRendering ? (
-          <Box className='flex items-center justify-center h-full'>
-            <CircularProgress size={32} />
-          </Box>
-        ) : (
-          <>
-            <DataGrid
-              loading={isLoading}
-              rows={users.users}
-              columns={columns}
-              pagination
-              paginationModel={paginationModel}
-              pageSizeOptions={[10]}
-              rowCount={totalRows}
-              paginationMode='server'
-              onPaginationModelChange={setPaginationModel}
-              sortingMode='server'
-              onSortModelChange={newSortModel => {
-                setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
-                setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
-              }}
-              rowSelectionModel={[]}
-              checkboxSelection={false}
-            />
-          </>
-        )}
-      </Box>
 
       <AllCafesModal open={open} setOpen={setOpen} cafes={allCafes} />
 

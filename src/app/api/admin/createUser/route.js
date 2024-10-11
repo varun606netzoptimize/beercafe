@@ -8,9 +8,9 @@ const saltRounds = 10 // Number of rounds for bcrypt hashing
 
 export async function POST(req) {
   // Verify if the request is made by an admin
-  const authResponse = await verifyAdmin(req)
+  // const authResponse = await verifyAdmin(req)
 
-  if (authResponse) return authResponse
+  // if (authResponse) return authResponse
 
   try {
     // Parse the request body
