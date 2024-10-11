@@ -6,9 +6,9 @@ const prisma = new PrismaClient()
 
 export async function DELETE(req) {
   // Verify if the request is made by an admin
-  const authResponse = await verifyAdmin(req)
+  // const authResponse = await verifyAdmin(req)
 
-  if (authResponse) return authResponse
+  // if (authResponse) return authResponse
 
   try {
     // Extract the user ID from query parameters
