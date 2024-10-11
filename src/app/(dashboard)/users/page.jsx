@@ -76,8 +76,6 @@ export default function Page() {
   const GetUsers = () => {
     const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner&search=${debouncedSearch}`
 
-    console.log(url)
-
     setIsLoading(true)
 
     axios
@@ -135,11 +133,13 @@ export default function Page() {
       field: 'name',
       headerName: 'Name',
       flex: 1,
-      renderCell: params => (
-        <Box>
-          <h4>{params?.row?.name}</h4>
-        </Box>
-      )
+      renderCell: params => {
+        return (
+          <Box>
+            <p>{params?.row?.name}</p>
+          </Box>
+        )
+      }
     },
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'phoneNumber', headerName: 'Phone', flex: 1 },
@@ -147,9 +147,14 @@ export default function Page() {
     {
       field: 'cafe',
       headerName: 'Cafe',
-      flex: 1
-
-      // renderCell: params => <Box>{params?.row?.cafes[0]?.name}</Box>
+      flex: 1,
+      renderCell: params => {
+        return (
+          <Box>
+            <p>{params?.row?.cafeUsers[0]?.cafe?.name}</p>
+          </Box>
+        )
+      }
     },
     {
       field: 'actions',
@@ -189,7 +194,7 @@ export default function Page() {
     }
   ]
 
-  if (!authToken.token || authToken.role !== 'admin') {
+  if (!authToken.token) {
     return null
   }
 
@@ -239,7 +244,6 @@ export default function Page() {
               onPaginationModelChange={setPaginationModel}
               sortingMode='server'
               onSortModelChange={newSortModel => {
-                console.log('newSortModel:', newSortModel[0]?.field, newSortModel[0]?.sort)
                 setSortBy(newSortModel[0]?.field ? newSortModel[0]?.field : 'name')
                 setSortOrder(newSortModel[0]?.sort ? newSortModel[0]?.sort : 'asc')
               }}

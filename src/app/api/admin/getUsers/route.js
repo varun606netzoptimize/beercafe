@@ -45,32 +45,18 @@ export async function GET(req) {
       orderBy: { [sortField]: sortDirection },
       skip: (page - 1) * limit,
       take: limit,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phoneNumber: true,
-        userTypeId: true,
-        createdAt: true,
-        updatedAt: true,
-        deletedAt: true,
+      include: {
         userType: {
           select: {
             type: true // Show only the userType type value
           }
         },
         cafeUsers: {
-          select: {
-            cafe: {
-              select: {
-                id: true,
-                name: true,
-                parentId: true // Include parentId to identify linked cafes
-              }
-            }
+          include: {
+           cafe: true
           }
-        }
-      }
+        } // Show only
+      },
     })
 
     // Get the total number of users excluding the specified userTypeId and including search criteria
@@ -101,73 +87,79 @@ export async function GET(req) {
     const hasNextPage = page < totalPages
 
     // Fetch branches owned and managers for users with the "owner" type
-    const usersWithBranches = await Promise.all(
-      users.map(async user => {
-        const branchesOwned =
-          user.userType.type === 'owner'
-            ? await prisma.cafe.findMany({
-                where: { parentId: { in: user.cafeUsers.map(cu => cu.cafe.id) } },
-                select: {
-                  id: true,
-                  name: true,
-                  location: true,
-                  address: true,
-                  description: true,
-                  priceConversionRate: true,
-                  parentId: true,
-                  cafeUsers: {
-                    // Fetch only name and id of users (managers) associated with each branch
-                    select: {
-                      user: {
-                        select: {
-                          id: true,
-                          name: true
-                        }
-                      }
-                    }
-                  }
-                }
-              })
-            : []
+    // const usersWithBranches = await Promise.all(
+    //   users.map(async user => {
+    //     const branchesOwned =
+    //       user.userType.type === 'owner'
+    //         ? await prisma.cafe.findMany({
+    //             where: { parentId: { in: user.cafeUsers.map(cu => cu.cafe.id) } },
+    //             select: {
+    //               id: true,
+    //               name: true,
+    //               location: true,
+    //               address: true,
+    //               description: true,
+    //               priceConversionRate: true,
+    //               parentId: true,
+    //               cafeUsers: {
+    //                 // Fetch only name and id of users (managers) associated with each branch
+    //                 select: {
+    //                   user: {
+    //                     select: {
+    //                       id: true,
+    //                       name: true
+    //                     }
+    //                   }
+    //                 }
+    //               }
+    //             }
+    //           })
+    //         : []
 
-        // Transform the branchesOwned data
-        const transformedBranchesOwned = branchesOwned.map(branch => ({
-          id: branch.id,
-          name: branch.name,
-          location: branch.location,
-          address: branch.address,
-          description: branch.description,
-          priceConversionRate: branch.priceConversionRate,
-          parentId: branch.parentId,
-          users: branch.cafeUsers.map(cafeUser => ({
-            id: cafeUser.user.id,
-            name: cafeUser.user.name
-          }))
-        }))
+    //     // Transform the branchesOwned data
+    //     const transformedBranchesOwned = branchesOwned.map(branch => ({
+    //       id: branch.id,
+    //       name: branch.name,
+    //       location: branch.location,
+    //       address: branch.address,
+    //       description: branch.description,
+    //       priceConversionRate: branch.priceConversionRate,
+    //       parentId: branch.parentId,
+    //       users: branch.cafeUsers.map(cafeUser => ({
+    //         id: cafeUser.user.id,
+    //         name: cafeUser.user.name
+    //       }))
+    //     }))
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          userType: user.userType.type, // Include only the userType type value
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-          deletedAt: user.deletedAt,
-          cafes: user.cafeUsers.map(cafeUser => ({
-            id: cafeUser.cafe.id,
-            name: cafeUser.cafe.name
-          })),
-          branches_owned: transformedBranchesOwned // Include branches owned if user is an owner
-        }
-      })
-    )
+    //     return {
+    //       id: user.id,
+    //       name: user.name,
+    //       email: user.email,
+    //       phoneNumber: user.phoneNumber,
+    //       userType: user.userType.type, // Include only the userType type value
+    //       createdAt: user.createdAt,
+    //       updatedAt: user.updatedAt,
+    //       deletedAt: user.deletedAt,
+    //       cafes:
+    //         user.cafeUsers.length > 0
+    //           ? user.cafeUsers.map(cafeUser => {
+    //               console.log(cafeUser.cafe.id, 'transformedBranchesOwned')
+
+    //               return {
+    //                 id: cafeUser.cafe.id,
+    //                 name: cafeUser.cafe.name
+    //               }
+    //             })
+    //           : [],
+    //       branches_owned: transformedBranchesOwned // Include branches owned if user is an owner
+    //     }
+    //   })
+    // )
 
     // Return the response with pagination info
     return new NextResponse(
       JSON.stringify({
-        message: 'Users fetched successfully',
-        users: usersWithBranches,
+        users: users,
         pagination: {
           page,
           limit,
