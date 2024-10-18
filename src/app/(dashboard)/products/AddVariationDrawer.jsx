@@ -62,7 +62,7 @@ export default function AddVariationDrawer({
       setValue('regularPrice', updateData.regularPrice)
       setValue('points', updateData.points)
     }
-  }, [type, updateData, setValue])
+  }, [type, updateData, setValue, open])
 
   // Form submit handler
   const onSubmit = async data => {

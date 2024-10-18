@@ -139,8 +139,6 @@ export default function ViewProductVariation({
   const startIndex = page * pageSize
   const paginatedData = myProductVariationData?.slice(startIndex, startIndex + pageSize)
 
-  console.log(productData, 'productData')
-
 return (
     <>
       <Dialog
