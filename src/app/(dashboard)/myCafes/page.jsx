@@ -5,8 +5,10 @@ import { useContext, useEffect, useState } from 'react'
 
 import { redirect, useRouter } from 'next/navigation'
 
+import Link from 'next/link'
+
 import axios from 'axios'
-import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CircularProgress, TextField, Tooltip, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
 import { AuthContext } from '@/context/AuthContext'
@@ -15,6 +17,8 @@ import ViewManagerModal from '../cafes/ViewManagerModal'
 import DeleteCafe from '../cafes/DeleteCafe'
 import AddMyCafeDrawer from './AddMyCafeDrawer'
 import ArrowDownRight from '@/@menu/svg/ArrowDownRight'
+
+const baseURL = process.env.NEXT_PUBLIC_APP_URL
 
 export default function Page() {
   const router = useRouter()
@@ -180,11 +184,29 @@ export default function Page() {
       headerName: 'Name',
       flex: 1,
       renderCell: params => {
+        console.log(params, 'params')
+
         return (
-          <Box sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box
+            className='h-full flex items-center'
+            sx={{ paddingLeft: params.row.parentId ? 6 : 4, display: 'flex', alignItems: 'center', gap: 2 }}
+          >
             {/* Show ArrowDownRight icon if not a parent */}
-            {params.row.parentId && <ArrowDownRight sx={{ marginRight: 3 }} />}
-            {!params.row.parentId ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
+            <Link className='group' href={`${baseURL}/cafe/${params.row.slug}`} target='_blank'>
+              {params.row.parentId ? (
+                <Typography className='text-[#121212] group-hover:text-[#7367f0] transition duration-300 text-sm flex no-wrap text-wrap h-full items-center gap-2'>
+                  {params.row.parentId && <ArrowDownRight sx={{ marginRight: 3 }} />}
+                  {!params.row.parentId ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
+                </Typography>
+              ) : (
+                <Typography className='text-[#121212] group-hover:text-[#7367f0] transition duration-300 text-md'>
+                  {!params.row.parentId ? <h3>{params.row.name}</h3> : <p>{params.row.name}</p>}
+                </Typography>
+              )}
+            </Link>
+            <Tooltip placement='top' title={`${baseURL}/cafe/${params.row.slug}`}>
+              <i className='tabler-info-circle text-[18px] cursor-pointer' />
+            </Tooltip>
           </Box>
         )
       },

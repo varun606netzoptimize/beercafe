@@ -137,7 +137,8 @@ export default function Page() {
         return (
           <Box
             sx={{
-              paddingLeft: '16px'
+              paddingLeft: '16px',
+              textTransform: 'capitalize'
             }}
           >
             <p>{params?.row?.name}</p>

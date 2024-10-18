@@ -61,6 +61,7 @@ export default function AddUserDrawer({ open, onClose, drawerType, setDrawerType
   const handleClickShowPassword = () => setIsPasswordShown(!isPasswordShown)
   const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(!isConfirmPasswordShown)
 
+
   useEffect(() => {
     if (drawerType === 'update' && updateUserData) {
       setValue('name', updateUserData.name)
@@ -72,8 +73,9 @@ export default function AddUserDrawer({ open, onClose, drawerType, setDrawerType
       )
 
       // Populate secondDropdown if applicable
-      if (updateUserData.cafes && updateUserData.cafes.length > 0) {
-        setValue('secondDropdown', updateUserData.cafes[0].id) // Assuming you want to use the first cafe if multiple are available
+      if (updateUserData.cafeUsers && updateUserData.cafeUsers.length > 0) {
+        console.log( updateUserData.cafeUsers[0].cafe.id, 'updateUserData')
+        setValue('secondDropdown', updateUserData.cafeUsers[0].cafe.id) // Assuming you want to use the first cafe if multiple are available
       } else {
         setValue('secondDropdown', '')
       }
