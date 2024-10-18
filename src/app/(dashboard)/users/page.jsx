@@ -5,8 +5,20 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, Typography, CircularProgress, TextField, CardContent } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  Typography,
+  CircularProgress,
+  TextField,
+  CardContent,
+  Select,
+  MenuItem
+} from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
+
+import { CornerDownRight } from 'lucide-react'
 
 import { AuthContext } from '@/context/AuthContext'
 import { ENDPOINT } from '@/endpoints'
@@ -41,6 +53,8 @@ export default function Page() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
+
+  const [cafeName, setCafeName] = useState('')
 
   const toggleDrawer = newOpen => () => {
     setOpen(newOpen)
@@ -150,8 +164,13 @@ export default function Page() {
     },
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 180 },
     { field: 'phoneNumber', headerName: 'Phone', flex: 1, minWidth: 150 },
-    { field: 'userType', headerName: 'Role', flex: 1, renderCell: params => <p>{params?.row?.userType?.type}</p>,       minWidth: 120
-  },
+    {
+      field: 'userType',
+      headerName: 'Role',
+      flex: 1,
+      renderCell: params => <p>{params?.row?.userType?.type}</p>,
+      minWidth: 120
+    },
     {
       field: 'cafe',
       headerName: 'Cafe',
@@ -201,7 +220,6 @@ export default function Page() {
       ),
       sortable: false,
       minWidth: 200
-
     }
   ]
 
@@ -227,6 +245,35 @@ export default function Page() {
                 setSearch(e.target.value)
               }}
             />
+
+            <Select
+              label='Select Cafe'
+              onChange={e => setCafeName(e.target.value)}
+              value={cafeName}
+              renderValue={selected => {
+                const selectedCafe = cafes.cafes?.find(
+                  data => data.id === selected || data.children?.find(child => child.id === selected)
+                )
+
+                const selectedChild = selectedCafe?.children?.find(child => child.id === selected)
+
+                return selectedChild ? selectedChild.name : selectedCafe?.name
+              }}
+              className='min-w-[300px]'
+            >
+              {cafes.cafes?.map(data => [
+                <MenuItem key={data.id} value={data.id}>
+                  {data.name}
+                </MenuItem>,
+                data.children?.map(child => (
+                  <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
+                    <CornerDownRight size={16} />
+                    {child.name}
+                  </MenuItem>
+                ))
+              ])}
+            </Select>
+
             <Button
               variant='contained'
               size='medium'
