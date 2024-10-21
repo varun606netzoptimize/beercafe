@@ -66,7 +66,7 @@ export default function Page() {
     }
   }, [authToken, paramsCafeID])
 
-  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue, paramsCafeID } = {}) => {
+  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue } = {}) => {
     let url = `${ENDPOINT.GET_PRODUCT}`
     const params = []
 
