@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 
-import { redirect, useRouter } from 'next/navigation'
+import { redirect, useRouter, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
 import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
@@ -46,6 +46,10 @@ export default function Page() {
     sortOrder: 'asc'
   })
 
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const paramsCafeID = searchParams.get('cafeId')
+
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
@@ -58,14 +62,19 @@ export default function Page() {
 
   useEffect(() => {
     if (authToken.token) {
-      getProducts()
+      if (paramsCafeID) {
+        getProducts({ cafeId: paramsCafeID })
+      } else {
+        getProducts()
+      }
     }
-  }, [authToken])
+  }, [authToken, paramsCafeID])
 
-  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue } = {}) => {
+  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue, cafeId } = {}) => {
     let url = `${ENDPOINT.GET_PRODUCT}`
     const params = []
 
+    if (cafeId) params.push(`cafeId=${cafeId}`)
     if (sortBy) params.push(`sortBy=${sortBy}`)
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
@@ -335,6 +344,16 @@ export default function Page() {
             padding: '16px'
           }}
         >
+          {paramsCafeID === products?.data[0]?.Cafe.id && (
+            <Box className='flex  gap-2 items-center justify-center mb-6'>
+              <Typography>Currently viewing the products of {products?.data[0].Cafe.name} Cafe.</Typography>
+              <Button onClick={() => router.push('/products')}>
+                {' '}
+                <i className='tabler-x text-[16px] text-blue border-none' />
+              </Button>
+            </Box>
+          )}
+
           <Box sx={titleBoxStyle}>
             <TextField
               id='outlined-basic'
@@ -377,7 +396,7 @@ export default function Page() {
             disableColumnFilter
             disableRowSelectionOnClick
             onSortModelChange={handleSortChange}
-            sortingMode="server"
+            sortingMode='server'
             sx={{
               '& .MuiDataGrid-columnHeaders': {
                 backgroundColor: '#3f51b5',

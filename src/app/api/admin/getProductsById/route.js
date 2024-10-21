@@ -66,22 +66,25 @@ export async function GET(req) {
     // Extract all cafeIds including child cafes
     const cafeIds = extractCafeIds(userCafes)
 
+    const checkCafeID = paramsCafeId => {
+      cafeIds.filter(cafeId => cafeId === paramsCafeId)
+    }
+
+    console.log(checkCafeID())
+
     // Get the total product count for pagination
     const totalProductsCount = await prisma.product.count({
       where: {
-        // cafeId: { in: cafeIds },
-        AND: [
-          filters.cafeId ? { cafeId: filters.cafeId } : { cafeId: { in: cafeIds } },
-          filters.search
-            ? {
-                OR: [
-                  { name: { contains: filters.search, mode: 'insensitive' } }, // Search in product name
-                  { Brand: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in brand name
-                  { Cafe: { name: { contains: filters.search, mode: 'insensitive' } } } // Search in cafe name
-                ]
-              }
-            : {}
-        ]
+        cafeId: filters.cafeId,
+        AND: filters.search
+          ? {
+              OR: [
+                { name: { contains: filters.search, mode: 'insensitive' } }, // Search in product name
+                { Brand: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in brand name
+                { Cafe: { name: { contains: filters.search, mode: 'insensitive' } } } // Search in cafe name
+              ]
+            }
+          : {}
       }
     })
 
@@ -100,19 +103,16 @@ export async function GET(req) {
     // Fetch products from associated cafes with pagination and sorting
     const products = await prisma.product.findMany({
       where: {
-        // cafeId: { in: cafeIds },
-        AND: [
-          filters.cafeId ? { cafeId: filters.cafeId } : { cafeId: { in: cafeIds } },
-          filters.search
-            ? {
-                OR: [
-                  { name: { contains: filters.search, mode: 'insensitive' } }, // Search in product name
-                  { Brand: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in brand name
-                  { Cafe: { name: { contains: filters.search, mode: 'insensitive' } } } // Search in cafe name
-                ]
-              }
-            : {}
-        ]
+        cafeId: filters.cafeId,
+        AND: filters.search
+          ? {
+              OR: [
+                { name: { contains: filters.search, mode: 'insensitive' } }, // Search in product name
+                { Brand: { name: { contains: filters.search, mode: 'insensitive' } } }, // Search in brand name
+                { Cafe: { name: { contains: filters.search, mode: 'insensitive' } } } // Search in cafe name
+              ]
+            }
+          : {}
       },
       orderBy: getOrderBy(filters.sortBy, filters.sortOrder),
       include: {

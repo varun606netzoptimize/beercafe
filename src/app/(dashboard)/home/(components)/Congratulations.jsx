@@ -21,7 +21,7 @@ const CongratulationsJohn = () => {
   return (
     <Card>
       <Grid container>
-        {statsIsLoading ? (
+        {statsIsLoading && !stats ? (
           <>
             <Grid className='flex !min-h-[190px] items-center justify-center w-full'>
               <CircularProgress size={28} />
@@ -31,15 +31,15 @@ const CongratulationsJohn = () => {
           <Grid item xs={10}>
             <CardContent>
               <Typography variant='h5' className='mbe-0.5'>
-                Congratulations, {stats.bestCafeOfTheMonth.name} 🎉
+                Congratulations, {stats?.bestCafeOfTheMonth.name} 🎉
               </Typography>
               <Typography variant='subtitle1' className='mbe-2'>
                 Best Café of the Month
               </Typography>
               <Typography variant='h4' color='primary.main' className='mbe-1'>
-                ${stats.bestCafeOfTheMonth.totalRevenue} in Revenue
+                ${stats?.bestCafeOfTheMonth.totalRevenue} in Revenue
               </Typography>
-              <Link href={`/orders?cafeId=${stats.bestCafeOfTheMonth.cafeId}`}>
+              <Link href={`/orders?cafeId=${stats?.bestCafeOfTheMonth.cafeId}`}>
                 <Button variant='contained' color='primary'>
                   View Performance
                 </Button>

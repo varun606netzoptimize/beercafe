@@ -34,6 +34,7 @@ export const ENDPOINT = {
   UPDATE_PRODUCT_VARIATION: baseURL + '/api/admin/updateProductVariation',
   DELETE_PRODUCT_VARIATION: baseURL + '/api/admin/deleteProductVariation',
   GET_ALL_PRODUCTS: baseURL + '/api/admin/getAllProducts',
+  GET_PRODUCTS_BY_CAFE_ID: baseURL + '/api/admin/getProductsById',
   GENERATE_SLUG: baseURL + '/api/admin/generateSlug',
   SLUG_CAFE: baseURL + '/api',
   PLACE_ORDER: baseURL + '/api/order',

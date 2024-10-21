@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 
-import { redirect, useRouter } from 'next/navigation'
+import { redirect, useRouter, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
 import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
@@ -32,6 +32,9 @@ export default function Page() {
   const [productData, setProductData] = useState(null)
   const [addVariationVisible, setAddVariationVisible] = useState(false)
   const [drawerType, setDrawerType] = useState('add')
+  const searchParams = useSearchParams()
+
+  const paramsCafeID = searchParams.get('cafeId')
 
   useEffect(() => {
     if (tokenCheck) {
@@ -50,6 +53,50 @@ export default function Page() {
       }
     }
   }, [authToken])
+
+  console.log(paramsCafeID, 'paramsCafeID')
+
+  useEffect(() => {
+    if (paramsCafeID) {
+      getProducts({ cafeId: paramsCafeID })
+    }
+  }, [paramsCafeID])
+
+  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue, cafeId } = {}) => {
+    let url = `${ENDPOINT.GET_PRODUCTS_BY_CAFE_ID}`
+    const params = []
+
+    if (cafeId) params.push(`cafeId=${cafeId}`)
+    if (sortBy) params.push(`sortBy=${sortBy}`)
+    if (sortOrder) params.push(`sortOrder=${sortOrder}`)
+    if (page) params.push(`page=${page}`)
+    if (pageSize) params.push(`pageSize=${pageSize}`)
+    if (queryValue) params.push(`query=${queryValue}`)
+
+    // If any parameters exist, join them with '&' and append to URL
+    if (params.length > 0) {
+      url += `?${params.join('&')}`
+    }
+
+    setIsLoading(true)
+
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken.token}`
+        }
+      })
+      .then(res => {
+        setProducts(res.data)
+      })
+      .catch(err => {
+        console.log('failed:', err.response)
+      })
+      .finally(() => {
+        setIsLoading(false)
+        setIsTableRendering(false)
+      })
+  }
 
   const GetCafeProducts = () => {
     const url = `${ENDPOINT.GET_CAFE_PRODUCTS}/${cafeProducts.cafe.id}`
@@ -106,7 +153,7 @@ export default function Page() {
       headerName: 'Brand Name',
       flex: 1,
       renderCell: params => (
-        <Box sx={{paddingLeft: 4}}>
+        <Box sx={{ paddingLeft: 4 }}>
           <p>
             <strong>{params?.row?.Brand?.name}</strong>
           </p>
@@ -114,7 +161,6 @@ export default function Page() {
       ),
       headerClassName: 'first-column-header',
       minWidth: 180
-
     },
     {
       field: 'name',
@@ -129,8 +175,8 @@ export default function Page() {
       ),
       minWidth: 180
     },
-    { field: 'SKU', headerName: 'SKU', flex: 1 , minWidth: 100},
-    { field: 'quantity', headerName: 'Quantity', flex: 1 , minWidth: 140},
+    { field: 'SKU', headerName: 'SKU', flex: 1, minWidth: 100 },
+    { field: 'quantity', headerName: 'Quantity', flex: 1, minWidth: 140 },
     { field: 'description', headerName: 'Description', flex: 1, minWidth: 180 },
     {
       field: 'productVariation',

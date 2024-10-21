@@ -258,7 +258,7 @@ export default function Page() {
             size='small'
             sx={{ marginRight: 2 }}
             onClick={() => {
-              router.push(`/cafeProducts`)
+              router.push(`/products?cafeId=${params?.row.id}`)
               setCafeProducts({ cafe: params?.row, products: null })
             }}
           >
