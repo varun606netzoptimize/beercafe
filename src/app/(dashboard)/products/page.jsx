@@ -62,19 +62,15 @@ export default function Page() {
 
   useEffect(() => {
     if (authToken.token) {
-      if (paramsCafeID) {
-        getProducts({ cafeId: paramsCafeID })
-      } else {
-        getProducts()
-      }
+      getProducts()
     }
   }, [authToken, paramsCafeID])
 
-  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue, cafeId } = {}) => {
+  const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue, paramsCafeID } = {}) => {
     let url = `${ENDPOINT.GET_PRODUCT}`
     const params = []
 
-    if (cafeId) params.push(`cafeId=${cafeId}`)
+    if (paramsCafeID) params.push(`cafeId=${paramsCafeID}`)
     if (sortBy) params.push(`sortBy=${sortBy}`)
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
