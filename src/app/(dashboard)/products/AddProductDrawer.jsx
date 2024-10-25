@@ -95,8 +95,8 @@ export default function AddProductDrawer({
       onClose()
       getProducts()
     } catch (err) {
-      console.error('Error updating product:', err)
-      toast.error('Failed to update product')
+      console.error('Error updating product:', err.response.data.error)
+      toast.error(err.response.data.error)
     } finally {
       setIsLoading(false)
     }
@@ -114,6 +114,8 @@ export default function AddProductDrawer({
       quantity: data.quantity,
       image: data.imageUrl
     }
+
+    console.log(data)
 
     if (drawerType === 'update') {
       productData.productId = data.id
@@ -141,7 +143,9 @@ export default function AddProductDrawer({
     } else {
       reset()
     }
-  }, [drawerType, updateProductData, setValue, reset])
+  }, [drawerType, updateProductData, setValue, reset, handleSubmit])
+
+  console.log(updateProductData, "updateProductData")
 
   const DrawerList = (
     <Box sx={{ width: 400, padding: 4 }} role='presentation'>

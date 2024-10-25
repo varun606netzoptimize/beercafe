@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -47,6 +49,14 @@ export async function PUT(req) {
 
     if (!existingProduct) {
       return new Response(JSON.stringify({ error: 'Product not found' }), { status: 404 })
+    }
+
+    const exisitingSKU = await prisma.product.findUnique({
+      where: { SKU: SKU }
+    })
+
+    if (exisitingSKU) {
+      return new Response(JSON.stringify({ error: 'SKU already exists' }), { status: 404 })
     }
 
     // Update the product in the database
