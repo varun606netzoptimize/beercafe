@@ -478,7 +478,12 @@ const Page = () => {
                   id='cafe-name'
                   onChange={handleCafeChange}
                   value={cafeId}
-                  className='min-w-[300px]'
+                  className='min-w-[300px] lg:ml-auto'
+                  sx={{
+                    minWidth: 150,
+                    marginBottom: 1 // Margin adjustments for consistency
+                  }}
+                  SelectProps={{ displayEmpty: true }}
                 >
                   <MenuItem value='all'>All</MenuItem>
                   {cafes.cafes?.map(data => [
@@ -505,7 +510,6 @@ const Page = () => {
                   minWidth: 150,
                   marginBottom: 1 // Margin adjustments for consistency
                 }}
-                className='lg:ml-auto'
                 SelectProps={{ displayEmpty: true }}
               >
                 <MenuItem value=''>All</MenuItem>
