@@ -14,7 +14,9 @@ import {
   TextField,
   CardContent,
   Select,
-  MenuItem
+  MenuItem,
+  InputLabel,
+  FormControl
 } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 
@@ -88,7 +90,20 @@ export default function Page() {
   }, [search])
 
   const GetUsers = () => {
-    const url = `${ENDPOINT.GET_USERS}?page=${paginationModel.page + 1}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}&userType=owner&search=${debouncedSearch}`
+    let url = `${ENDPOINT.GET_USERS}`
+
+    const params = []
+
+    if (sortBy) params.push(`sortBy=${sortBy}`)
+    if (sortOrder) params.push(`sortOrder=${sortOrder}`)
+    if (debouncedSearch) params.push(`search=${debouncedSearch}`)
+
+    // if (page) params.push(`page=${page}`)
+    // if (pageSize) params.push(`pageSize=${pageSize}`)
+
+    if (params.length > 0) {
+      url += `?${params.join('&')}`
+    }
 
     setIsLoading(true)
 
@@ -163,13 +178,16 @@ export default function Page() {
       minWidth: 180
     },
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 180 },
-    { field: 'phoneNumber', headerName: 'Phone', flex: 1, minWidth: 150 },
+    { field: 'phoneNumber', headerName: 'Phone', flex: 1, minWidth: 150,       sortable: false,
+    },
     {
       field: 'userType',
       headerName: 'Role',
       flex: 1,
       renderCell: params => <p>{params?.row?.userType?.type}</p>,
-      minWidth: 120
+      minWidth: 120,
+      sortable: false,
+
     },
     {
       field: 'cafe',
@@ -246,33 +264,44 @@ export default function Page() {
               }}
             />
 
-            <Select
-              label='Select Cafe'
-              onChange={e => setCafeName(e.target.value)}
-              value={cafeName}
-              renderValue={selected => {
-                const selectedCafe = cafes.cafes?.find(
-                  data => data.id === selected || data.children?.find(child => child.id === selected)
-                )
+            <FormControl className='hidden'>
+              <InputLabel>Select Cafe</InputLabel>
 
-                const selectedChild = selectedCafe?.children?.find(child => child.id === selected)
+              <Select
+                label='Select Cafe'
+                onChange={e => setCafeName(e.target.value)}
+                value={cafeName}
+                renderValue={selected => {
+                  if (selected === 'All') {
+                    return selected
+                  }
 
-                return selectedChild ? selectedChild.name : selectedCafe?.name
-              }}
-              className='min-w-[300px]'
-            >
-              {cafes.cafes?.map(data => [
-                <MenuItem key={data.id} value={data.id}>
-                  {data.name}
-                </MenuItem>,
-                data.children?.map(child => (
-                  <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
-                    <CornerDownRight size={16} />
-                    {child.name}
-                  </MenuItem>
-                ))
-              ])}
-            </Select>
+                  const selectedCafe = cafes.cafes?.find(
+                    data => data.id === selected || data.children?.find(child => child.id === selected)
+                  )
+
+                  const selectedChild = selectedCafe?.children?.find(child => child.id === selected)
+
+                  return selectedChild ? selectedChild.name : selectedCafe?.name
+                }}
+                className='min-w-[300px]'
+              >
+                <MenuItem key='All' value='All'>
+                  All
+                </MenuItem>
+                {cafes.cafes?.map(data => [
+                  <MenuItem key={data.id} value={data.id}>
+                    {data.name}
+                  </MenuItem>,
+                  data.children?.map(child => (
+                    <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
+                      <CornerDownRight size={16} />
+                      {child.name}
+                    </MenuItem>
+                  ))
+                ])}
+              </Select>
+            </FormControl>
 
             <Button
               variant='contained'
