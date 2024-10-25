@@ -15,11 +15,15 @@ import {
   Card,
   CardContent,
   IconButton,
-  Chip
+  Chip,
+  InputLabel,
+  FormControl
 } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { format } from 'date-fns'
 import padding from 'tailwindcss-logical/plugins/padding'
+
+import { CornerDownRight } from 'lucide-react'
 
 import { AuthContext } from '@/context/AuthContext'
 import AppReactDatepicker from '@/@core/components/date-picker'
@@ -29,7 +33,7 @@ import CustomTextField from '@/@core/components/mui/TextField'
 import CrossFilter from '@/@menu/svg/CrossFilter'
 
 const Page = () => {
-  const { authToken, tokenCheck, setPageTitle, setOrders, orders, stats } = useContext(AuthContext)
+  const { authToken, tokenCheck, setPageTitle, setOrders, orders, stats, cafes } = useContext(AuthContext)
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isTableRendering, setIsTableRendering] = useState(true)
@@ -52,9 +56,8 @@ const Page = () => {
   })
 
   const searchParams = useSearchParams()
-  const cafeIdParams = searchParams.get('cafeId') || ''
+  const [cafeId, setCafeId] = useState(searchParams.get('cafeId') || 'all')
 
-  console.log(cafeIdParams, 'cafeId')
 
   useEffect(() => {
     if (tokenCheck) {
@@ -66,7 +69,7 @@ const Page = () => {
 
       setPageTitle('Orders')
     }
-  }, [authToken, cafeIdParams])
+  }, [authToken, cafeId])
 
   useEffect(() => {
     // Cleanup function to clear the timer when the component unmounts
@@ -77,17 +80,7 @@ const Page = () => {
     }
   }, [debounceTimer])
 
-  const getOrder = ({
-    startDate,
-    endDate,
-    paymentStatus,
-    queryValue,
-    sortBy,
-    sortOrder,
-    page,
-    pageSize,
-    cafeId
-  } = {}) => {
+  const getOrder = ({ startDate, endDate, paymentStatus, queryValue, sortBy, sortOrder, page, pageSize } = {}) => {
     let url = `${ENDPOINT.GET_ORDERS}`
     const params = []
 
@@ -100,7 +93,7 @@ const Page = () => {
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
     if (pageSize) params.push(`pageSize=${pageSize}`)
-    if (cafeIdParams) params.push(`cafeId=${cafeIdParams}`)
+    if (cafeId && cafeId !== 'all') params.push(`cafeId=${cafeId}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
@@ -186,6 +179,17 @@ const Page = () => {
       paymentStatus: selectedStatus,
       queryValue
     })
+  }
+
+  const handleCafeChange = event => {
+    const selectedCafeId = event.target.value
+
+    if (selectedCafeId === 'all') {
+      setCafeId('all');
+      router.replace('/orders', undefined, { shallow: true });
+    } else {
+      setCafeId(selectedCafeId)
+    }
   }
 
   const handleQueryValueSubmit = event => {
@@ -441,15 +445,6 @@ const Page = () => {
             padding: '16px'
           }}
         >
-          {cafeIdParams === stats?.bestCafeOfTheMonth?.cafeId && (
-            <Box className='flex  gap-2 items-center justify-center mb-6'>
-              <Typography>Currently viewing orders for {stats.bestCafeOfTheMonth.name} Cafe.</Typography>
-              <Button onClick={() => router.push('/orders')}>
-                {' '}
-                <i className='tabler-x text-[16px] text-blue border-none' />
-              </Button>
-            </Box>
-          )}
 
           <Box
             sx={{
@@ -464,7 +459,7 @@ const Page = () => {
               borderRadius: 2
             }}
           >
-            <form onSubmit={handleQueryValueSubmit} className='flex items-end justify-between w-full gap-4 flex-nowrap'>
+            <form onSubmit={handleQueryValueSubmit} className='flex flex-wrap items-end justify-between w-full gap-4 '>
               {/* Search Input */}
               <CustomTextField
                 value={queryValue}
@@ -475,6 +470,30 @@ const Page = () => {
                 className='w-[250px] lg:w-[300px]'
                 placeholder='Search by Customer Name or Cafe'
               />
+
+              <FormControl>
+                <CustomTextField
+                  select
+                  label='Select Cafe'
+                  id='cafe-name'
+                  onChange={handleCafeChange}
+                  value={cafeId}
+                  className='min-w-[300px]'
+                >
+                  <MenuItem value='all'>All</MenuItem>
+                  {cafes.cafes?.map(data => [
+                    <MenuItem key={data.id} value={data.id}>
+                      {data.name}
+                    </MenuItem>,
+                    data.children?.map(child => (
+                      <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
+                        <CornerDownRight size={16} />
+                        {child.name}
+                      </MenuItem>
+                    ))
+                  ])}
+                </CustomTextField>
+              </FormControl>
 
               <CustomTextField
                 select
@@ -493,6 +512,7 @@ const Page = () => {
                 <MenuItem value='PAID'>Paid</MenuItem>
                 <MenuItem value='PENDING'>Unpaid</MenuItem>
               </CustomTextField>
+
               <AppReactDatepicker
                 selectsRange
                 monthsShown={2}
@@ -550,7 +570,7 @@ const Page = () => {
               rowHeight={60}
               getRowId={row => row.id}
               onSortModelChange={handleSortChange}
-              sortingMode="server"
+              sortingMode='server'
               sx={{
                 '& .MuiDataGrid-columnHeaders': {
                   backgroundColor: '#3f51b5',
