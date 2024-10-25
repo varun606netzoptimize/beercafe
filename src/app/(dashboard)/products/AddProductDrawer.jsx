@@ -48,55 +48,44 @@ export default function AddProductDrawer({
 }) {
   const { authToken, brands, cafeProducts, cafes } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
+  const [initialData, setInitialData] = useState(null)
 
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitted },
-    setValue
+    setValue,
+    getValues
   } = useForm({
     resolver: yupResolver(productSchema),
     mode: 'onBlur'
   })
 
-  const createProduct = async productData => {
+  const createOrUpdateProduct = async productData => {
+    const endpoint = drawerType === 'update' ? ENDPOINT.UPDATE_PRODUCT : ENDPOINT.CREATE_PRODUCT
+    const action = drawerType === 'update' ? 'Updated' : 'Added'
+    const method = drawerType === 'update' ? 'put' : 'post'
+
     try {
-      const response = await axios.post(ENDPOINT.CREATE_PRODUCT, productData, {
+      const response = await axios({
+        method,
+        url: endpoint,
+        data: productData,
         headers: {
           Authorization: `Bearer ${authToken.token}`
         }
       })
 
-      console.log('Product added:', response.data)
-      toast.success(productData.name + ' Product Added')
-      reset()
-      onClose()
-      getProducts()
-    } catch (err) {
-      console.error('Error adding product:', err)
-      toast.error('Failed to add product')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+      if (response.data) {
+        toast.success(`${productData.name} Product ${action}`)
+        getProducts()
+      }
 
-  const updateProduct = async productData => {
-    try {
-      const response = await axios.put(ENDPOINT.UPDATE_PRODUCT, productData, {
-        headers: {
-          Authorization: `Bearer ${authToken.token}`
-        }
-      })
-
-      console.log('Product Updated:', response.data)
-      toast.success(productData.name + ' Product Updated')
-      reset()
       onClose()
-      getProducts()
-    } catch (err) {
-      console.error('Error updating product:', err.response.data.error)
-      toast.error(err.response.data.error)
+      reset()
+    } catch (error) {
+      toast.error(error.response?.data?.error || `Failed to ${action.toLowerCase()} product`)
     } finally {
       setIsLoading(false)
     }
@@ -109,28 +98,32 @@ export default function AddProductDrawer({
       brandId: data.brand,
       cafeId: data.cafe,
       name: data.name,
-      SKU: data.sku,
+      SKU: data.sku.toUpperCase(),
       description: data.description,
       quantity: data.quantity,
       image: data.imageUrl
     }
 
-    console.log(data)
-
-    if (drawerType === 'update') {
-      productData.productId = data.id
+    if (drawerType === 'update' && updateProductData?.id) {
+      productData.productId = updateProductData.id
     }
 
-    if (drawerType === 'update') {
-      await updateProduct(productData)
-    } else {
-      await createProduct(productData)
+    console.log(JSON.stringify(initialData) ,JSON.stringify(data), 'updateProductData')
+
+    // Check for changes
+    if (JSON.stringify(initialData) === JSON.stringify(data)) {
+      toast.info('No changes made')
+      setIsLoading(false)
+
+      return
     }
 
-    reset()
+    // Call the appropriate API function based on drawerType
+    await createOrUpdateProduct(productData)
   }
 
   React.useEffect(() => {
+
     if (drawerType === 'update' && updateProductData) {
       setValue('brand', updateProductData.Brand.id)
       setValue('cafe', updateProductData.Cafe.id)
@@ -139,13 +132,24 @@ export default function AddProductDrawer({
       setValue('description', updateProductData.description)
       setValue('quantity', updateProductData.quantity)
       setValue('imageUrl', updateProductData.image)
-      setValue('id', updateProductData.id)
+
+      // setValue('id', updateProductData.id)
+
+      // Store initial data for comparison
+      setInitialData({
+        cafe: updateProductData.Cafe.id,
+        brand: updateProductData.Brand.id,
+        name: updateProductData.name,
+        sku: updateProductData.SKU,
+        description: updateProductData.description,
+        quantity: updateProductData.quantity,
+        imageUrl: updateProductData.image
+      })
     } else {
       reset()
+      setInitialData(null)
     }
-  }, [drawerType, updateProductData, setValue, reset, handleSubmit])
-
-  console.log(updateProductData, "updateProductData")
+  }, [drawerType, updateProductData, setValue, reset])
 
   const DrawerList = (
     <Box sx={{ width: 400, padding: 4 }} role='presentation'>
