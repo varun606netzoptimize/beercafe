@@ -6,8 +6,20 @@ import { useContext, useEffect, useState } from 'react'
 import { redirect, useRouter, useSearchParams } from 'next/navigation'
 
 import axios from 'axios'
-import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  FormControl,
+  MenuItem,
+  TextField,
+  Typography
+} from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
+
+import { CornerDownRight } from 'lucide-react'
 
 import { AuthContext } from '@/context/AuthContext'
 import AddProductDrawer from './AddProductDrawer'
@@ -15,9 +27,10 @@ import { ENDPOINT } from '@/endpoints'
 import DeleteProduct from './DeleteProduct'
 import ViewProductVariation from './ViewProductVariation'
 import AddVariationDrawer from './AddVariationDrawer'
+import CustomTextField from '@/@core/components/mui/TextField'
 
 export default function Page() {
-  const { authToken, tokenCheck, currentUser, setPageTitle, setProducts, products } = useContext(AuthContext)
+  const { authToken, tokenCheck, currentUser, setPageTitle, setProducts, products, cafes } = useContext(AuthContext)
 
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -49,33 +62,30 @@ export default function Page() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const paramsCafeID = searchParams.get('cafeId')
+  const [cafeId, setCafeId] = useState(searchParams.get('cafeId') || 'all')
 
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
         redirect('/login')
+      } else {
+        getProducts()
       }
 
       setPageTitle('Products')
     }
-  }, [authToken])
-
-  useEffect(() => {
-    if (authToken.token) {
-      getProducts()
-    }
-  }, [authToken, paramsCafeID])
+  }, [authToken, cafeId])
 
   const getProducts = ({ sortBy, sortOrder, page, pageSize, queryValue } = {}) => {
     let url = `${ENDPOINT.GET_PRODUCT}`
     const params = []
 
-    if (paramsCafeID) params.push(`cafeId=${paramsCafeID}`)
     if (sortBy) params.push(`sortBy=${sortBy}`)
     if (sortOrder) params.push(`sortOrder=${sortOrder}`)
     if (page) params.push(`page=${page}`)
     if (pageSize) params.push(`pageSize=${pageSize}`)
     if (queryValue) params.push(`query=${queryValue}`)
+    if (cafeId && cafeId !== 'all') params.push(`cafeId=${cafeId}`)
 
     // If any parameters exist, join them with '&' and append to URL
     if (params.length > 0) {
@@ -128,6 +138,18 @@ export default function Page() {
         setShowDeletePop(false)
         setDeleteItem(null)
       })
+  }
+
+  const handleCafeChange = event => {
+    const selectedCafeId = event.target.value
+
+    if (selectedCafeId === 'all') {
+      setCafeId('all')
+    } else {
+      setCafeId(selectedCafeId)
+    }
+
+    router.replace('/products', undefined, { shallow: true })
   }
 
   const columns = [
@@ -340,16 +362,6 @@ export default function Page() {
             padding: '16px'
           }}
         >
-          {paramsCafeID === products?.data[0]?.Cafe.id && (
-            <Box className='flex  gap-2 items-center justify-center mb-6'>
-              <Typography>Currently viewing the products of {products?.data[0].Cafe.name} Cafe.</Typography>
-              <Button onClick={() => router.push('/products')}>
-                {' '}
-                <i className='tabler-x text-[16px] text-blue border-none' />
-              </Button>
-            </Box>
-          )}
-
           <Box sx={titleBoxStyle}>
             <TextField
               id='outlined-basic'
@@ -358,6 +370,36 @@ export default function Page() {
               size='small'
               onChange={e => handleQueryValueChange(e.target.value)}
             />
+
+            <FormControl className='mr-auto'>
+              <CustomTextField
+                select
+                label='Select Cafe'
+                id='cafe-name'
+                onChange={handleCafeChange}
+                value={cafeId}
+                className='min-w-[260px] lg:ml-auto'
+                SelectProps={{ displayEmpty: true }}
+              >
+                <MenuItem value='all'>All</MenuItem>
+                {cafes.cafes?.map(data => [
+                  <MenuItem key={data.id} value={data.id}>
+                    {data.name}
+                  </MenuItem>,
+                  data.children?.map(child => (
+                    <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
+                      {cafeId !== child.id && (
+                        <>
+                          <CornerDownRight size={16} />
+                        </>
+                      )}
+                      {child.name}
+                    </MenuItem>
+                  ))
+                ])}
+              </CustomTextField>
+            </FormControl>
+
             <Button
               variant='contained'
               size='medium'
@@ -455,6 +497,6 @@ const titleBoxStyle = {
   columnGap: 4,
   display: 'flex',
   flexWrap: 'wrap',
-  alignItems: 'center',
+  alignItems: 'flex-end',
   justifyContent: 'space-between'
 }
