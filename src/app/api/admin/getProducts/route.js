@@ -143,7 +143,7 @@ export async function GET(req) {
   } catch (error) {
     console.error('Error fetching products:', error)
 
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ error: error }, { status: 500 })
   }
 }
 

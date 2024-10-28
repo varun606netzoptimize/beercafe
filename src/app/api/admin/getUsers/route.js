@@ -8,6 +8,7 @@ export async function GET(req) {
   try {
     // Extract pagination, sorting, and search parameters from query
     const url = new URL(req.url, `http://${req.headers.host}`)
+    
     const page = parseInt(url.searchParams.get('page')) || 1
     const limit = parseInt(url.searchParams.get('limit')) || 10
     const sortBy = url.searchParams.get('sortBy') || 'name'
