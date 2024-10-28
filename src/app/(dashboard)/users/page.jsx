@@ -163,6 +163,8 @@ export default function Page() {
       headerName: 'Name',
       flex: 1,
       renderCell: params => {
+        console.log(params?.row, "params")
+
         return (
           <Box
             sx={{
@@ -170,21 +172,26 @@ export default function Page() {
               textTransform: 'capitalize'
             }}
           >
-            <p>{params?.row?.name}</p>
+            <p>{params?.row?.user?.name}</p>
           </Box>
         )
       },
       headerClassName: 'first-column-header',
       minWidth: 180
     },
-    { field: 'email', headerName: 'Email', flex: 1, minWidth: 180 },
-    { field: 'phoneNumber', headerName: 'Phone', flex: 1, minWidth: 150,       sortable: false,
+    { field: 'email', headerName: 'Email', flex: 1, minWidth: 180,
+      renderCell: params => <p>{params?.row?.user?.email}</p>,
+
+     },
+    { field: 'phoneNumber', headerName: 'Phone', flex: 1, minWidth: 150, sortable: false,
+      renderCell: params => <p>{params?.row?.user?.phoneNumber}</p>,
+
     },
     {
       field: 'userType',
       headerName: 'Role',
       flex: 1,
-      renderCell: params => <p>{params?.row?.userType?.type}</p>,
+      renderCell: params => <p>{params?.row?.user?.userType?.type}</p>,
       minWidth: 120,
       sortable: false,
 
@@ -196,7 +203,7 @@ export default function Page() {
       renderCell: params => {
         return (
           <Box>
-            <p>{params?.row?.cafeUsers[0]?.cafe?.name}</p>
+            <p>{params?.row?.cafe?.name}</p>
           </Box>
         )
       },

@@ -9,7 +9,7 @@ export const ENDPOINT = {
   GET_STATS: baseURL + '/api/admin/stats',
   CAFE_STATS: baseURL + '/api/admin/cafeStats',
   GET_MANAGERS: baseURL + '/api/admin/getManagers/',
-  GET_USERS: baseURL + '/api/admin/getUsers/',
+  GET_USERS: baseURL + '/api/admin/getUsersTest/',
   CREATE_USER: baseURL + '/api/admin/createUser',
   UPDATE_USER: baseURL + '/api/admin/updateUser',
   CREATE_CAFE: baseURL + '/api/admin/createCafe',
