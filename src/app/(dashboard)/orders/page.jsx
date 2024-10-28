@@ -58,7 +58,6 @@ const Page = () => {
   const searchParams = useSearchParams()
   const [cafeId, setCafeId] = useState(searchParams.get('cafeId') || 'all')
 
-
   useEffect(() => {
     if (tokenCheck) {
       if (!authToken.token) {
@@ -185,11 +184,12 @@ const Page = () => {
     const selectedCafeId = event.target.value
 
     if (selectedCafeId === 'all') {
-      setCafeId('all');
-      router.replace('/orders', undefined, { shallow: true });
+      setCafeId('all')
     } else {
       setCafeId(selectedCafeId)
     }
+    
+    router.replace('/orders', undefined, { shallow: true })
   }
 
   const handleQueryValueSubmit = event => {
@@ -445,7 +445,6 @@ const Page = () => {
             padding: '16px'
           }}
         >
-
           <Box
             sx={{
               display: 'flex',
@@ -492,7 +491,11 @@ const Page = () => {
                     </MenuItem>,
                     data.children?.map(child => (
                       <MenuItem key={child.id} value={child.id} style={{ paddingLeft: 24 }}>
-                        <CornerDownRight size={16} />
+                        {cafeId !== child.id && (
+                          <>
+                            <CornerDownRight size={16} />
+                          </>
+                        )}
                         {child.name}
                       </MenuItem>
                     ))
