@@ -55,6 +55,8 @@ export default function AddOwnerDrawer({
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
   const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(show => !show)
 
+  console.log(updateOwnerData, 'updateOwnerData')
+
   React.useEffect(() => {
     if (drawerType === 'update' && updateOwnerData) {
       setValue('name', updateOwnerData.name)

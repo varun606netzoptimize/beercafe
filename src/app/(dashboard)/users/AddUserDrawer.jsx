@@ -64,18 +64,18 @@ export default function AddUserDrawer({ open, onClose, drawerType, setDrawerType
 
   useEffect(() => {
     if (drawerType === 'update' && updateUserData) {
-      setValue('name', updateUserData.name)
-      setValue('email', updateUserData.email)
-      setValue('phone', updateUserData.phoneNumber || '')
+      setValue('name', updateUserData.user.name)
+      setValue('email', updateUserData.user.email)
+      setValue('phone', updateUserData.user.phoneNumber || '')
       setValue(
         'firstDropdown',
-        updateUserData.userType === 'owner' ? '66b3583586109427057d98a0' : '66b3583586109427057d98a1'
+        updateUserData.user.userType.type === 'owner' ? '66b3583586109427057d98a0' : '66b3583586109427057d98a1'
       )
 
       // Populate secondDropdown if applicable
-      if (updateUserData.cafeUsers && updateUserData.cafeUsers.length > 0) {
-        console.log( updateUserData.cafeUsers[0].cafe.id, 'updateUserData')
-        setValue('secondDropdown', updateUserData.cafeUsers[0].cafe.id) // Assuming you want to use the first cafe if multiple are available
+      if (updateUserData.cafe) {
+        console.log( updateUserData.cafe.id, 'updateUserData')
+        setValue('secondDropdown', updateUserData.cafe.id) // Assuming you want to use the first cafe if multiple are available
       } else {
         setValue('secondDropdown', '')
       }
