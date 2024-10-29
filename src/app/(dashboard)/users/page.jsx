@@ -114,8 +114,8 @@ export default function Page() {
         }
       })
       .then(res => {
-        setUsers({ users: res.data.users, pagination: res.data.pagination })
-        setTotalRows(res.data.pagination.totalUsers)
+        setUsers({ users: res.data.users, pagination: res.data.meta })
+        setTotalRows(res.data.meta.totalUsers)
       })
       .catch(err => {
         console.log('failed:', err.response)
@@ -127,7 +127,7 @@ export default function Page() {
   }
 
   const DeleteManager = () => {
-    const url = `${ENDPOINT.DELETE_USER}?id=${deleteUserData.id}`
+    const url = `${ENDPOINT.DELETE_USER}?id=${deleteUserData?.user?.id}`
 
     setDeleting(true)
 
@@ -140,11 +140,12 @@ export default function Page() {
       })
       .then(res => {
         setUsers(prevOwners => ({
-          users: prevOwners.users.filter(user => user.id !== deleteUserData.id),
-          pagination: {
-            ...prevOwners.pagination,
-            totalUsers: prevOwners.pagination.totalUsers - 1
-          }
+          users: prevOwners.users.filter(user => user.id !== deleteUserData?.user?.id),
+
+          // pagination: {
+          //   ...prevOwners.pagination,
+          //   totalUsers: prevOwners.pagination.totalUsers - 1
+          // }
         }))
       })
       .catch(err => {

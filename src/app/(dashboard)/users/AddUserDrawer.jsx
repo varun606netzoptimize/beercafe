@@ -128,7 +128,7 @@ export default function AddUserDrawer({ open, onClose, drawerType, setDrawerType
     const url = ENDPOINT.UPDATE_USER
 
     const userData = {
-      id: updateUserData.id,
+      id: updateUserData.user.id,
       name: data.name,
       email: data.email,
       password: data.password,

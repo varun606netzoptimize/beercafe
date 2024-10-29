@@ -29,10 +29,10 @@ export default function ConfirmDelete({
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{`Delete ${deleteUserData?.name}?`}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{`Delete ${deleteUserData?.user?.name}?`}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            {`Are you sure you want to delete ${deleteUserData?.name}?`}
+            {`Are you sure you want to delete ${deleteUserData?.user?.name}?`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
